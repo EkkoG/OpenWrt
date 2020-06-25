@@ -75,7 +75,7 @@ jobs:
     - name: 编译固件
       id: compile
       run: |
-        make image PACKAGES="luci luci-i18n-base-zh-cn luci-i18n-firewall-zh-cn luci-theme-material luci-app-wifischedule luci-i18n-wifischedule-zh-cn -dnsmasq iptables dnsmasq-full coreutils coreutils-nohup bash curl jsonfilter ca-certificates ipset ip-full iptables-mod-tproxy kmod-tun luci-compat luci-app-openclash" FILES="files"
+        make image PACKAGES="luci luci-i18n-base-zh-cn luci-i18n-firewall-zh-cn luci-theme-material luci-app-wifischedule luci-i18n-wifischedule-zh-cn -dnsmasq iptables dnsmasq-full coreutils coreutils-nohup bash curl jsonfilter ca-certificates ipset ip-full iptables-mod-tproxy kmod-tun luci-compat luci-app-openclash"
         echo "::set-output name=status::success"
     
     - name: 上传bin文件夹
