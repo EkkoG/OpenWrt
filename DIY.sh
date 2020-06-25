@@ -32,7 +32,7 @@ tar -xzvf clash-linux-amd64.tar.gz -C ./clash_tmp
 cd ./clash_tmp
 ls | grep clash | xargs -I {} mv {} clash
 chmod +x clash
-cp ./clash_tmp/* "$work_dir/etc/openclash/core/"
+cp ./* "$work_dir/etc/openclash/core/"
 cd ..
 rm -rf clash_tmp
 rm clash-linux-amd64.tar.gz 
@@ -44,7 +44,7 @@ tar -xzvf clash-linux-amd64-2020.06.15.gbf68156.gz -C ./clash_tmp
 cd ./clash_tmp
 ls | grep clash | xargs -I {} mv {} clash_tun
 chmod +x clash
-cp ./clash_tmp/* "$work_dir/etc/openclash/core/"
+cp ./* "$work_dir/etc/openclash/core/"
 cd ..
 rm -rf clash_tmp
 rm clash-linux-amd64-2020.06.15.gbf68156.gz
@@ -56,7 +56,7 @@ tar -xzvf clash-linux-amd64.tar.gz -C ./clash_tmp
 cd ./clash_tmp
 ls | grep clash | xargs -I {} mv {} clash_game
 chmod +x clash
-cp ./clash_tmp/* "$work_dir/etc/openclash/core/"
+cp ./* "$work_dir/etc/openclash/core/"
 cd ..
 rm -rf clash_tmp
 rm clash-linux-amd64.tar.gz 
