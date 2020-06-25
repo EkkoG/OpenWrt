@@ -43,22 +43,23 @@ if [ ! -f "clash" ]; then
     ls | grep clash | xargs -I {} mv {} clash
 fi
 chmod +x clash
-cp ./* "$work_dir/etc/openclash/core/"
+cp ./* "$work_dir/files/etc/openclash/core/"
 cd ..
 rm -rf clash_tmp
 rm clash-linux-amd64.tar.gz 
 
 echo "下载 clash_tun..."
+sudo -E apt-get -qq install gzip
 # /etc/openclash/core/clash_tun
 wget -q https://github.com/vernesong/OpenClash/releases/download/TUN-Premium/clash-linux-amd64-2020.06.15.gbf68156.gz
 mkdir clash_tmp
-tar -xzvf clash-linux-amd64-2020.06.15.gbf68156.gz -C ./clash_tmp
+gunzip -c clash-linux-amd64-2020.06.15.gbf68156.gz > ./clash_tmp/clash_tun
 cd ./clash_tmp
 if [ ! -f "clash_tun" ]; then
     ls | grep clash | xargs -I {} mv {} clash_tun
 fi
 chmod +x clash_tun
-cp ./* "$work_dir/etc/openclash/core/"
+cp ./* "$work_dir/files/etc/openclash/core/"
 cd ..
 rm -rf clash_tmp
 rm clash-linux-amd64-2020.06.15.gbf68156.gz
@@ -73,7 +74,7 @@ if [ ! -f "clash_game" ]; then
     ls | grep clash | xargs -I {} mv {} clash_game
 fi
 chmod +x clash_game
-cp ./* "$work_dir/etc/openclash/core/"
+cp ./* "$work_dir/files/etc/openclash/core/"
 cd ..
 rm -rf clash_tmp
 rm clash-linux-amd64.tar.gz 

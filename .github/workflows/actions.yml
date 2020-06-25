@@ -65,6 +65,8 @@ jobs:
       if: env.SSH_ACTIONS == 'true'
 
     - name: 专属定制
+      env:
+        DEBIAN_FRONTEND: noninteractive
       run: |
         chmod +x $DIY_SH
         ./$DIY_SH
