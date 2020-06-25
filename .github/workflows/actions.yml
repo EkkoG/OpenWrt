@@ -27,7 +27,7 @@ env:
 # BUILDER_URL，openwrt-imagebuilder地址，可在http://downloads.openwrt.org/releases/找到对应版本，对应架构的openwrt-imagebuilder
   BUILDER_URL: https://downloads.openwrt.org/releases/19.07.3/targets/x86/64/openwrt-imagebuilder-19.07.3-x86-64.Linux-x86_64.tar.xz
 # 默认不开启。运行到该步骤时，通过浏览器或终端复制提示的ssh连接登陆，如黑屏ctrl+c即可。进入openwrt目录，运行命令make menuconfig进行配置。配置完成保存为默认.config文件，ctrl+d，输入命令exit或logout即可继续后续步骤。
-  SSH_ACTIONS: true
+  SSH_ACTIONS: false
 # 专属定制脚本  
   DIY_SH: DIY.sh
 # 是否上传固件文件夹，默认否
@@ -72,7 +72,7 @@ jobs:
     - name: 编译固件
       id: compile
       run: |
-        make image PROFILE=tl-wr841-v9 PACKAGES="luci luci-i18n-base-zh-cn luci-i18n-firewall-zh-cn luci-theme-material luci-app-wifischedule luci-i18n-wifischedule-zh-cn" FILES=files/
+        make image PACKAGES="luci luci-i18n-base-zh-cn luci-i18n-firewall-zh-cn luci-theme-material luci-app-wifischedule luci-i18n-wifischedule-zh-cn"
         echo "::set-output name=status::success"
     
     - name: 上传bin文件夹
