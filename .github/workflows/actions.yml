@@ -43,6 +43,8 @@ jobs:
     if: github.event.repository.owner.id == github.event.sender.id
 
     steps:
+    - name: 拉取代码
+      uses: actions/checkout@master
       
     - name: 准备环境
       env:
