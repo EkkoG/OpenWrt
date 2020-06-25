@@ -14,8 +14,8 @@ on:
   push:
     branches:
       - master
-    paths:
-      - 'DIY.sh'
+    # paths:
+    #   - 'DIY.sh'
 # 定时编译，不建议开启
 #   schedule:
 #    - cron: 0 8 * * 5
@@ -25,7 +25,7 @@ on:
 
 env:
 # BUILDER_URL，openwrt-imagebuilder地址，可在http://downloads.openwrt.org/releases/找到对应版本，对应架构的openwrt-imagebuilder
-  BUILDER_URL: http://downloads.openwrt.org/snapshots/targets/ramips/mt7621/openwrt-imagebuilder-ramips-mt7621.Linux-x86_64.tar.xz
+  BUILDER_URL: https://downloads.openwrt.org/releases/19.07.3/targets/x86/64/openwrt-imagebuilder-19.07.3-x86-64.Linux-x86_64.tar.xz
 # 默认不开启。运行到该步骤时，通过浏览器或终端复制提示的ssh连接登陆，如黑屏ctrl+c即可。进入openwrt目录，运行命令make menuconfig进行配置。配置完成保存为默认.config文件，ctrl+d，输入命令exit或logout即可继续后续步骤。
   SSH_ACTIONS: true
 # 专属定制脚本  
@@ -56,7 +56,6 @@ jobs:
         sudo -E apt-get -qq install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch python3 unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs git-core gcc-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler g++-multilib
         sudo -E apt-get -qq autoremove --purge
         sudo -E apt-get -qq clean
-        curl -fsSL https://raw.githubusercontent.com/P3TERX/dotfiles/master/.bashrc >> ~/.bashrc
     
     - name: 下载openwrt-imagebuilder
       run: |
