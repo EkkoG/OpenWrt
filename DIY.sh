@@ -80,7 +80,7 @@ rm -rf clash_tmp
 rm clash-linux-amd64.tar.gz 
 
 echo "查看下载结果"
-ls "$work_dir/etc/openclash/core/"
+ls "$work_dir/files/etc/openclash/core/"
 
 echo "清理文件"
 cd ..
