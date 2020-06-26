@@ -11,6 +11,9 @@
 
 ![](./screenshots/ACA68A44-C0F0-42A0-B4EC-46FAB27F7455.png)
 
+### 下载
+
+https://github.com/cielpy/OpenWrt/actions 找到最新一个成功构建的 Action 并打开，下载其 Artifacts 即可
 ### 致谢
 
 感谢以下项目，使得我的上网体验又有所提升
