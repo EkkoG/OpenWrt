@@ -7,6 +7,10 @@
 - 采用官方原版 19.07.3 ImageBuilder 构建，可按照官方提供的方式进行自定义
 - 集成 [OpenClash](https://github.com/vernesong/OpenClash)，开箱即用
 
+### 截图
+
+![](./screenshots/ACA68A44-C0F0-42A0-B4EC-46FAB27F7455.png)
+
 ### 致谢
 
 感谢以下项目，使得我的上网体验又有所提升
