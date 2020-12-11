@@ -14,8 +14,8 @@ on:
   push:
     branches:
       - master
-    paths:
-      - 'DIY.sh'
+    # paths:
+    #   - 'DIY.sh'
 # 定时编译，不建议开启
 #   schedule:
 #    - cron: 0 8 * * 5
