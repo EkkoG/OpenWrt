@@ -60,9 +60,9 @@ jobs:
         wget $BUILDER_URL
         tar -xf *.xz -C  ./ --strip-components 1
 
-    - name: SSH 连接 Actions
-      uses: P3TERX/debugger-action@master
-      if: env.SSH_ACTIONS == 'true'
+    # - name: SSH 连接 Actions
+    #   uses: P3TERX/debugger-action@master
+    #   if: env.SSH_ACTIONS == 'true'
 
     - name: 专属定制
       env:
