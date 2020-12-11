@@ -62,7 +62,7 @@ chmod +x clash_tun
 cp ./* "$work_dir/files/etc/openclash/core/"
 cd ..
 rm -rf clash_tmp
-rm clash-linux-amd64-2020.06.15.gbf68156.gz
+rm clash-linux-amd64-2020.11.23.g4474306.gz
 
 echo "下载 clash_game"
 # /etc/openclash/core/clash_game
