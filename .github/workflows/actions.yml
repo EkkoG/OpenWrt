@@ -91,7 +91,7 @@ jobs:
       run: |
         cd bin/targets/*/*
         rm -rf packages
-        echo "::set-env name=FIRMWARE::$PWD"
+        echo "FIRMWARE=$PWD" >> $GITHUB_ENV
         echo "::set-output name=status::success"
     
     - name: 上传固件文件
