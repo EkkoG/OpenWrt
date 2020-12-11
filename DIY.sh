@@ -11,7 +11,7 @@ sed -i 's/192.168.1.1/192.168.33.1/g' package/base-files/files/bin/config_genera
 # sed -i '567c $(Device/tplink-8mlzma)' target/linux/ar71xx/image/tiny-tp-link.mk
 # sed -i '238c CONFIG_ATH79_MACH_TL_WR841N_V9=y' target/linux/ar71xx/config-4.14
 
-echo "src/gz https://downloads.openwrt.org/snapshots/packages/x86_64/packages" >> ./openwrt-imagebuilder-19.07.4-x86-64.Linux-x86_64/repositories.conf
+echo "src/gz https://downloads.openwrt.org/snapshots/packages/x86_64/packages" >> ./repositories.conf
 
 work_dir=$(pwd)
 
