@@ -87,8 +87,3 @@ ls "$work_dir/files/etc/openclash/core/"
 echo "清理文件"
 cd ..
 rm -rf openclash_tmp
-
-
-mkdir -p files/etc/config/
-
-cp ./network files/etc/config/
