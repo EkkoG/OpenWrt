@@ -53,7 +53,7 @@ sudo -E apt-get -qq install gzip
 # /etc/openclash/core/clash_tun
 wget -q https://github.com/vernesong/OpenClash/releases/download/TUN-Premium/clash-linux-amd64-2020.11.23.g4474306.gz
 mkdir clash_tmp
-gunzip -c clash-linux-amd64-2020.06.15.gbf68156.gz > ./clash_tmp/clash_tun
+gunzip -c clash-linux-amd64-2020.11.23.g4474306.gz > ./clash_tmp/clash_tun
 cd ./clash_tmp
 if [ ! -f "clash_tun" ]; then
     ls | grep clash | xargs -I {} mv {} clash_tun
