@@ -6,7 +6,7 @@
 # Version:1.0
 #=================================================
 # Modify default Lan IP
-sed -i 's/192.168.1.1/192.168.33.1/g' package/base-files/files/bin/config_generate
+# sed -i 's/192.168.1.1/192.168.33.1/g' package/base-files/files/bin/config_generate
 # Modify image size for OFFICAL OpenWrt source code
 # sed -i '567c $(Device/tplink-8mlzma)' target/linux/ar71xx/image/tiny-tp-link.mk
 # sed -i '238c CONFIG_ATH79_MACH_TL_WR841N_V9=y' target/linux/ar71xx/config-4.14
@@ -87,3 +87,8 @@ ls "$work_dir/files/etc/openclash/core/"
 echo "清理文件"
 cd ..
 rm -rf openclash_tmp
+
+
+mkdir -p files/etc/config/
+
+cp ./network files/etc/config/
