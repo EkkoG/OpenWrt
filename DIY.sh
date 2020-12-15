@@ -11,6 +11,10 @@
 # sed -i '567c $(Device/tplink-8mlzma)' target/linux/ar71xx/image/tiny-tp-link.mk
 # sed -i '238c CONFIG_ATH79_MACH_TL_WR841N_V9=y' target/linux/ar71xx/config-4.14
 
+LUCI_APP_OPENCLASH_VERSION=0.41.07-beta
+CLASH_VERSION=0.39.2-beta
+CLASH_TUN_FILE_NAME=clash-linux-amd64-2020.11.23.g4474306.gz
+
 echo "src/gz snapshots https://downloads.openwrt.org/snapshots/packages/x86_64/packages" >> ./repositories.conf
 
 work_dir=$(pwd)
@@ -27,7 +31,7 @@ mkdir -p files/etc/openclash/core/
 
 echo "下载 luci-app-openclash..."
 cd packages
-wget -q https://github.com/vernesong/OpenClash/releases/download/v0.41.07-beta/luci-app-openclash_0.41.07-beta_all.ipk
+wget https://github.com/vernesong/OpenClash/releases/download/v${LUCI_APP_OPENCLASH_VERSION}/luci-app-openclash_${LUCI_APP_OPENCLASH_VERSION}_all.ipk
 
 cd $work_dir
 
@@ -36,7 +40,7 @@ cd openclash_tmp
 
 echo "下载 clash..."
 #/etc/openclash/core/clash
-wget -q https://github.com/vernesong/OpenClash/releases/download/v0.39.2-beta/clash-linux-amd64.tar.gz
+wget -q https://github.com/vernesong/OpenClash/releases/download/v${CLASH_VERSION}/clash-linux-amd64.tar.gz
 mkdir clash_tmp
 tar -xzvf clash-linux-amd64.tar.gz -C ./clash_tmp
 cd ./clash_tmp
@@ -53,9 +57,9 @@ rm clash-linux-amd64.tar.gz
 echo "下载 clash_tun..."
 sudo -E apt-get -qq install gzip
 # /etc/openclash/core/clash_tun
-wget -q https://github.com/vernesong/OpenClash/releases/download/TUN-Premium/clash-linux-amd64-2020.11.23.g4474306.gz
+wget -q https://github.com/vernesong/OpenClash/releases/download/TUN-Premium/${CLASH_TUN_FILE_NAME}
 mkdir clash_tmp
-gunzip -c clash-linux-amd64-2020.11.23.g4474306.gz > ./clash_tmp/clash_tun
+gunzip -c $CLASH_TUN_FILE_NAME > ./clash_tmp/clash_tun
 cd ./clash_tmp
 if [ ! -f "clash_tun" ]; then
     ls | grep clash | xargs -I {} mv {} clash_tun
@@ -64,7 +68,7 @@ chmod +x clash_tun
 cp ./* "$work_dir/files/etc/openclash/core/"
 cd ..
 rm -rf clash_tmp
-rm clash-linux-amd64-2020.11.23.g4474306.gz
+rm $CLASH_TUN_FILE_NAME
 
 echo "下载 clash_game"
 # /etc/openclash/core/clash_game
