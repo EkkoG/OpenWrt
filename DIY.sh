@@ -11,7 +11,7 @@
 # sed -i '567c $(Device/tplink-8mlzma)' target/linux/ar71xx/image/tiny-tp-link.mk
 # sed -i '238c CONFIG_ATH79_MACH_TL_WR841N_V9=y' target/linux/ar71xx/config-4.14
 
-# echo "src/gz snapshots https://downloads.openwrt.org/snapshots/packages/x86_64/packages" >> ./repositories.conf
+echo "src/gz simonsmh https://github.com/simonsmh/openwrt-dist/raw/packages/rockchip/armv8/" >> ./repositories.conf
 
 
 # 最新版本查看 https://github.com/vernesong/OpenClash/releases
@@ -31,9 +31,9 @@ fi
 
 mkdir -p files/etc/openclash/core/
 
-echo "下载 luci-app-openclash..."
-cd packages
-wget https://github.com/vernesong/OpenClash/releases/download/v${LUCI_APP_OPENCLASH_VERSION}/luci-app-openclash_${LUCI_APP_OPENCLASH_VERSION}_all.ipk
+# echo "下载 luci-app-openclash..."
+# cd packages
+# wget https://github.com/vernesong/OpenClash/releases/download/v${LUCI_APP_OPENCLASH_VERSION}/luci-app-openclash_${LUCI_APP_OPENCLASH_VERSION}_all.ipk
 
 cd $work_dir
 
