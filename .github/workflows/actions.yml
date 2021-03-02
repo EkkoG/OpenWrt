@@ -25,7 +25,7 @@ on:
 
 env:
 # BUILDER_URL，openwrt-imagebuilder地址，可在http://downloads.openwrt.org/releases/找到对应版本，对应架构的openwrt-imagebuilder
-  BUILDER_URL: https://downloads.openwrt.org/releases/19.07/targets/x86/64/openwrt-imagebuilder-19.07.7-x86-64.Linux-x86_64.tar.xz
+  BUILDER_URL: https://downloads.openwrt.org/releases/19.07.7/targets/x86/64/openwrt-imagebuilder-19.07.7-x86-64.Linux-x86_64.tar.xz
 # 默认不开启。运行到该步骤时，通过浏览器或终端复制提示的ssh连接登陆，如黑屏ctrl+c即可。进入openwrt目录，运行命令make menuconfig进行配置。配置完成保存为默认.config文件，ctrl+d，输入命令exit或logout即可继续后续步骤。
   SSH_ACTIONS: false
 # 专属定制脚本  
