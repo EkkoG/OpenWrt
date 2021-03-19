@@ -17,7 +17,7 @@ echo "src/gz simonsmh https://github.com/simonsmh/openwrt-dist/raw/packages/x86/
 # 最新版本查看 https://github.com/vernesong/OpenClash/releases
 # LUCI_APP_OPENCLASH_VERSION=0.41.08-beta
 # 最新版本查看 https://github.com/vernesong/OpenClash/releases/tag/TUN-Premium
-CLASH_TUN_FILE_NAME=clash-linux-amd64-2020.11.23.g4474306.gz
+CLASH_TUN_FILE_NAME=clash-linux-amd64-2021.03.10.gz
 
 work_dir=$(pwd)
 
