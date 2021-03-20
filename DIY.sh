@@ -11,7 +11,7 @@
 # sed -i '567c $(Device/tplink-8mlzma)' target/linux/ar71xx/image/tiny-tp-link.mk
 # sed -i '238c CONFIG_ATH79_MACH_TL_WR841N_V9=y' target/linux/ar71xx/config-4.14
 
-# echo "src/gz simonsmh https://github.com/simonsmh/openwrt-dist/raw/packages/x86/64" >> ./repositories.conf
+echo "src/gz simonsmh https://github.com/simonsmh/openwrt-dist/raw/packages/x86/64" >> ./repositories.conf
 
 
 # 最新版本查看 https://github.com/vernesong/OpenClash/releases
@@ -93,3 +93,7 @@ ls "$work_dir/files/etc/openclash/core/"
 echo "清理文件"
 cd ..
 rm -rf openclash_tmp
+
+cat system-custom.tpl  | sed "s/CUSTOM_PPPOE_USERNAME/$CUSTOM_PPPOE_USERNAME/g" | sed "s/CUSTOM_PPPOE_PASSWORD/$CUSTOM_PPPOE_PASSWORD/g" | sed "s/CUSTOM_LAN_IP/$CUSTOM_LAN_IP/g" | sed "s~CUSTOM_CLASH_CONFIG_URL~$CUSTOM_CLASH_CONFIG_URL~g" >  files/etc/uci-defaults/system-custom
+
+cat  files/etc/uci-defaults/system-custom

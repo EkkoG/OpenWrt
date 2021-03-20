@@ -1,0 +1,17 @@
+version: '3.5'
+services:
+  imagebuilder:
+    image: "openwrtorg/imagebuilder:x86-64-19.07.7"
+    container_name: imagebuilder
+    env_file:
+     - ./.env
+    volumes:
+     - ./bin:/home/build/openwrt/bin
+     - ./tmp/libcap_2.43-1_x86_64.ipk:/home/build/openwrt/packages/libcap_2.43-1_x86_64.ipk
+     - ./tmp/libcap-bin_2.43-1_x86_64.ipk:/home/build/openwrt/packages/libcap-bin_2.43-1_x86_64.ipk
+     - ./tmp/luci_git-21.044.30835-34e0d65-1_all.ipk:/home/build/openwrt/packages/luci_git-21.044.30835-34e0d65-1_all.ipk
+     - ./DIY.sh:/home/build/openwrt/DIY.sh
+     - ./system-custom.tpl:/home/build/openwrt/system-custom.tpl
+     - ./build.sh:/home/build/openwrt/build.sh
+     - ./files:/home/build/openwrt/files
+    command: "./build.sh"
