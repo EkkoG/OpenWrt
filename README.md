@@ -38,3 +38,5 @@ CUSTOM_CLASH_CONFIG_URL=
 - [OpenWrt](https://openwrt.org/)
 - [clash](https://github.com/Dreamacro/clash)
 - [OpenClash](https://github.com/vernesong/OpenClash)
+- [China-DNS](https://github.com/aa65535/openwrt-chinadns)
+- [SmartDNS](https://github.com/pymumu/smartdns/)
