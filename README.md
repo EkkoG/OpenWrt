@@ -10,6 +10,25 @@
 - 可配置默认 LAN 口 IP，PPPoE 账号密码，刷机完成后，几乎不用任何配置即可使用
 - 可以自定义，根据 [UCI](https://openwrt.org/docs/guide-user/base-system/uci) 语法，可以自定义几乎所有配置，只需要将 uci 命令录入 `system-custom.tpl` 即可，system-custom.tpl 也可以酌情删减，**删除时请务必清楚删除的配置的作用！！！**
 
+
+### 使用
+
+- git clone https://github.com/cielpy/OpenWrt.git
+- cd OpenWrt
+- 新建 .env 文件，配置环境变量，请参考 https://github.com/cielpy/OpenWrt#%E6%94%AF%E6%8C%81%E9%85%8D%E7%BD%AE%E7%9A%84%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F
+- 修改 system-custom.tpl（非必须，修改须谨慎）
+- docker-compose up &&  docker-compose rm -f
+
+
+### 支持配置的环境变量
+
+```bash
+CUSTOM_PPPOE_PASSWORD=
+CUSTOM_PPPOE_USERNAME=
+CUSTOM_LAN_IP=
+CUSTOM_CLASH_CONFIG_URL=
+```
+
 感谢以下项目，使得我的上网体验又有所提升
 
 - [OpenWrt](https://openwrt.org/)
