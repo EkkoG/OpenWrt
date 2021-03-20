@@ -10,7 +10,7 @@ CLASH_GAME_RELEASE_DATE=20210310
 # https://github.com/Dreamacro/clash/releases
 CLASH_VERSION=1.4.2
 
-ARCH=armv8
+ARCH=amd64
 
 work_dir=$(pwd)
 
