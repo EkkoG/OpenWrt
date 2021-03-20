@@ -10,6 +10,8 @@ CLASH_GAME_RELEASE_DATE=20210310
 # https://github.com/Dreamacro/clash/releases
 CLASH_VERSION=1.4.2
 
+ARCH=armv8
+
 work_dir=$(pwd)
 
 # Add third-party package
@@ -32,9 +34,9 @@ function download() {
     rm $filename
 }
 
-download https://github.com/Dreamacro/clash/releases/download/v${CLASH_VERSION}/clash-linux-amd64-v${CLASH_VERSION}.gz clash
-download https://github.com/Dreamacro/clash/releases/download/premium/clash-linux-amd64-${CLASH_TUN_RELEASE_DATE}.gz clash_tun
-download https://github.com/comzyh/clash/releases/download/${CLASH_GAME_RELEASE_DATE}/clash-linux-amd64-${CLASH_GAME_RELEASE_DATE}.gz clash_game
+download https://github.com/Dreamacro/clash/releases/download/v${CLASH_VERSION}/clash-linux-${ARCH}-v${CLASH_VERSION}.gz clash
+download https://github.com/Dreamacro/clash/releases/download/premium/clash-linux-${ARCH}-${CLASH_TUN_RELEASE_DATE}.gz clash_tun
+download https://github.com/comzyh/clash/releases/download/${CLASH_GAME_RELEASE_DATE}/clash-linux-${ARCH}-${CLASH_GAME_RELEASE_DATE}.gz clash_game
 
 
 cd $work_dir
