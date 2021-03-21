@@ -8,7 +8,7 @@ if [ "$TARGET" = "x86_64" ]; then
     CUSTOM_IPK_ARCH=x86_64
     CUSTOM_SOURCE_ARCH="x86/64"
     ARCH=amd64
-else
+elif [ "$TARGET" = "rockchip" ]; then
     ARCH=armv8
     CUSTOM_IPK_ARCH=aarch64_generic
     CUSTOM_SOURCE_ARCH="rockchip/armv8"
