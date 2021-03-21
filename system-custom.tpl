@@ -75,7 +75,7 @@ uci set smartdns.@smartdns[0].ipv6_server='1'
 uci set smartdns.@smartdns[0].tcp_server='1'
 uci set smartdns.@smartdns[0].enabled='1'
 uci set smartdns.@smartdns[0].dualstack_ip_selection='1'
-uci set smartdns.cfg016bb1.serve_expired='1'
+uci set smartdns.@smartdns[0].serve_expired='1'
 uci uci commit smartdns
 
 uci add openclash config_subscribe
