@@ -47,3 +47,20 @@ services:
      - ./build.sh:/home/build/openwrt/build.sh
      - ./files:/home/build/openwrt/files
     command: "./build.sh"
+
+  imagebuilder_ar71xx_nand:
+    image: "openwrtorg/imagebuilder:ar71xx-nand-19.07.7"
+    container_name: imagebuilder_ar71xx_nand
+    environment:
+      - TARGET=ar71xx_nand
+      - OPENWRT_VERSION=19.07
+    env_file:
+     - ./.env
+    volumes:
+     - ./19_07_bin:/home/build/openwrt/bin
+     - ./DIY.sh:/home/build/openwrt/DIY.sh
+     - ./system-custom.tpl:/home/build/openwrt/system-custom.tpl
+     - ./build.sh:/home/build/openwrt/build.sh
+     - ./files:/home/build/openwrt/files
+     - ./config:/home/build/openwrt/config
+    command: "./build.sh"

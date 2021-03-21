@@ -6,5 +6,7 @@ elif [ "$1" = 'amd64_21' ]; then
     docker-compose up imagebuilder_x86_64_21_02 
 elif [ "$1" = 'rockchip_21' ]; then
     docker-compose up imagebuilder_rockchip_21_02 
+elif [ "$1" = 'ar71xx_nand' ]; then
+    docker-compose up imagebuilder_ar71xx_nand
 fi
 docker-compose rm -f

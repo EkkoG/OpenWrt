@@ -8,10 +8,20 @@ if [ "$TARGET" = "x86_64" ]; then
     CUSTOM_IPK_ARCH=x86_64
     CUSTOM_SOURCE_ARCH="x86/64"
     ARCH=amd64
+    echo "src/gz simonsmh https://github.com/simonsmh/openwrt-dist/raw/packages/${CUSTOM_SOURCE_ARCH}" >> ./repositories.conf
 elif [ "$TARGET" = "rockchip" ]; then
     ARCH=armv8
     CUSTOM_IPK_ARCH=aarch64_generic
     CUSTOM_SOURCE_ARCH="rockchip/armv8"
+    echo "src/gz simonsmh https://github.com/simonsmh/openwrt-dist/raw/packages/${CUSTOM_SOURCE_ARCH}" >> ./repositories.conf
+elif [ "$TARGET" = "ar71xx_nand" ]; then
+    ARCH=mips-softfloat
+    CUSTOM_IPK_ARCH=mips_24kc
+    CUSTOM_SOURCE_ARCH="ar71xx/nand"
+
+    cp config/wireless files/etc/config/wireless
+
+    echo "src/gz simonsmh https://github.com/cielpy/openwrt-dist/raw/packages/${CUSTOM_SOURCE_ARCH}" >> ./repositories.conf
 fi
 
 if [ "$OPENWRT_VERSION" = "21.02" ]; then
@@ -19,7 +29,6 @@ if [ "$OPENWRT_VERSION" = "21.02" ]; then
     mv tmp_repositories.conf repositories.conf
 fi
 
-echo "src/gz simonsmh https://github.com/simonsmh/openwrt-dist/raw/packages/${CUSTOM_SOURCE_ARCH}" >> ./repositories.conf
 
 
 # https://github.com/Dreamacro/clash/releases/tag/premium
@@ -52,8 +61,10 @@ function download_clash_binaries() {
 }
 
 download_clash_binaries https://github.com/Dreamacro/clash/releases/download/v${CLASH_VERSION}/clash-linux-${ARCH}-v${CLASH_VERSION}.gz clash
-download_clash_binaries https://github.com/Dreamacro/clash/releases/download/premium/clash-linux-${ARCH}-${CLASH_TUN_RELEASE_DATE}.gz clash_tun
-download_clash_binaries https://github.com/comzyh/clash/releases/download/${CLASH_GAME_RELEASE_DATE}/clash-linux-${ARCH}-${CLASH_GAME_RELEASE_DATE}.gz clash_game
+if [ "$TARGET" != "ar71xx_nand" ]; then
+    download_clash_binaries https://github.com/Dreamacro/clash/releases/download/premium/clash-linux-${ARCH}-${CLASH_TUN_RELEASE_DATE}.gz clash_tun
+    download_clash_binaries https://github.com/comzyh/clash/releases/download/${CLASH_GAME_RELEASE_DATE}/clash-linux-${ARCH}-${CLASH_GAME_RELEASE_DATE}.gz clash_game
+fi
 
 
 cd $work_dir
