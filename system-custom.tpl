@@ -96,4 +96,9 @@ uci uci commit openclash
 
 uci set system.@system[0].zonename='Asia/Shanghai'
 uci set system.@system[0].timezone='CST-8'
+system.@system[0].cronloglevel='8'
+system.@system[0].conloglevel='7'
 uci commit system
+
+uci set luci.main.lang='zh_cn'
+uci commit luci
