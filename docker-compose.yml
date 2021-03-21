@@ -1,12 +1,38 @@
 version: '3.5'
 services:
-  imagebuilder:
+  imagebuilder_x86_64_19_07:
     image: "openwrtorg/imagebuilder:x86-64-19.07.7"
-    container_name: imagebuilder
+    container_name: imagebuilder_x86_64_19_07
     env_file:
      - ./.env
     volumes:
-     - ./bin:/home/build/openwrt/bin
+     - ./19_07_bin:/home/build/openwrt/bin
+     - ./DIY.sh:/home/build/openwrt/DIY.sh
+     - ./system-custom.tpl:/home/build/openwrt/system-custom.tpl
+     - ./build.sh:/home/build/openwrt/build.sh
+     - ./files:/home/build/openwrt/files
+    command: "./build.sh"
+
+  imagebuilder_x86_64_21_02:
+    image: "openwrtorg/imagebuilder:x86-64-21.02-SNAPSHOT"
+    container_name: imagebuilder_x86_64_21_02
+    env_file:
+     - ./.env_x86_64_2102
+    volumes:
+     - ./21_02_bin:/home/build/openwrt/bin
+     - ./DIY.sh:/home/build/openwrt/DIY.sh
+     - ./system-custom.tpl:/home/build/openwrt/system-custom.tpl
+     - ./build.sh:/home/build/openwrt/build.sh
+     - ./files:/home/build/openwrt/files
+    command: "./build.sh"
+
+  imagebuilder_rockchip_21_02:
+    image: "openwrtorg/imagebuilder:rockchip-armv8-21.02-SNAPSHOT"
+    container_name: imagebuilder_rockchip_21_02
+    env_file:
+     - ./.env_rockchip
+    volumes:
+     - ./21_02_bin:/home/build/openwrt/bin
      - ./DIY.sh:/home/build/openwrt/DIY.sh
      - ./system-custom.tpl:/home/build/openwrt/system-custom.tpl
      - ./build.sh:/home/build/openwrt/build.sh

@@ -1,3 +1,4 @@
 files/etc/openclash/core/clash*
 files/etc/uci-defaults/*
-armv8-bin/
+21_02_bin/
+19_07_bin/

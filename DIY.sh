@@ -1,20 +1,20 @@
 #!/bin/bash
 
-# ARCH 可选 amd64 和 armv8
-ARCH=amd64
-### ================================================================
-
 CUSTOM_SOURCE_ARCH=
 CUSTOM_IPK_ARCH=
+ARCH=
 
-if [ "$ARCH" == "amd64" ]; then
+if [ "$TARGET" = "x86_64" ]; then
     CUSTOM_IPK_ARCH=x86_64
     CUSTOM_SOURCE_ARCH="x86/64"
+    ARCH=amd64
 else
-    CUSTOM_IPK_ARCH=armv8
-    CUSTOM_SOURCE_ARCH="ockchip/armv8"
+    ARCH=armv8
+    CUSTOM_IPK_ARCH=aarch64_generic
+    CUSTOM_SOURCE_ARCH="rockchip/armv8"
+fi
 
-
+if [ "$OPENWRT_VERSION" = "21.02" ]; then
     sed '/.*check_signature/d' repositories.conf > tmp_repositories.conf
     mv tmp_repositories.conf repositories.conf
 fi
@@ -72,8 +72,10 @@ function download_missing_ipks() {
     rm $filename
 }
 
-download_missing_ipks https://downloads.openwrt.org/releases/packages-21.02/${CUSTOM_IPK_ARCH}/packages/libcap_2.43-1_${CUSTOM_IPK_ARCH}.ipk
-download_missing_ipks https://downloads.openwrt.org/releases/packages-21.02/${CUSTOM_IPK_ARCH}/packages/libcap-bin_2.43-1_${CUSTOM_IPK_ARCH}.ipk
 
+if [ "$OPENWRT_VERSION" = "19.07" ]; then
+    download_missing_ipks https://downloads.openwrt.org/releases/packages-21.02/${CUSTOM_IPK_ARCH}/packages/libcap_2.43-1_${CUSTOM_IPK_ARCH}.ipk
+    download_missing_ipks https://downloads.openwrt.org/releases/packages-21.02/${CUSTOM_IPK_ARCH}/packages/libcap-bin_2.43-1_${CUSTOM_IPK_ARCH}.ipk
+fi
 
 cat system-custom.tpl  | sed "s/CUSTOM_PPPOE_USERNAME/$CUSTOM_PPPOE_USERNAME/g" | sed "s/CUSTOM_PPPOE_PASSWORD/$CUSTOM_PPPOE_PASSWORD/g" | sed "s/CUSTOM_LAN_IP/$CUSTOM_LAN_IP/g" | sed "s~CUSTOM_CLASH_CONFIG_URL~$CUSTOM_CLASH_CONFIG_URL~g" >  files/etc/uci-defaults/system-custom
