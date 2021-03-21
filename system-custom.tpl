@@ -3,15 +3,6 @@ uci set network.wan.proto='pppoe'
 uci set network.wan.username='CUSTOM_PPPOE_USERNAME'
 uci set network.wan.password='CUSTOM_PPPOE_PASSWORD'
 uci commit network
-uci add dhcp host
-uci set dhcp.@host[-1].name='dsm'
-uci set dhcp.@host[-1].ip='192.168.33.120'
-uci set dhcp.@host[-1].mac='00:11:32:88:B0:01'
-uci add dhcp host
-uci set dhcp.@host[-1].name='home-server'
-uci set dhcp.@host[-1].ip='192.168.33.152'
-uci set dhcp.@host[-1].mac='5E:AB:8D:AA:CE:C8'
-uci commit dhcp
 uci add smartdns server
 uci set smartdns.@server[-1]=server
 uci set smartdns.@server[-1].enabled='1'
