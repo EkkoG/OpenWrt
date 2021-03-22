@@ -24,12 +24,7 @@ elif [ "$TARGET" = "ar71xx_nand" ]; then
     echo "src/gz simonsmh https://github.com/cielpy/openwrt-dist/raw/packages/${CUSTOM_SOURCE_ARCH}" >> ./repositories.conf
 fi
 
-if [ "$OPENWRT_VERSION" = "21.02" ]; then
-    sed '/.*check_signature/d' repositories.conf > tmp_repositories.conf
-    mv tmp_repositories.conf repositories.conf
-fi
-
-
+cp custom/keys/* keys
 
 # https://github.com/Dreamacro/clash/releases/tag/premium
 CLASH_TUN_RELEASE_DATE=2021.03.10

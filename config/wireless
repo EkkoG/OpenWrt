@@ -15,7 +15,7 @@ config wifi-iface
 	option mode 'ap'
 	option ssid 'ahhhhh'
 	option encryption 'psk-mixed'
-	option key 'mine_wlan'
+	option key 'ahhhhhhhh'
 
 config wifi-device 'radio1'
 	option type 'mac80211'
@@ -33,4 +33,4 @@ config wifi-iface
 	option mode 'ap'
 	option ssid 'ahhhhh-5G'
 	option encryption 'psk-mixed'
-	option key 'mine_wlan'
+	option key 'ahhhhhhhh'

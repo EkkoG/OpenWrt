@@ -10,6 +10,7 @@ services:
      - ./.env
     volumes:
      - ./19_07_bin:/home/build/openwrt/bin
+     - ./keys:/home/build/openwrt/custom/keys
      - ./DIY.sh:/home/build/openwrt/DIY.sh
      - ./system-custom.tpl:/home/build/openwrt/system-custom.tpl
      - ./build.sh:/home/build/openwrt/build.sh
@@ -26,6 +27,7 @@ services:
      - ./.env
     volumes:
      - ./21_02_bin:/home/build/openwrt/bin
+     - ./keys:/home/build/openwrt/custom/keys
      - ./DIY.sh:/home/build/openwrt/DIY.sh
      - ./system-custom.tpl:/home/build/openwrt/system-custom.tpl
      - ./build.sh:/home/build/openwrt/build.sh
@@ -42,6 +44,7 @@ services:
      - ./.env
     volumes:
      - ./21_02_bin:/home/build/openwrt/bin
+     - ./keys:/home/build/openwrt/custom/keys
      - ./DIY.sh:/home/build/openwrt/DIY.sh
      - ./system-custom.tpl:/home/build/openwrt/system-custom.tpl
      - ./build.sh:/home/build/openwrt/build.sh
@@ -55,9 +58,10 @@ services:
       - TARGET=ar71xx_nand
       - OPENWRT_VERSION=19.07
     env_file:
-     - ./.env
+     - ./.env_ar71xx
     volumes:
      - ./19_07_bin:/home/build/openwrt/bin
+     - ./keys:/home/build/openwrt/custom/keys
      - ./DIY.sh:/home/build/openwrt/DIY.sh
      - ./system-custom.tpl:/home/build/openwrt/system-custom.tpl
      - ./build.sh:/home/build/openwrt/build.sh
