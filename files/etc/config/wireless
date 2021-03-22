@@ -1,4 +1,3 @@
-
 config wifi-device 'radio0'
 	option type 'mac80211'
 	option channel '11'
@@ -9,7 +8,7 @@ config wifi-device 'radio0'
 	option country 'US'
 	option disabled '0'
 
-config wifi-iface
+config wifi-iface 'wifinet0'
 	option device 'radio0'
 	option network 'lan'
 	option mode 'ap'
@@ -27,7 +26,7 @@ config wifi-device 'radio1'
 	option country 'US'
 	option disabled '0'
 
-config wifi-iface
+config wifi-iface 'wifinet1'
 	option device 'radio1'
 	option network 'lan'
 	option mode 'ap'
