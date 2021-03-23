@@ -8,12 +8,10 @@ if [ "$TARGET" = "x86_64" ]; then
     CUSTOM_IPK_ARCH=x86_64
     CUSTOM_SOURCE_ARCH="x86/64"
     ARCH=amd64
-    echo "src/gz simonsmh https://github.com/simonsmh/openwrt-dist/raw/packages/${CUSTOM_SOURCE_ARCH}" >> ./repositories.conf
 elif [ "$TARGET" = "rockchip" ]; then
     ARCH=armv8
     CUSTOM_IPK_ARCH=aarch64_generic
     CUSTOM_SOURCE_ARCH="rockchip/armv8"
-    echo "src/gz simonsmh https://github.com/simonsmh/openwrt-dist/raw/packages/${CUSTOM_SOURCE_ARCH}" >> ./repositories.conf
 elif [ "$TARGET" = "ar71xx_nand" ]; then
     ARCH=mips-softfloat
     CUSTOM_IPK_ARCH=mips_24kc
@@ -21,8 +19,9 @@ elif [ "$TARGET" = "ar71xx_nand" ]; then
 
     cp config/wireless files/etc/config/wireless
 
-    echo "src/gz simonsmh https://github.com/cielpy/openwrt-dist/raw/packages/${CUSTOM_SOURCE_ARCH}" >> ./repositories.conf
 fi
+
+echo "src/gz simonsmh https://github.com/cielpy/openwrt-dist/raw/packages/${CUSTOM_SOURCE_ARCH}" >> ./repositories.conf
 
 cp custom/keys/* keys
 
