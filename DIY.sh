@@ -44,6 +44,8 @@ sudo -E apt-get -qq install gzip
 
 cd files/etc/openclash/core/
 
+rm -f *
+
 function download_clash_binaries() {
     local url=$1
     local binaryname=$2
