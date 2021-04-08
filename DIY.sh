@@ -26,11 +26,11 @@ echo "src/gz simonsmh https://github.com/cielpy/openwrt-dist/raw/packages/${CUST
 cp custom/keys/* keys
 
 # https://github.com/Dreamacro/clash/releases/tag/premium
-CLASH_TUN_RELEASE_DATE=2021.03.10
+CLASH_TUN_RELEASE_DATE=2021.04.08
 # https://github.com/comzyh/clash/releases
 CLASH_GAME_RELEASE_DATE=20210310
 # https://github.com/Dreamacro/clash/releases
-CLASH_VERSION=1.4.2
+CLASH_VERSION=1.5.0
 
 work_dir=$(pwd)
 
