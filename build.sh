@@ -2,4 +2,10 @@
 
 ./DIY.sh
 
-make image PACKAGES="luci -dnsmasq wget libustream-openssl coreutils-nohup bash dnsmasq-full curl jsonfilter ca-certificates ipset ip-full iptables-mod-tproxy iptables-mod-extra libcap ruby ruby-yaml kmod-tun ip6tables-mod-nat luci-compat vim-full luci-app-openclash luci-app-smartdns luci-i18n-smartdns-zh-cn luci-app-chinadns libcap libcap-bin luci-i18n-base-zh-cn luci-i18n-firewall-zh-cn" FILES="files"
+base_package="luci -dnsmasq wget bash dnsmasq-full curl ipset ip-full iptables-mod-tproxy iptables-mod-extra kmod-tun ip6tables-mod-nat vim-full luci-i18n-base-zh-cn luci-i18n-firewall-zh-cn"
+
+clash_package="luci-base wget iptables coreutils-base64 coreutils coreutils-nohup bash ipset libustream-openssl curl jsonfilter ca-certificates libcap iptables-mod-tproxy kmod-tun luci-app-clash"
+
+all_packages="$base_package $clash_package"
+
+make image PACKAGES="$all_packages" FILES="files"

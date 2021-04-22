@@ -41,25 +41,36 @@ cd $work_dir
 
 sudo -E apt-get -qq install gzip
 
-cd files/etc/openclash/core/
+cd files/etc/clash/
 
-rm -f *
+rm -rf *
 
 function download_clash_binaries() {
     local url=$1
     local binaryname=$2
+    local dist=$3
     wget $url
+
+    if [ "$dist" != "" ];then
+        mkdir -p $dist
+        pushd $dist
+    fi
     
     local filename="${url##*/}"
     gunzip -c $filename > $binaryname
     chmod +x $binaryname
+
+    if [ "$dist" != "" ];then
+        popd
+    fi
+
     rm $filename
 }
 
 download_clash_binaries https://github.com/Dreamacro/clash/releases/download/v${CLASH_VERSION}/clash-linux-${ARCH}-v${CLASH_VERSION}.gz clash
 if [ "$TARGET" != "ar71xx_nand" ]; then
-    download_clash_binaries https://github.com/Dreamacro/clash/releases/download/premium/clash-linux-${ARCH}-${CLASH_TUN_RELEASE_DATE}.gz clash_tun
-    download_clash_binaries https://github.com/comzyh/clash/releases/download/${CLASH_GAME_RELEASE_DATE}/clash-linux-${ARCH}-${CLASH_GAME_RELEASE_DATE}.gz clash_game
+    download_clash_binaries https://github.com/Dreamacro/clash/releases/download/premium/clash-linux-${ARCH}-${CLASH_TUN_RELEASE_DATE}.gz clash ./dtun/
+    download_clash_binaries https://github.com/comzyh/clash/releases/download/${CLASH_GAME_RELEASE_DATE}/clash-linux-${ARCH}-${CLASH_GAME_RELEASE_DATE}.gz clash ./clashtun/
 fi
 
 
@@ -86,3 +97,5 @@ if [ "$OPENWRT_VERSION" = "19.07" ]; then
 fi
 
 cat system-custom.tpl  | sed "s/CUSTOM_PPPOE_USERNAME/$CUSTOM_PPPOE_USERNAME/g" | sed "s/CUSTOM_PPPOE_PASSWORD/$CUSTOM_PPPOE_PASSWORD/g" | sed "s/CUSTOM_LAN_IP/$CUSTOM_LAN_IP/g" | sed "s~CUSTOM_CLASH_CONFIG_URL~$CUSTOM_CLASH_CONFIG_URL~g" >  files/etc/uci-defaults/system-custom
+
+cp custom_packages/* ./packages

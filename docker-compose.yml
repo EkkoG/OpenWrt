@@ -9,16 +9,17 @@ services:
     env_file:
      - ./.env
     volumes:
-     - ./19_07_bin:/home/build/openwrt/bin
+     - ./bin/19_07:/home/build/openwrt/bin
      - ./keys:/home/build/openwrt/custom/keys
      - ./DIY.sh:/home/build/openwrt/DIY.sh
      - ./system-custom.tpl:/home/build/openwrt/system-custom.tpl
      - ./build.sh:/home/build/openwrt/build.sh
      - ./files:/home/build/openwrt/files
+     - ./packages:/home/build/openwrt/custom_packages
     command: "./build.sh"
 
   imagebuilder_x86_64_21_02:
-    image: "openwrtorg/imagebuilder:x86-64-21.02-SNAPSHOT"
+    image: "openwrtorg/imagebuilder:x86-64-openwrt-21.02"
     container_name: imagebuilder_x86_64_21_02
     environment:
       - TARGET=x86_64
@@ -26,12 +27,13 @@ services:
     env_file:
      - ./.env
     volumes:
-     - ./21_02_bin:/home/build/openwrt/bin
+     - ./bin/21_02:/home/build/openwrt/bin
      - ./keys:/home/build/openwrt/custom/keys
      - ./DIY.sh:/home/build/openwrt/DIY.sh
      - ./system-custom.tpl:/home/build/openwrt/system-custom.tpl
      - ./build.sh:/home/build/openwrt/build.sh
      - ./files:/home/build/openwrt/files
+     - ./packages:/home/build/openwrt/custom_packages
     command: "./build.sh"
 
   imagebuilder_rockchip_21_02:
@@ -43,7 +45,7 @@ services:
     env_file:
      - ./.env
     volumes:
-     - ./21_02_bin:/home/build/openwrt/bin
+     - ./bin/21_02:/home/build/openwrt/bin
      - ./keys:/home/build/openwrt/custom/keys
      - ./DIY.sh:/home/build/openwrt/DIY.sh
      - ./system-custom.tpl:/home/build/openwrt/system-custom.tpl
@@ -60,7 +62,7 @@ services:
     env_file:
      - ./.env_ar71xx
     volumes:
-     - ./19_07_bin:/home/build/openwrt/bin
+     - ./bin/19_07:/home/build/openwrt/bin
      - ./keys:/home/build/openwrt/custom/keys
      - ./DIY.sh:/home/build/openwrt/DIY.sh
      - ./system-custom.tpl:/home/build/openwrt/system-custom.tpl
