@@ -11,70 +11,70 @@ uci set clash.@dnsservers[-1]=dnsservers
 uci set clash.@dnsservers[-1].enabled='1'
 uci set clash.@dnsservers[-1].ser_type='nameserver'
 uci set clash.@dnsservers[-1].ser_address='114.114.114.114'
-uci set  clash.@dnsservers[-1].protocol='udp://''
+uci set  clash.@dnsservers[-1].protocol='udp://'
 
 uci add clash dnsservers
 uci set clash.@dnsservers[-1]=dnsservers
 uci set clash.@dnsservers[-1].enabled='1'
 uci set clash.@dnsservers[-1].ser_type='nameserver'
 uci set clash.@dnsservers[-1].ser_address='223.5.5.5.5'
-uci set  clash.@dnsservers[-1].protocol='udp://''
+uci set  clash.@dnsservers[-1].protocol='udp://'
 
 uci add clash dnsservers
 uci set clash.@dnsservers[-1]=dnsservers
 uci set clash.@dnsservers[-1].enabled='1'
 uci set clash.@dnsservers[-1].ser_type='nameserver'
 uci set clash.@dnsservers[-1].ser_address='119.29.29.29'
-uci set  clash.@dnsservers[-1].protocol='udp://''
+uci set  clash.@dnsservers[-1].protocol='udp://'
 
 uci add clash dnsservers
 uci set clash.@dnsservers[-1]=dnsservers
 uci set clash.@dnsservers[-1].enabled='1'
 uci set clash.@dnsservers[-1].ser_type='nameserver'
 uci set clash.@dnsservers[-1].ser_address='8.8.8.8'
-uci set  clash.@dnsservers[-1].protocol='udp://''
+uci set  clash.@dnsservers[-1].protocol='udp://'
 
 uci add clash dnsservers
 uci set clash.@dnsservers[-1]=dnsservers
 uci set clash.@dnsservers[-1].enabled='1'
 uci set clash.@dnsservers[-1].ser_type='nameserver'
 uci set clash.@dnsservers[-1].ser_address='1.1.1.1'
-uci set  clash.@dnsservers[-1].protocol='udp://''
+uci set  clash.@dnsservers[-1].protocol='udp://'
 
 uci add clash dnsservers
 uci set clash.@dnsservers[-1]=dnsservers
 uci set clash.@dnsservers[-1].enabled='1'
 uci set clash.@dnsservers[-1].ser_type='nameserver'
 uci set clash.@dnsservers[-1].ser_address='1.2.4.8'
-uci set  clash.@dnsservers[-1].protocol='udp://''
+uci set  clash.@dnsservers[-1].protocol='udp://'
 
 uci add clash dnsservers
 uci set clash.@dnsservers[-1]=dnsservers
 uci set clash.@dnsservers[-1].enabled='1'
 uci set clash.@dnsservers[-1].ser_type='fallback'
 uci set clash.@dnsservers[-1].ser_address='114.114.115.115'
-uci set  clash.@dnsservers[-1].protocol='udp://''
+uci set  clash.@dnsservers[-1].protocol='udp://'
 
 uci add clash dnsservers
 uci set clash.@dnsservers[-1]=dnsservers
 uci set clash.@dnsservers[-1].enabled='1'
 uci set clash.@dnsservers[-1].ser_type='fallback'
 uci set clash.@dnsservers[-1].ser_address='223.6.6.6'
-uci set  clash.@dnsservers[-1].protocol='udp://''
+uci set  clash.@dnsservers[-1].protocol='udp://'
 
 uci add clash dnsservers
 uci set clash.@dnsservers[-1]=dnsservers
 uci set clash.@dnsservers[-1].enabled='1'
 uci set clash.@dnsservers[-1].ser_type='fallback'
 uci set clash.@dnsservers[-1].ser_address='182.254.116.116'
-uci set  clash.@dnsservers[-1].protocol='udp://''
+uci set  clash.@dnsservers[-1].protocol='udp://'
 
 uci add clash dnsservers
 uci set clash.@dnsservers[-1]=dnsservers
 uci set clash.@dnsservers[-1].enabled='1'
 uci set clash.@dnsservers[-1].ser_type='fallback'
 uci set clash.@dnsservers[-1].ser_address='1.1.1.1'
-uci set  clash.@dnsservers[-1].protocol='tcp://''
+uci set  clash.@dnsservers[-1].protocol='tcp://'
 
 uci add clash addtype
 uci set clash.@addtype[-1]=addtype
