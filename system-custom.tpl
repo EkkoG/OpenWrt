@@ -10,83 +10,10 @@ uci add clash dnsservers
 uci set clash.@dnsservers[-1]=dnsservers
 uci set clash.@dnsservers[-1].enabled='1'
 uci set clash.@dnsservers[-1].ser_type='nameserver'
-uci set clash.@dnsservers[-1].ser_address='114.114.114.114'
+uci set clash.@dnsservers[-1].ser_address='127.0.0.1'
+uci set clash.@dnsservers[-1].ser_port='7053'
 uci set  clash.@dnsservers[-1].protocol='udp://'
 
-uci add clash dnsservers
-uci set clash.@dnsservers[-1]=dnsservers
-uci set clash.@dnsservers[-1].enabled='1'
-uci set clash.@dnsservers[-1].ser_type='nameserver'
-uci set clash.@dnsservers[-1].ser_address='223.5.5.5.5'
-uci set  clash.@dnsservers[-1].protocol='udp://'
-
-uci add clash dnsservers
-uci set clash.@dnsservers[-1]=dnsservers
-uci set clash.@dnsservers[-1].enabled='1'
-uci set clash.@dnsservers[-1].ser_type='nameserver'
-uci set clash.@dnsservers[-1].ser_address='119.29.29.29'
-uci set  clash.@dnsservers[-1].protocol='udp://'
-
-uci add clash dnsservers
-uci set clash.@dnsservers[-1]=dnsservers
-uci set clash.@dnsservers[-1].enabled='1'
-uci set clash.@dnsservers[-1].ser_type='nameserver'
-uci set clash.@dnsservers[-1].ser_address='8.8.8.8'
-uci set  clash.@dnsservers[-1].protocol='udp://'
-
-uci add clash dnsservers
-uci set clash.@dnsservers[-1]=dnsservers
-uci set clash.@dnsservers[-1].enabled='1'
-uci set clash.@dnsservers[-1].ser_type='nameserver'
-uci set clash.@dnsservers[-1].ser_address='1.1.1.1'
-uci set  clash.@dnsservers[-1].protocol='udp://'
-
-uci add clash dnsservers
-uci set clash.@dnsservers[-1]=dnsservers
-uci set clash.@dnsservers[-1].enabled='1'
-uci set clash.@dnsservers[-1].ser_type='nameserver'
-uci set clash.@dnsservers[-1].ser_address='1.2.4.8'
-uci set  clash.@dnsservers[-1].protocol='udp://'
-
-uci add clash dnsservers
-uci set clash.@dnsservers[-1]=dnsservers
-uci set clash.@dnsservers[-1].enabled='1'
-uci set clash.@dnsservers[-1].ser_type='fallback'
-uci set clash.@dnsservers[-1].ser_address='114.114.115.115'
-uci set  clash.@dnsservers[-1].protocol='udp://'
-
-uci add clash dnsservers
-uci set clash.@dnsservers[-1]=dnsservers
-uci set clash.@dnsservers[-1].enabled='1'
-uci set clash.@dnsservers[-1].ser_type='fallback'
-uci set clash.@dnsservers[-1].ser_address='223.6.6.6'
-uci set  clash.@dnsservers[-1].protocol='udp://'
-
-uci add clash dnsservers
-uci set clash.@dnsservers[-1]=dnsservers
-uci set clash.@dnsservers[-1].enabled='1'
-uci set clash.@dnsservers[-1].ser_type='fallback'
-uci set clash.@dnsservers[-1].ser_address='182.254.116.116'
-uci set  clash.@dnsservers[-1].protocol='udp://'
-
-uci add clash dnsservers
-uci set clash.@dnsservers[-1]=dnsservers
-uci set clash.@dnsservers[-1].enabled='1'
-uci set clash.@dnsservers[-1].ser_type='fallback'
-uci set clash.@dnsservers[-1].ser_address='1.1.1.1'
-uci set  clash.@dnsservers[-1].protocol='tcp://'
-
-uci add clash addtype
-uci set clash.@addtype[-1]=addtype
-uci set clash.@addtype[-1].type='SRC-IP-CIDR'
-uci set clash.@addtype[-1].pgroup='DIRECT'
-uci set clash.@addtype[-1].ipaaddr='::211:32ff:fe88:b001/-64'
-
-uci add clash addtype
-uci set clash.@addtype[-1]=addtype
-uci set clash.@addtype[-1].type='SRC-IP-CIDR'
-uci set clash.@addtype[-1].pgroup='DIRECT'
-uci set clash.@addtype[-1].ipaaddr='::cd5/-112'
 
 uci set clash.config.clash_url='CUSTOM_CLASH_CONFIG_URL'
 uci set clash.config.config_name='config'
@@ -104,6 +31,19 @@ uci set clash.config.auto_update_geoip_time='3'
 uci set clash.config.geoip_source='2'
 uci set clash.config.geoip_update_day='1'
 uci set clash.config.append_rules='1'
+
+uci add clash addtype
+uci set clash.@addtype[-1]=addtype
+uci set clash.@addtype[-1].type='SRC-IP-CIDR'
+uci set clash.@addtype[-1].pgroup='DIRECT'
+uci set clash.@addtype[-1].ipaaddr='::211:32ff:fe88:b001/-64'
+
+uci add clash addtype
+uci set clash.@addtype[-1]=addtype
+uci set clash.@addtype[-1].type='SRC-IP-CIDR'
+uci set clash.@addtype[-1].pgroup='DIRECT'
+uci set clash.@addtype[-1].ipaaddr='::cd5/-112'
+
 uci uci commit clash
 
 uci set system.@system[0].zonename='Asia/Shanghai'
@@ -114,3 +54,18 @@ uci commit system
 
 uci set luci.main.lang='zh_cn'
 uci commit luci
+
+uci set passwall.@global_forwarding[0].udp_no_redir_ports='disable'
+uci set passwall.@global_forwarding[0].tcp_no_redir_ports='disable'
+uci set passwall.@global_other[0].ipv6_tproxy='1'
+
+uci set passwall.@global_subscribe[0].auto_update_subscribe='1'
+uci set passwall.@global_subscribe[0].week_update_subscribe='7'
+uci set passwall.@global_subscribe[0].time_update_subscribe='5'
+
+uci add passwall subscribe_list
+uci set passwall.@subscribe_list[-1]=subscribe_list
+uci set passwall.@subscribe_list[-1].enabled='1'
+uci set passwall.@subscribe_list[-1].remark='neo'
+uci set passwall.@subscribe_list[-1].url='CUSTOM_PASSWALL_SUBSCRIBE_URL'
+uci commit passwall

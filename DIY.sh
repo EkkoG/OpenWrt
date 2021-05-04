@@ -21,7 +21,8 @@ elif [ "$TARGET" = "ar71xx_nand" ]; then
 
 fi
 
-echo "src/gz simonsmh https://github.com/cielpy/openwrt-dist/raw/packages/${CUSTOM_SOURCE_ARCH}" >> ./repositories.conf
+echo "src/gz simonsmh https://github.com/simonsmh/openwrt-dist/raw/packages/${CUSTOM_SOURCE_ARCH}" >> ./repositories.conf
+echo "src/gz passwall https://gh-proxy.imciel.com/https://github.com/${PASSWALL_SOURCE}/blob/19.07.7/packages/${CUSTOM_SOURCE_ARCH}" >> ./repositories.conf
 
 cp custom/keys/* keys
 
@@ -42,8 +43,6 @@ cd $work_dir
 sudo -E apt-get -qq install gzip
 
 cd files/etc/clash/
-
-rm -rf *
 
 function download_clash_binaries() {
     local url=$1
@@ -67,17 +66,32 @@ function download_clash_binaries() {
     rm $filename
 }
 
-download_clash_binaries https://github.com/Dreamacro/clash/releases/download/v${CLASH_VERSION}/clash-linux-${ARCH}-v${CLASH_VERSION}.gz clash
-if [ "$TARGET" != "ar71xx_nand" ]; then
-    download_clash_binaries https://github.com/Dreamacro/clash/releases/download/premium/clash-linux-${ARCH}-${CLASH_TUN_RELEASE_DATE}.gz clash ./dtun/
-    download_clash_binaries https://github.com/comzyh/clash/releases/download/${CLASH_GAME_RELEASE_DATE}/clash-linux-${ARCH}-${CLASH_GAME_RELEASE_DATE}.gz clash ./clashtun/
-fi
+function download_xray() {
+    mkdir /tmp/download_xray
+    pushd /tmp/download_xray
 
+    url=https://github.com/XTLS/Xray-core/releases/download/v1.4.2/Xray-linux-64.zip
+    wget $url
+    local filename="${url##*/}"
+    unzip $filename
+    cp xray /home/build/openwrt/files/usr/bin/xray
+    mkdir -p /home/build/openwrt/files/usr/share/xray/
+    cp geosite.dat /home/build/openwrt/files/usr/share/xray/
+    cp geoip.dat /home/build/openwrt/files/usr/share/xray/
+    popd
+}
+
+# rm -rf *
+
+# download_clash_binaries https://github.com/Dreamacro/clash/releases/download/v${CLASH_VERSION}/clash-linux-${ARCH}-v${CLASH_VERSION}.gz clash
+# if [ "$TARGET" != "ar71xx_nand" ]; then
+#     download_clash_binaries https://github.com/Dreamacro/clash/releases/download/premium/clash-linux-${ARCH}-${CLASH_TUN_RELEASE_DATE}.gz clash ./dtun/
+#     download_clash_binaries https://github.com/comzyh/clash/releases/download/${CLASH_GAME_RELEASE_DATE}/clash-linux-${ARCH}-${CLASH_GAME_RELEASE_DATE}.gz clash ./clashtun/
+# fi
+
+download_xray
 
 cd $work_dir
-
-echo "查看下载结果"
-ls "$work_dir/files/etc/openclash/core/"
 
 function download_missing_ipks() {
     local url=$1
@@ -96,6 +110,8 @@ if [ "$OPENWRT_VERSION" = "19.07" ]; then
     download_missing_ipks https://downloads.openwrt.org/releases/packages-21.02/${CUSTOM_IPK_ARCH}/packages/libcap-bin_2.43-1_${CUSTOM_IPK_ARCH}.ipk
 fi
 
-cat system-custom.tpl  | sed "s/CUSTOM_PPPOE_USERNAME/$CUSTOM_PPPOE_USERNAME/g" | sed "s/CUSTOM_PPPOE_PASSWORD/$CUSTOM_PPPOE_PASSWORD/g" | sed "s/CUSTOM_LAN_IP/$CUSTOM_LAN_IP/g" | sed "s~CUSTOM_CLASH_CONFIG_URL~$CUSTOM_CLASH_CONFIG_URL~g" >  files/etc/uci-defaults/system-custom
+cat system-custom.tpl  | sed "s/CUSTOM_PPPOE_USERNAME/$CUSTOM_PPPOE_USERNAME/g" | sed "s/CUSTOM_PPPOE_PASSWORD/$CUSTOM_PPPOE_PASSWORD/g" | sed "s/CUSTOM_LAN_IP/$CUSTOM_LAN_IP/g" | sed "s~CUSTOM_CLASH_CONFIG_URL~$CUSTOM_CLASH_CONFIG_URL~g" | sed "s~CUSTOM_PASSWALL_SUBSCRIBE_URL~$CUSTOM_PASSWALL_SUBSCRIBE_URL~g" >  files/etc/uci-defaults/system-custom
 
-cp custom_packages/* ./packages
+mkdir packages
+cp custom_packages/* ./packages/
+ls ./packages/
