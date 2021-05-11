@@ -74,6 +74,7 @@ function download_xray() {
     wget $url
     local filename="${url##*/}"
     unzip $filename
+    mkdir -p /home/build/openwrt/files/usr/bin/xray
     cp xray /home/build/openwrt/files/usr/bin/xray
     mkdir -p /home/build/openwrt/files/usr/share/xray/
     cp geosite.dat /home/build/openwrt/files/usr/share/xray/
@@ -108,6 +109,7 @@ function download_missing_ipks() {
 if [ "$OPENWRT_VERSION" = "19.07" ]; then
     download_missing_ipks https://downloads.openwrt.org/releases/packages-21.02/${CUSTOM_IPK_ARCH}/packages/libcap_2.43-1_${CUSTOM_IPK_ARCH}.ipk
     download_missing_ipks https://downloads.openwrt.org/releases/packages-21.02/${CUSTOM_IPK_ARCH}/packages/libcap-bin_2.43-1_${CUSTOM_IPK_ARCH}.ipk
+    download_missing_ipks https://github.com/jerrykuku/luci-theme-argon/releases/download/v2.2.5/luci-theme-argon_2.2.5-20200914_all.ipk
 fi
 
 cat system-custom.tpl  | sed "s/CUSTOM_PPPOE_USERNAME/$CUSTOM_PPPOE_USERNAME/g" | sed "s/CUSTOM_PPPOE_PASSWORD/$CUSTOM_PPPOE_PASSWORD/g" | sed "s/CUSTOM_LAN_IP/$CUSTOM_LAN_IP/g" | sed "s~CUSTOM_CLASH_CONFIG_URL~$CUSTOM_CLASH_CONFIG_URL~g" | sed "s~CUSTOM_PASSWALL_SUBSCRIBE_URL~$CUSTOM_PASSWALL_SUBSCRIBE_URL~g" >  files/etc/uci-defaults/system-custom

@@ -12,7 +12,7 @@ uci set clash.@dnsservers[-1].enabled='1'
 uci set clash.@dnsservers[-1].ser_type='nameserver'
 uci set clash.@dnsservers[-1].ser_address='127.0.0.1'
 uci set clash.@dnsservers[-1].ser_port='7053'
-uci set  clash.@dnsservers[-1].protocol='udp://'
+uci set clash.@dnsservers[-1].protocol='udp://'
 
 
 uci set clash.config.clash_url='CUSTOM_CLASH_CONFIG_URL'
@@ -32,6 +32,7 @@ uci set clash.config.geoip_source='2'
 uci set clash.config.geoip_update_day='1'
 uci set clash.config.append_rules='1'
 
+while uci -q delete clash.@addtype[0]; do :; done
 uci add clash addtype
 uci set clash.@addtype[-1]=addtype
 uci set clash.@addtype[-1].type='SRC-IP-CIDR'
@@ -44,12 +45,12 @@ uci set clash.@addtype[-1].type='SRC-IP-CIDR'
 uci set clash.@addtype[-1].pgroup='DIRECT'
 uci set clash.@addtype[-1].ipaaddr='::cd5/-112'
 
-uci uci commit clash
+uci commit clash
 
 uci set system.@system[0].zonename='Asia/Shanghai'
 uci set system.@system[0].timezone='CST-8'
-system.@system[0].cronloglevel='8'
-system.@system[0].conloglevel='7'
+uci set system.@system[0].cronloglevel='8'
+uci set system.@system[0].conloglevel='7'
 uci commit system
 
 uci set luci.main.lang='zh_cn'
@@ -69,3 +70,7 @@ uci set passwall.@subscribe_list[-1].enabled='1'
 uci set passwall.@subscribe_list[-1].remark='neo'
 uci set passwall.@subscribe_list[-1].url='CUSTOM_PASSWALL_SUBSCRIBE_URL'
 uci commit passwall
+
+uci set overture.@overture[0].VerboseMode='0'
+uci set overture.@overture[0].LogToFile='/var/overture.log'
+uci commit overture

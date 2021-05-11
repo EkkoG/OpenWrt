@@ -1,9 +1,5 @@
-files/etc/openclash/core/clash*
-files/etc/uci-defaults/*
-files/etc/config/wireless
-21_02_bin/
-19_07_bin/
 .env*
 bin/
+files/
 .DS_Store
 keys/d9b9*
