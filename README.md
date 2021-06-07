@@ -21,7 +21,7 @@
 - cd OpenWrt
 - 新建 .env 文件，配置环境变量，请参考 https://github.com/cielpy/OpenWrt#%E6%94%AF%E6%8C%81%E9%85%8D%E7%BD%AE%E7%9A%84%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F
 - 修改 uci-diy.tpl（非必须，修改须谨慎）
-- ./run.sh rockchip_21/amd64_21/amd64_19
+- ./run.sh rockchip_21/amd64_21/amd64_19 .env
 
 
 ### 支持配置的环境变量
@@ -39,4 +39,5 @@ CUSTOM_CLASH_CONFIG_URL=
 - [clash](https://github.com/Dreamacro/clash)
 - [OpenClash](https://github.com/vernesong/OpenClash)
 - [China-DNS](https://github.com/aa65535/openwrt-chinadns)
-- [SmartDNS](https://github.com/pymumu/smartdns/)
+- [Overture](https://github.com/shawn1m/overture)
+- [overture for OpenWrt](https://github.com/EXSERENS/overture-openwrt)
