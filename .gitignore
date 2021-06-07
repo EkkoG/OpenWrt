@@ -1,5 +1,4 @@
 .env*
 bin/
-files/
 .DS_Store
-keys/d9b9*
+diy_files/keys/d9b9*
