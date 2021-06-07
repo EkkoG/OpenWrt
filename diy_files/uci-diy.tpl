@@ -1,9 +1,3 @@
-uci set network.lan.ipaddr='CUSTOM_LAN_IP'
-uci set network.wan.proto='pppoe'
-uci set network.wan.username='CUSTOM_PPPOE_USERNAME'
-uci set network.wan.password='CUSTOM_PPPOE_PASSWORD'
-uci commit network
-
 
 while uci -q delete clash.@dnsservers[0]; do :; done
 uci add clash dnsservers
@@ -31,19 +25,6 @@ uci set clash.config.auto_update_geoip_time='3'
 uci set clash.config.geoip_source='2'
 uci set clash.config.geoip_update_day='1'
 uci set clash.config.append_rules='1'
-
-while uci -q delete clash.@addtype[0]; do :; done
-uci add clash addtype
-uci set clash.@addtype[-1]=addtype
-uci set clash.@addtype[-1].type='SRC-IP-CIDR'
-uci set clash.@addtype[-1].pgroup='DIRECT'
-uci set clash.@addtype[-1].ipaaddr='::211:32ff:fe88:b001/-64'
-
-uci add clash addtype
-uci set clash.@addtype[-1]=addtype
-uci set clash.@addtype[-1].type='SRC-IP-CIDR'
-uci set clash.@addtype[-1].pgroup='DIRECT'
-uci set clash.@addtype[-1].ipaaddr='::cd5/-112'
 
 uci commit clash
 

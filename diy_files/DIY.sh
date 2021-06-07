@@ -25,6 +25,19 @@ fi
 echo "src/gz simonsmh https://github.com/simonsmh/openwrt-dist/raw/packages/${CUSTOM_SOURCE_ARCH}" >> ./repositories.conf
 echo "src/gz passwall https://gh-proxy.imciel.com/https://github.com/${PASSWALL_SOURCE}/blob/19.07.7/packages/${CUSTOM_SOURCE_ARCH}" >> ./repositories.conf
 
+mkdir -p files/etc/uci-defaults/
+cat diy_files/uci-diy.tpl > /tmp/init.sh
+cat "diy_files/$FLAG.sh" >> /tmp/init.sh
+
+cat /tmp/init.sh | \
+ sed "s/CUSTOM_PPPOE_USERNAME/$CUSTOM_PPPOE_USERNAME/g" | \
+ sed "s/CUSTOM_PPPOE_PASSWORD/$CUSTOM_PPPOE_PASSWORD/g" | \
+ sed "s/CUSTOM_LAN_IP/$CUSTOM_LAN_IP/g" | \
+ sed "s~CUSTOM_CLASH_CONFIG_URL~$CUSTOM_CLASH_CONFIG_URL~g" | \
+ sed "s~CUSTOM_PASSWALL_SUBSCRIBE_URL~$CUSTOM_PASSWALL_SUBSCRIBE_URL~g" \
+ >  files/etc/uci-defaults/uci-diy
+
+
 cp diy_files/keys/* keys
 
 # https://github.com/Dreamacro/clash/releases/tag/premium
@@ -117,18 +130,8 @@ function download_missing_ipks() {
 if [ "$OPENWRT_VERSION" = "19.07" ]; then
     download_missing_ipks https://downloads.openwrt.org/releases/packages-21.02/${CUSTOM_IPK_ARCH}/packages/libcap_2.43-1_${CUSTOM_IPK_ARCH}.ipk
     download_missing_ipks https://downloads.openwrt.org/releases/packages-21.02/${CUSTOM_IPK_ARCH}/packages/libcap-bin_2.43-1_${CUSTOM_IPK_ARCH}.ipk
-    download_missing_ipks https://github.com/jerrykuku/luci-theme-argon/releases/download/v2.2.5/luci-theme-argon_2.2.5-20200914_all.ipk
 fi
-
-mkdir -p files/etc/uci-defaults/
-cat diy_files/uci-diy.tpl  | \
- sed "s/CUSTOM_PPPOE_USERNAME/$CUSTOM_PPPOE_USERNAME/g" | \
- sed "s/CUSTOM_PPPOE_PASSWORD/$CUSTOM_PPPOE_PASSWORD/g" | \
- sed "s/CUSTOM_LAN_IP/$CUSTOM_LAN_IP/g" | \
- sed "s~CUSTOM_CLASH_CONFIG_URL~$CUSTOM_CLASH_CONFIG_URL~g" | \
- sed "s~CUSTOM_PASSWALL_SUBSCRIBE_URL~$CUSTOM_PASSWALL_SUBSCRIBE_URL~g" \
- >  files/etc/uci-defaults/uci-diy
-
-mkdir packages
-cp diy_files/packages/* ./packages/
-ls ./packages/
+download_missing_ipks https://github.com/jerrykuku/luci-theme-argon/releases/download/v2.2.5/luci-theme-argon_2.2.5-20200914_all.ipk
+download_missing_ipks https://github.com/cielpy/luci-app-jd-dailybonus/releases/download/v1.0.5/luci-app-jd-dailybonus_1.0.5-20210316_all.ipk
+download_missing_ipks https://github.com/cielpy/luci-app-clash/releases/download/v1.8.1/luci-app-clash_v1.8.1_all.ipk
+download_missing_ipks https://github.com/cielpy/luci-app-clash/releases/download/v1.8.1/overture_1.7-1_${CUSTOM_IPK_ARCH}.ipk
