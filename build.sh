@@ -11,7 +11,10 @@ all_packages="$all_packages luci-app-passwall"
 # overture
 all_packages="$all_packages overture"
 # luci-app-jd-dailybonus
+if [ "$TARGET" != "ar71xx_nand" ]; then
 all_packages="$all_packages luci-app-jd-dailybonus"
+fi
+
 all_packages="$all_packages luci-theme-argon"
 
 make image PACKAGES="$all_packages" FILES="files"

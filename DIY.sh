@@ -8,14 +8,16 @@ if [ "$TARGET" = "x86_64" ]; then
     CUSTOM_IPK_ARCH=x86_64
     CUSTOM_SOURCE_ARCH="x86/64"
     ARCH=amd64
+    rm -f files/etc/config/wireless
 elif [ "$TARGET" = "rockchip" ]; then
     ARCH=armv8
     CUSTOM_IPK_ARCH=aarch64_generic
     CUSTOM_SOURCE_ARCH="rockchip/armv8"
+    rm -f files/etc/config/wireless
 elif [ "$TARGET" = "ar71xx_nand" ]; then
     ARCH=mips-softfloat
     CUSTOM_IPK_ARCH=mips_24kc
-    CUSTOM_SOURCE_ARCH="ar71xx/nand"
+    CUSTOM_SOURCE_ARCH="ar71xx/generic"
 
     cp config/wireless files/etc/config/wireless
 
@@ -71,6 +73,10 @@ function download_xray() {
     pushd /tmp/download_xray
 
     url=https://github.com/XTLS/Xray-core/releases/download/v1.4.2/Xray-linux-64.zip
+    if [ "$TARGET" = "ar71xx_nand" ]; then
+        url=https://github.com/XTLS/Xray-core/releases/download/v1.4.2/Xray-linux-mips32.zip
+    fi
+
     wget $url
     local filename="${url##*/}"
     unzip $filename
@@ -112,7 +118,13 @@ if [ "$OPENWRT_VERSION" = "19.07" ]; then
     download_missing_ipks https://github.com/jerrykuku/luci-theme-argon/releases/download/v2.2.5/luci-theme-argon_2.2.5-20200914_all.ipk
 fi
 
-cat system-custom.tpl  | sed "s/CUSTOM_PPPOE_USERNAME/$CUSTOM_PPPOE_USERNAME/g" | sed "s/CUSTOM_PPPOE_PASSWORD/$CUSTOM_PPPOE_PASSWORD/g" | sed "s/CUSTOM_LAN_IP/$CUSTOM_LAN_IP/g" | sed "s~CUSTOM_CLASH_CONFIG_URL~$CUSTOM_CLASH_CONFIG_URL~g" | sed "s~CUSTOM_PASSWALL_SUBSCRIBE_URL~$CUSTOM_PASSWALL_SUBSCRIBE_URL~g" >  files/etc/uci-defaults/system-custom
+cat system-custom.tpl  | \
+ sed "s/CUSTOM_PPPOE_USERNAME/$CUSTOM_PPPOE_USERNAME/g" | \
+ sed "s/CUSTOM_PPPOE_PASSWORD/$CUSTOM_PPPOE_PASSWORD/g" | \
+ sed "s/CUSTOM_LAN_IP/$CUSTOM_LAN_IP/g" | \
+ sed "s~CUSTOM_CLASH_CONFIG_URL~$CUSTOM_CLASH_CONFIG_URL~g" | \
+ sed "s~CUSTOM_PASSWALL_SUBSCRIBE_URL~$CUSTOM_PASSWALL_SUBSCRIBE_URL~g" \
+ >  files/etc/uci-defaults/system-custom
 
 mkdir packages
 cp custom_packages/* ./packages/
