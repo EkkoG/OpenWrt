@@ -30,5 +30,6 @@ uci set clash.config.auto_update_geoip_time='3'
 uci set clash.config.geoip_source='2'
 uci set clash.config.geoip_update_day='1'
 uci set clash.config.append_rules='1'
+uci set clash.config.global='0'
 
 uci commit clash
