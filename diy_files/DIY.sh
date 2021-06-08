@@ -27,7 +27,7 @@ echo "src/gz passwall https://gh-proxy.imciel.com/https://github.com/${PASSWALL_
 
 mkdir -p files/etc/uci-defaults/
 cat diy_files/uci-diy.tpl > /tmp/init.sh
-cat "diy_files/$FLAG.sh" >> /tmp/init.sh
+cat "diy_files/personal_config/$FLAG.sh" >> /tmp/init.sh
 if [ "$WAN_TYPE" = "pppoe" ]; then
     cat "diy_files/pppoe.sh" >> /tmp/init.sh
 
