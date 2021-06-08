@@ -63,9 +63,6 @@ cd $work_dir
 
 sudo -E apt-get -qq install gzip
 
-mkdir -p files/etc/clash/
-cd files/etc/clash/
-
 function download_clash_binaries() {
     local url=$1
     local binaryname=$2
@@ -123,11 +120,14 @@ add_anti_ad
 
 
 if [ "$TARGET" != "ar71xx_nand" ]; then
+    mkdir -p files/etc/clash/
+    pushd files/etc/clash/
     download_clash_binaries https://github.com/cielpy/clash/releases/download/v${CLASH_VERSION}/clash-linux-${ARCH}-v${CLASH_VERSION}.gz clash
 # if [ "$TARGET" != "ar71xx_nand" ]; then
 #     download_clash_binaries https://github.com/Dreamacro/clash/releases/download/premium/clash-linux-${ARCH}-${CLASH_TUN_RELEASE_DATE}.gz clash ./dtun/
 #     download_clash_binaries https://github.com/comzyh/clash/releases/download/${CLASH_GAME_RELEASE_DATE}/clash-linux-${ARCH}-${CLASH_GAME_RELEASE_DATE}.gz clash ./clashtun/
 # fi
+    popd
 fi
 
 if [ "$TARGET" = "ar71xx_nand" ]; then
