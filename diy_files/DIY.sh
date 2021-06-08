@@ -28,9 +28,9 @@ echo "src/gz passwall https://gh-proxy.imciel.com/https://github.com/${PASSWALL_
 mkdir -p files/etc/uci-defaults/
 cat diy_files/uci-diy.tpl > /tmp/init.sh
 cat "diy_files/personal_config/$FLAG.sh" >> /tmp/init.sh
+cat "diy_files/personal_config/$TARGET.sh" >> /tmp/init.sh
 if [ "$WAN_TYPE" = "pppoe" ]; then
     cat "diy_files/pppoe.sh" >> /tmp/init.sh
-
 fi
 
 cat /tmp/init.sh | \
@@ -110,11 +110,14 @@ function download_xray() {
 
 # rm -rf *
 
-download_clash_binaries https://github.com/cielpy/clash/releases/download/v${CLASH_VERSION}/clash-linux-${ARCH}-v${CLASH_VERSION}.gz clash
+
+if [ "$TARGET" != "ar71xx_nand" ]; then
+    download_clash_binaries https://github.com/cielpy/clash/releases/download/v${CLASH_VERSION}/clash-linux-${ARCH}-v${CLASH_VERSION}.gz clash
 # if [ "$TARGET" != "ar71xx_nand" ]; then
 #     download_clash_binaries https://github.com/Dreamacro/clash/releases/download/premium/clash-linux-${ARCH}-${CLASH_TUN_RELEASE_DATE}.gz clash ./dtun/
 #     download_clash_binaries https://github.com/comzyh/clash/releases/download/${CLASH_GAME_RELEASE_DATE}/clash-linux-${ARCH}-${CLASH_GAME_RELEASE_DATE}.gz clash ./clashtun/
 # fi
+fi
 
 if [ "$TARGET" = "ar71xx_nand" ]; then
     download_xray
