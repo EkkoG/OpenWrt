@@ -27,10 +27,14 @@ echo "src/gz passwall https://gh-proxy.imciel.com/https://github.com/${PASSWALL_
 
 mkdir -p files/etc/uci-defaults/
 cat diy_files/uci-diy.tpl.sh > /tmp/init.sh
+printf "\n" >> /tmp/init.sh
 cat "diy_files/personal_diy/$FLAG.sh" >> /tmp/init.sh
+printf "\n" >> /tmp/init.sh
 cat "diy_files/$TARGET.sh" >> /tmp/init.sh
+printf "\n" >> /tmp/init.sh
 if [ "$WAN_TYPE" = "pppoe" ]; then
     cat "diy_files/pppoe.sh" >> /tmp/init.sh
+    printf "\n" >> /tmp/init.sh
 fi
 
 cat /tmp/init.sh | \
@@ -112,7 +116,6 @@ function add_anti_ad() {
     pushd files/etc/dnsmasq.d
         wget $url
     popd
-    echo "conf-file=/etc/dnsmasq.d/$filename" > files/etc/dnsmasq.conf
 }
 
 add_anti_ad
