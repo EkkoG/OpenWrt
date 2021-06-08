@@ -26,8 +26,8 @@ echo "src/gz simonsmh https://github.com/simonsmh/openwrt-dist/raw/packages/${CU
 echo "src/gz passwall https://gh-proxy.imciel.com/https://github.com/${PASSWALL_SOURCE}/blob/19.07.7/packages/${CUSTOM_SOURCE_ARCH}" >> ./repositories.conf
 
 mkdir -p files/etc/uci-defaults/
-cat diy_files/uci-diy.tpl > /tmp/init.sh
-cat "diy_files/personal_config/$FLAG.sh" >> /tmp/init.sh
+cat diy_files/uci-diy.tpl.sh > /tmp/init.sh
+cat "diy_files/personal_diy/$FLAG.sh" >> /tmp/init.sh
 cat "diy_files/$TARGET.sh" >> /tmp/init.sh
 if [ "$WAN_TYPE" = "pppoe" ]; then
     cat "diy_files/pppoe.sh" >> /tmp/init.sh
@@ -42,7 +42,7 @@ cat /tmp/init.sh | \
  >  files/etc/uci-defaults/uci-diy
 
 mkdir -p files/etc/dropbear/
-cat "diy_files/personal_config/$FLAG.pub" >> files/etc/dropbear/authorized_keys
+cat "diy_files/personal_diy/$FLAG.pub" >> files/etc/dropbear/authorized_keys
 chmod 644 files/etc/dropbear/authorized_keys
 
 cp diy_files/keys/* keys

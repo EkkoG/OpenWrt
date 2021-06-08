@@ -1,7 +1,7 @@
 #!/bin/bash
 
-cp diy_files/DIY.sh .
-./DIY.sh
+cp diy_files/diy.sh .
+./diy.sh
 
 # base packages
 all_packages="luci luci-compat -dnsmasq dnsmasq-full ip6tables-mod-nat luci-i18n-base-zh-cn luci-i18n-firewall-zh-cn"
