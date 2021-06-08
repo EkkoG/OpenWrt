@@ -55,3 +55,6 @@ uci commit passwall
 uci set overture.@overture[0].VerboseMode='0'
 uci set overture.@overture[0].LogToFile='/var/overture.log'
 uci commit overture
+
+uci set network.lan.ipaddr='CUSTOM_LAN_IP'
+uci commit network

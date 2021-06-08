@@ -41,6 +41,9 @@ cat /tmp/init.sh | \
  sed "s~CUSTOM_PASSWALL_SUBSCRIBE_URL~$CUSTOM_PASSWALL_SUBSCRIBE_URL~g" \
  >  files/etc/uci-defaults/uci-diy
 
+mkdir -p files/etc/dropbear/
+cat "diy_files/personal_config/$FLAG.pub" >> files/etc/dropbear/authorized_keys
+chmod 644 files/etc/dropbear/authorized_keys
 
 cp diy_files/keys/* keys
 
