@@ -116,6 +116,7 @@ function add_anti_ad() {
     pushd files/etc/dnsmasq.d
         wget $url
     popd
+    sed -i '/seeip.org/d' $filename
 }
 
 add_anti_ad
