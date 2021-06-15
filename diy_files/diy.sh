@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 CUSTOM_SOURCE_ARCH=
 CUSTOM_IPK_ARCH=
@@ -49,7 +49,9 @@ mkdir -p files/etc/dropbear/
 cat "diy_files/personal_diy/$FLAG.pub" >> files/etc/dropbear/authorized_keys
 chmod 644 files/etc/dropbear/authorized_keys
 
-cp diy_files/keys/* keys
+if [ -z keys ]; then
+    cp diy_files/keys/* keys
+fi
 
 # https://github.com/Dreamacro/clash/releases/tag/premium
 CLASH_TUN_RELEASE_DATE=2021.05.08
@@ -115,8 +117,8 @@ function add_anti_ad() {
     local filename="${url##*/}"
     pushd files/etc/dnsmasq.d
         wget $url
+        sed -i '/seeip.org/d' $filename
     popd
-    sed -i '/seeip.org/d' $filename
 }
 
 add_anti_ad

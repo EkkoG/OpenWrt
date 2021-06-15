@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 cp diy_files/diy.sh .
 ./diy.sh
