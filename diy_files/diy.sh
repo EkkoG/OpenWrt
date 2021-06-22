@@ -11,7 +11,7 @@ if [ "$TARGET" = "x86_64" ]; then
 elif [ "$TARGET" = "rockchip" ]; then
     ARCH=armv8
     CUSTOM_IPK_ARCH=aarch64_generic
-    CUSTOM_SOURCE_ARCH="rockchip/armv8"
+    CUSTOM_SOURCE_ARCH="aarch64_generic/"
 elif [ "$TARGET" = "ar71xx_nand" ]; then
     ARCH=mips-softfloat
     CUSTOM_IPK_ARCH=mips_24kc
@@ -22,14 +22,21 @@ elif [ "$TARGET" = "ar71xx_nand" ]; then
 
 fi
 
+# echo "src/gz opsupes https://op.supes.top/packages/${CUSTOM_IPK_ARCH}" >> ./repositories.conf
 echo "src/gz simonsmh https://github.com/simonsmh/openwrt-dist/raw/packages/${CUSTOM_SOURCE_ARCH}" >> ./repositories.conf
 echo "src/gz passwall https://gh-proxy.imciel.com/https://github.com/${PASSWALL_SOURCE}/blob/19.07.7/packages/${CUSTOM_SOURCE_ARCH}" >> ./repositories.conf
+
+if [ "$OPENWRT_VERSION" = "21.02" ]; then
+    echo "src imagebuilder file:packages" >> ./repositories.conf
+fi
 
 mkdir -p files/etc/uci-defaults/
 cat diy_files/uci-diy.tpl.sh > /tmp/init.sh
 printf "\n" >> /tmp/init.sh
-cat "diy_files/personal_diy/$FLAG.sh" >> /tmp/init.sh
-printf "\n" >> /tmp/init.sh
+if [ -f "diy_files/personal_diy/$FLAG.sh" ];then
+    cat "diy_files/personal_diy/$FLAG.sh" >> /tmp/init.sh
+    printf "\n" >> /tmp/init.sh
+fi
 cat "diy_files/$TARGET.sh" >> /tmp/init.sh
 printf "\n" >> /tmp/init.sh
 if [ "$WAN_TYPE" = "pppoe" ]; then
@@ -45,11 +52,13 @@ cat /tmp/init.sh | \
  sed "s~CUSTOM_PASSWALL_SUBSCRIBE_URL~$CUSTOM_PASSWALL_SUBSCRIBE_URL~g" \
  >  files/etc/uci-defaults/uci-diy
 
-mkdir -p files/etc/dropbear/
-cat "diy_files/personal_diy/$FLAG.pub" >> files/etc/dropbear/authorized_keys
-chmod 644 files/etc/dropbear/authorized_keys
+if [ -f "diy_files/personal_diy/$FLAG.pub" ];then
+    mkdir -p files/etc/dropbear/
+    cat "diy_files/personal_diy/$FLAG.pub" >> files/etc/dropbear/authorized_keys
+    chmod 644 files/etc/dropbear/authorized_keys
+fi
 
-if [ -z keys ]; then
+if [ -d keys ]; then
     cp diy_files/keys/* keys
 fi
 
@@ -149,6 +158,7 @@ function download_missing_ipks() {
     
     local filename="${url##*/}"
 
+    mkdir -p packages
     cp $filename ./packages/$filename
     rm $filename
 }
