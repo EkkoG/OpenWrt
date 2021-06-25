@@ -47,6 +47,8 @@ services:
   imagebuilder_rockchip_21_02:
     image: "openwrtorg/imagebuilder:rockchip-armv8-21.02-SNAPSHOT"
     container_name: imagebuilder_rockchip_21_02
+    env_file:
+      - ./.env
     environment:
       - TARGET=rockchip
       - OPENWRT_VERSION=21.02
