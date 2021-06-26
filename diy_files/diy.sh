@@ -172,5 +172,5 @@ if [ "$OPENWRT_VERSION" = "19.07" ]; then
 fi
 download_missing_ipks https://github.com/jerrykuku/luci-theme-argon/releases/download/v2.2.5/luci-theme-argon_2.2.5-20200914_all.ipk
 download_missing_ipks https://github.com/cielpy/luci-app-jd-dailybonus/releases/download/v1.0.5/luci-app-jd-dailybonus_1.0.5-20210316_all.ipk
-download_missing_ipks https://github.com/cielpy/luci-app-clash/releases/download/v1.8.1/luci-app-clash_v1.8.1_all.ipk
+download_missing_ipks https://github.com/cielpy/luci-app-clash/releases/download/v1.9.0/luci-app-clash_v1.9.0_all.ipk
 download_missing_ipks https://github.com/cielpy/overture-openwrt/releases/download/v1.8-rc1/overture_1.8-rc1-1_${CUSTOM_IPK_ARCH}.ipk
