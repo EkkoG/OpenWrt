@@ -149,6 +149,12 @@ fi
 # 安装依赖
 sudo -E apt-get -qq install gzip
 
+# 扩大 rootfs 大小，不然编译 x86_64 会报错
+
+if [ "$TARGET" = "x86_64" ];then
+    sed -i '/CONFIG_TARGET_ROOTFS_PARTSIZE/ c\CONFIG_TARGET_ROOTFS_PARTSIZE=154' .config
+fi
+
 # 添加去广告
 add_anti_ad
 

@@ -24,7 +24,6 @@ services:
     env_file:
       - ./.env
     volumes:
-      - ./config:/home/build/openwrt/.config
       - ./bin/21_02:/home/build/openwrt/bin
       - ./diy_files:/home/build/openwrt/diy_files
       - ./build.sh:/home/build/openwrt/build.sh
