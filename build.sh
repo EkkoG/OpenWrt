@@ -19,7 +19,7 @@ if [ "$TARGET" != "ar71xx_nand" ]; then
 fi
 
 # luci-app-passwall
-# all_packages="$all_packages luci-app-passwall"
+all_packages="$all_packages luci-app-passwall"
 if [ "$OPENWRT_VERSION" = "21.02" ]; then
     all_packages="$all_packages -libustream-openssl"
 fi
