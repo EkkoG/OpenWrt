@@ -8,8 +8,8 @@
 
 ### 特色
 
-- 采用官方原版 ImageBuilder 构建，可按照官方提供的方式进行自定义，无代码修改，版本支持见
-- 集成常用软件，软件列表见
+- 采用官方原版 ImageBuilder 构建，可按照官方提供的方式进行自定义，无代码修改，版本支持见 https://github.com/cielpy/OpenWrt#%E7%89%88%E6%9C%AC%E6%94%AF%E6%8C%81%E6%83%85%E5%86%B5
+- 集成常用软件，软件列表见 https://github.com/cielpy/OpenWrt#%E8%BD%AF%E4%BB%B6%E5%88%97%E8%A1%A8
 - 默认使用 Clash+Overture组合，两个组件间的联动配置已配置好，构建固件时只需要提供 clash 配置链接即可在刷机完成后，直接启动 OpenClash
 - 可配置默认 LAN 口 IP，PPPoE 账号密码，刷机完成后，不用配置网络
 - 可以自定义，根据 [UCI](https://openwrt.org/docs/guide-user/base-system/uci) 语法，可以自定义几乎所有配置，只需要将 uci 命令录入 `diy_files/diy.sh` 即可，diy.sh 也可以酌情删减，**删除时请务必清楚删除的配置的作用！！！**
