@@ -105,7 +105,8 @@ if [ "$OPENWRT_VERSION" = "21.02" ]; then
 fi
 
 # 如果需要，添加签名验证的 key
-if [ -d keys ] && [ -d diy_files/keys ]; then
+if [ -d keys ] && [ -d diy_files/keys ] && [ ! -z $(ls diy_files/keys) ]; then
+    ls diy_files/keys
     cp diy_files/keys/* keys
 fi
 
