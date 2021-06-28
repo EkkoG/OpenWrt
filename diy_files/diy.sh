@@ -94,15 +94,12 @@ function download_missing_ipks() {
 # =================================================================
 
 # 添加软件源
-if [ "$CUSTOM_IPK_ARCH" = "mips_24kc" ];then
-    echo "src/gz supres https://op.supes.top/packages/mipsel_24kc" >> ./repositories.conf
-else
-    echo "src/gz supres https://op.supes.top/packages/${CUSTOM_IPK_ARCH}" >> ./repositories.conf
-fi
-if grep 'check_signature' ./repositories.conf
-then
-    sed -i '/check_signature/d' ./repositories.conf
-fi
+echo "src/gz cielpy https://github.com/cielpy/openwrt-dist-passwall/blob/packages/${CUSTOM_IPK_ARCH}" >> ./repositories.conf
+
+# if grep 'check_signature' ./repositories.conf
+# then
+#     sed -i '/check_signature/d' ./repositories.conf
+# fi
 
 if [ "$OPENWRT_VERSION" = "21.02" ]; then
     echo "src imagebuilder file:packages" >> ./repositories.conf

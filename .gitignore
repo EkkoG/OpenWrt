@@ -1,6 +1,5 @@
 .env*
 bin/
 .DS_Store
-diy_files/keys/d9b9*
 diy_files/personal_diy/*
 run-for-p.sh
