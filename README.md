@@ -9,7 +9,7 @@
 ### 特色
 
 - 采用官方原版 ImageBuilder 构建，可按照官方提供的方式进行自定义，无代码修改，版本支持见 [版本支持情况](#版本支持情况)
-- 集成常用软件，软件列表见 [软件列表](软件列表)
+- 集成常用软件，软件列表见 [软件列表](#软件列表)
 - 默认使用 Clash+Overture组合，两个组件间的联动配置已配置好，构建固件时只需要提供 clash 配置链接即可在刷机完成后，直接启动 OpenClash
 - 可配置默认 LAN 口 IP，PPPoE 账号密码，刷机完成后，不用配置网络
 - 可以自定义，根据 [UCI](https://openwrt.org/docs/guide-user/base-system/uci) 语法，可以自定义几乎所有配置，只需要将 uci 命令录入 `diy_files/diy.sh` 即可，diy.sh 也可以酌情删减，**删除时请务必清楚删除的配置的作用！！！**
@@ -33,7 +33,7 @@
 
 - git clone https://github.com/cielpy/OpenWrt.git
 - cd OpenWrt
-- 新建 .env 文件，配置环境变量，请参考 [支持配置的环境变量](支持配置的环境变量)
+- 新建 .env 文件，配置环境变量，请参考 [支持配置的环境变量](#支持配置的环境变量)
 - 修改 diy_files/diy.sh（非必须，修改须谨慎）
 - ./run.sh rockchip_21/amd64_21/amd64_19
 
