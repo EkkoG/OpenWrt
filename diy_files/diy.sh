@@ -94,7 +94,7 @@ function download_missing_ipks() {
 # =================================================================
 
 # 添加软件源
-echo "src/gz cielpy https://github.com/cielpy/openwrt-dist-passwall/blob/packages/${CUSTOM_IPK_ARCH}" >> ./repositories.conf
+echo "src/gz cielpy https://github.com/cielpy/openwrt-dist/raw/packages/${CUSTOM_IPK_ARCH}" >> ./repositories.conf
 
 # if grep 'check_signature' ./repositories.conf
 # then
@@ -110,6 +110,7 @@ if [ -d keys ] && [ -d diy_files/keys ] && [ ! -z $(ls diy_files/keys) ]; then
     ls diy_files/keys
     cp diy_files/keys/* keys
 fi
+
 
 
 # 添加自定义 uci 脚本
