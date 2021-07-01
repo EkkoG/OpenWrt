@@ -26,4 +26,4 @@ uci commit passwall
 uci set network.lan.ipaddr='CUSTOM_LAN_IP'
 uci commit network
 
-echo "conf-dir=/etc/dnsmasq.d/" >> /etc/dnsmasq.conf
+# echo "conf-dir=/etc/dnsmasq.d/" >> /etc/dnsmasq.conf

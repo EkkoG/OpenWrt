@@ -3,3 +3,4 @@ bin/
 .DS_Store
 diy_files/personal_diy/*
 run-for-p.sh
+transfer.sh
