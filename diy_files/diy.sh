@@ -13,34 +13,12 @@ elif [ "$TARGET" = "ar71xx_nand" ]; then
 
 fi
 
-# 工具方法定义
-
-function download_xray() {
-    mkdir /tmp/download_xray
-    pushd /tmp/download_xray
-
-    url=https://github.com/XTLS/Xray-core/releases/download/v1.4.2/Xray-linux-64.zip
-    if [ "$TARGET" = "ar71xx_nand" ]; then
-        url=https://github.com/XTLS/Xray-core/releases/download/v1.4.2/Xray-linux-mips32le.zip
-    fi
-
-    wget $url
-    local filename="${url##*/}"
-    unzip $filename
-    mkdir -p /home/build/openwrt/files/usr/bin/xray
-    cp xray /home/build/openwrt/files/usr/bin/xray
-    mkdir -p /home/build/openwrt/files/usr/share/xray/
-    cp geosite.dat /home/build/openwrt/files/usr/share/xray/
-    cp geoip.dat /home/build/openwrt/files/usr/share/xray/
-    popd
-}
-
 # =================================================================
 
 # 添加软件源
 
-S1="src/gz cielpy https://github.com/cielpy/openwrt-dist/raw/packages/${CUSTOM_IPK_ARCH}"
-S2="src/gz cielpy_base https://github.com/cielpy/openwrt-dist/raw/base/${CUSTOM_IPK_ARCH}"
+S1="src/gz cielpy https://gh-proxy.imciel.com/https://github.com/cielpy/openwrt-dist/blob/packages/${CUSTOM_IPK_ARCH}"
+S2="src/gz cielpy_base https://gh-proxy.imciel.com/https://github.com/cielpy/openwrt-dist/blob/base/${CUSTOM_IPK_ARCH}"
 
 echo "$S1" >> ./repositories.conf
 echo "$S2" >> ./repositories.conf
@@ -98,19 +76,13 @@ sudo -E apt-get -qq install gzip
 
 # 扩大 rootfs 大小，不然编译 x86_64 会报错
 
-if [ "$TARGET" = "x86_64" ];then
-    sed -i '/CONFIG_TARGET_ROOTFS_PARTSIZE/ c\CONFIG_TARGET_ROOTFS_PARTSIZE=184' .config
+if [ "$TARGET" = "x86_64" ] || [ "$TARGET" = "rockchip" ];then
+    sed -i '/CONFIG_TARGET_ROOTFS_PARTSIZE/ c\CONFIG_TARGET_ROOTFS_PARTSIZE=200' .config
 fi
 
 # 去广告相关
 mkdir -p files/etc/dnsfilter
 cp diy_files/dnsfilter_white.list files/etc/dnsfilter/white.list
-
-# 在 ar71xx_nand 上添加 xray 可执行文件，其他平台安装 luci-app-passwall 时会自动安装 xray
-
-# if [ "$TARGET" = "ar71xx_nand" ]; then
-#     download_xray
-# fi
 
 # # 添加本地软件源，安装自定义 ipk 使用
 # if [ "$OPENWRT_VERSION" = "21.02" ]; then

@@ -11,16 +11,13 @@ if [ "$TARGET" != "ar71xx_nand" ]; then
     luci-app-clash \
     overture \
     clash \
-    luci-app-jd-dailybonus \
+    luci-app-jd-dailybonus node \
     luci-app-dnsfilter \
-    luci-app-vlmcsd \
     luci-app-zerotier \
     luci-app-autoreboot \
-    luci-app-bypass \
     luci-app-passwall \
     luci-app-wrtbwmon \
     luci-app-ssr-plus \
-    luci-app-vssr \
     "
 else
     all_packages="$all_packages \
