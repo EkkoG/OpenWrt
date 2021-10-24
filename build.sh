@@ -8,16 +8,10 @@ all_packages="luci luci-compat -dnsmasq dnsmasq-full luci-i18n-base-zh-cn luci-i
 if [ "$TARGET" != "ar71xx_nand" ]; then
     all_packages="$all_packages \
     wget curl vim-full \
-    luci-app-clash \
     overture \
-    clash \
-    luci-app-jd-dailybonus node \
-    luci-app-dnsfilter \
-    luci-app-zerotier \
     luci-app-autoreboot \
-    luci-app-passwall \
-    luci-app-wrtbwmon \
-    luci-app-ssr-plus \
+    luci-i18n-autoreboot-zh-cn \
+    luci-app-dnsfilter \
     "
 else
     all_packages="$all_packages \

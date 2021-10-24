@@ -17,15 +17,21 @@ fi
 
 # 添加软件源
 
-S1="src/gz cielpy https://gh-proxy.imciel.com/https://github.com/cielpy/openwrt-dist/blob/packages/${CUSTOM_IPK_ARCH}"
-S2="src/gz cielpy_base https://gh-proxy.imciel.com/https://github.com/cielpy/openwrt-dist/blob/base/${CUSTOM_IPK_ARCH}"
+S1="src/gz cielpy https://ghproxy.com/https://github.com/cielpy/openwrt-dist/blob/packages/${CUSTOM_IPK_ARCH}"
+S2="src/gz cielpy_base https://ghproxy.com/https://github.com/cielpy/openwrt-dist/blob/base/${CUSTOM_IPK_ARCH}"
+S3="src/gz simonsmh https://ghproxy.com/https://github.com/simonsmh/openwrt-dist/blob/packages/x86/64/"
 
 echo "$S1" >> ./repositories.conf
 echo "$S2" >> ./repositories.conf
+echo "$S3" >> ./repositories.conf
 
 mkdir -p files/etc/opkg/
 echo "$S1" >> files/etc/opkg/customfeeds.conf
 echo "$S2" >> files/etc/opkg/customfeeds.conf
+# echo "$S3" >> files/etc/opkg/customfeeds.conf
+sed -i '/check_signature/d' ./repositories.conf
+
+cat ./repositories.conf
 
 # 如果需要，添加签名验证的 key
 if [ -d keys ] && [ -d diy_files/keys ] && [ ! -z $(ls diy_files/keys) ]; then
