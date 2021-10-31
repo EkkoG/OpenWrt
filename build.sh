@@ -9,6 +9,7 @@ if [ "$TARGET" != "ar71xx_nand" ]; then
     all_packages="$all_packages \
     wget curl vim-full \
     overture \
+    clash-for-openclash \
     luci-app-openclash \
     luci-app-autoreboot \
     luci-i18n-autoreboot-zh-cn \

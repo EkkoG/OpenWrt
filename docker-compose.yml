@@ -15,7 +15,7 @@ services:
     command: "./build.sh"
 
   imagebuilder_x86_64_21_02:
-    image: "openwrtorg/imagebuilder:x86-64-21.02.0"
+    image: "openwrtorg/imagebuilder:x86-64-openwrt-21.02"
     # image: "openwrtorg/imagebuilder:x86-64-openwrt-21.02"
     container_name: imagebuilder_x86_64_21_02
     environment:
@@ -30,7 +30,7 @@ services:
     command: "./build.sh"
 
   imagebuilder_rockchip_21_02:
-    image: "openwrtorg/imagebuilder:rockchip-armv8-21.02.0"
+    image: "openwrtorg/imagebuilder:rockchip-armv8-openwrt-21.02"
     container_name: imagebuilder_rockchip_21_02
     env_file:
       - ./.env
@@ -58,7 +58,7 @@ services:
     command: "./build.sh"
 
   imagebuilder_ar71xx_nand_21:
-    image: "openwrtorg/imagebuilder:ath79-nand-21.02.0"
+    image: "openwrtorg/imagebuilder:ath79-nand-openwrt-21.02"
     container_name: imagebuilder_ar71xx_nand_21
     environment:
       - TARGET=ar71xx_nand

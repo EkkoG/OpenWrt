@@ -1,10 +1,13 @@
 #!/bin/bash -e
 
 CUSTOM_IPK_ARCH=
+CUSTOM_IPK_ARCH_STYLE_2=
 if [ "$TARGET" = "x86_64" ]; then
     CUSTOM_IPK_ARCH=x86_64
+    CUSTOM_IPK_ARCH_STYLE_2=x86/64
 elif [ "$TARGET" = "rockchip" ]; then
     CUSTOM_IPK_ARCH=aarch64_generic
+    CUSTOM_IPK_ARCH_STYLE_2=rockchip/armv8
 elif [ "$TARGET" = "ar71xx_nand" ]; then
     CUSTOM_IPK_ARCH=mips_24kc
 
@@ -19,7 +22,7 @@ fi
 
 S1="src/gz cielpy https://ghproxy.com/https://github.com/cielpy/openwrt-dist/blob/packages/${CUSTOM_IPK_ARCH}"
 S2="src/gz cielpy_base https://ghproxy.com/https://github.com/cielpy/openwrt-dist/blob/base/${CUSTOM_IPK_ARCH}"
-S3="src/gz simonsmh https://ghproxy.com/https://github.com/simonsmh/openwrt-dist/blob/packages/x86/64/"
+S3="src/gz simonsmh https://ghproxy.com/https://github.com/simonsmh/openwrt-dist/blob/packages/${CUSTOM_IPK_ARCH_STYLE_2}"
 
 echo "$S1" >> ./repositories.conf
 echo "$S2" >> ./repositories.conf
