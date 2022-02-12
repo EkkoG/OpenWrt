@@ -31,7 +31,7 @@
 
 ### 使用
 
-- git clone https://github.com/cielpy/OpenWrt.git
+- git clone https://github.com/ekkog/OpenWrt.git
 - cd OpenWrt
 - 新建 .env 文件，配置环境变量，请参考 [支持配置的环境变量](#支持配置的环境变量)
 - 修改 diy_files/diy.sh（非必须，修改须谨慎）

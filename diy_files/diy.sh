@@ -20,8 +20,8 @@ fi
 
 # 添加软件源
 
-S1="src/gz cielpy https://ghproxy.com/https://github.com/cielpy/openwrt-dist/blob/packages/${CUSTOM_IPK_ARCH}"
-S2="src/gz cielpy_base https://ghproxy.com/https://github.com/cielpy/openwrt-dist/blob/base/${CUSTOM_IPK_ARCH}"
+S1="src/gz ekkog https://ghproxy.com/https://github.com/ekkog/openwrt-dist/blob/packages/${CUSTOM_IPK_ARCH}"
+S2="src/gz ekkog_base https://ghproxy.com/https://github.com/ekkog/openwrt-dist/blob/base/${CUSTOM_IPK_ARCH}"
 S3="src/gz simonsmh https://ghproxy.com/https://github.com/simonsmh/openwrt-dist/blob/packages/${CUSTOM_IPK_ARCH_STYLE_2}"
 
 echo "$S1" >> ./repositories.conf
