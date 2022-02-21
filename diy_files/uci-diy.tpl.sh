@@ -51,6 +51,9 @@ uci set openclash.config.enable_custom_dns='1'
 uci set openclash.config.ipv6_dns='1'
 uci set openclash.config.append_wan_dns='0'
 uci set openclash.config.disable_udp_quic='0'
+uci set openclash.config.auto_update='1'
+uci set openclash.config.config_auto_update_mode='0'
+uci set openclash.config.config_update_week_time='*'
 
 uci commit openclash
 
