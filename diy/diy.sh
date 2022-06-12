@@ -53,6 +53,11 @@ printf "\n" >> /tmp/init.sh
 cat "diy/uci/other.sh" >> /tmp/init.sh
 printf "\n" >> /tmp/init.sh
 
+if [ -z $LAN_IP ]; then
+    echo "LAN_IP is empty"
+    exit 1
+fi
+
 # 替换自定义参数
 cat /tmp/init.sh | \
  sed "s/PPPOE_USERNAME/$PPPOE_USERNAME/g" | \
