@@ -12,7 +12,7 @@
 - 集成常用软件，软件列表见 [软件列表](#软件列表)
 - 默认使用 Clash+Overture组合，两个组件间的联动配置已配置好，构建固件时只需要提供 clash 配置链接即可在刷机完成后，直接启动 OpenClash
 - 可配置默认 LAN 口 IP，PPPoE 账号密码，刷机完成后，不用配置网络
-- 可以自定义，根据 [UCI](https://openwrt.org/docs/guide-user/base-system/uci) 语法，可以自定义几乎所有配置，只需要将 uci 命令录入 `diy_files/diy.sh` 即可，diy.sh 也可以酌情删减，**删除时请务必清楚删除的配置的作用！！！**
+- 可以自定义，根据 [UCI](https://openwrt.org/docs/guide-user/base-system/uci) 语法，可以自定义几乎所有配置，只需要将 uci 命令录入 `diy/diy.sh` 即可，diy.sh 也可以酌情删减，**删除时请务必清楚删除的配置的作用！！！**
 
 #### 版本支持情况
 
@@ -34,18 +34,18 @@
 - git clone https://github.com/ekkog/OpenWrt.git
 - cd OpenWrt
 - 新建 .env 文件，配置环境变量，请参考 [支持配置的环境变量](#支持配置的环境变量)
-- 修改 diy_files/diy.sh（非必须，修改须谨慎）
+- 修改 diy/diy.sh（非必须，修改须谨慎）
 - ./run.sh rockchip_21/amd64_21/amd64_19
 
 
 ### 支持配置的环境变量
 
 ```bash
-CUSTOM_PPPOE_PASSWORD=
-CUSTOM_PPPOE_USERNAME=
-CUSTOM_LAN_IP=
-CUSTOM_CLASH_CONFIG_URL=
-CUSTOM_PASSWALL_SUBSCRIBE_URL=
+PPPOE_PASSWORD=
+PPPOE_USERNAME=
+LAN_IP=
+CLASH_CONFIG_URL=
+PASSWALL_SUBSCRIBE_URL=
 WAN_TYPE=
 FLAG=
 ```

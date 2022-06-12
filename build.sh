@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-cp diy_files/diy.sh .
+cp diy/diy.sh .
 ./diy.sh
 
 # base packages

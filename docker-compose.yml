@@ -10,7 +10,7 @@ services:
       - ./.env
     volumes:
       - ./bin/19_07:/home/build/openwrt/bin
-      - ./diy_files:/home/build/openwrt/diy_files
+      - ./diy:/home/build/openwrt/diy
       - ./build.sh:/home/build/openwrt/build.sh
     command: "./build.sh"
 
@@ -26,7 +26,7 @@ services:
       - ./.env
     volumes:
       - ./bin/21_02:/home/build/openwrt/bin
-      - ./diy_files:/home/build/openwrt/diy_files
+      - ./diy:/home/build/openwrt/diy
       - ./build.sh:/home/build/openwrt/build.sh
     command: "./build.sh"
 
@@ -40,7 +40,7 @@ services:
       - OPENWRT_VERSION=21.02
     volumes:
       - ./bin/21_02:/home/build/openwrt/bin
-      - ./diy_files:/home/build/openwrt/diy_files
+      - ./diy:/home/build/openwrt/diy
       - ./build.sh:/home/build/openwrt/build.sh
     command: "./build.sh"
 
@@ -54,7 +54,7 @@ services:
       - ./.env
     volumes:
       - ./bin/19_07:/home/build/openwrt/bin
-      - ./diy_files:/home/build/openwrt/diy_files
+      - ./diy:/home/build/openwrt/diy
       - ./build.sh:/home/build/openwrt/build.sh
     command: "./build.sh"
 
@@ -68,6 +68,6 @@ services:
       - ./.env
     volumes:
       - ./bin/21_02:/home/build/openwrt/bin
-      - ./diy_files:/home/build/openwrt/diy_files
+      - ./diy:/home/build/openwrt/diy
       - ./build.sh:/home/build/openwrt/build.sh
     command: "./build.sh"

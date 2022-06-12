@@ -1,6 +1,6 @@
 .env*
 bin/
 .DS_Store
-diy_files/personal_diy/*
-run-for-p.sh
+diy/uci/other.sh
+diy/ssh/authorized_keys
 transfer.sh
