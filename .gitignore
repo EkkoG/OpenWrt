@@ -4,3 +4,4 @@ bin/
 diy/uci/other.sh
 diy/ssh/authorized_keys
 transfer.sh
+files

@@ -2,35 +2,29 @@
 
 IPK_ARCH=
 IPK_ARCH_STYLE_2=
+CLASH_ARCH=
 if [ "$TARGET" = "x86_64" ]; then
     IPK_ARCH=x86_64
     IPK_ARCH_STYLE_2=x86/64
+    CLASH_ARCH=amd64-compatible
 elif [ "$TARGET" = "rockchip" ]; then
     IPK_ARCH=aarch64_generic
     IPK_ARCH_STYLE_2=rockchip/armv8
-elif [ "$TARGET" = "ar71xx_nand" ]; then
-    IPK_ARCH=mips_24kc
-
-    mkdir -p files/etc/config
-    cp diy/config/wireless files/etc/config/wireless
-
+    CLASH_ARCH=arm64
 fi
 
 # =================================================================
 
 # 添加软件源
 
-S1="src/gz ekkog https://ghproxy.com/https://github.com/ekkog/openwrt-dist/blob/packages/${IPK_ARCH}"
-S2="src/gz ekkog_base https://ghproxy.com/https://github.com/ekkog/openwrt-dist/blob/base/${IPK_ARCH}"
+S1="src/gz ekkog https://ghproxy.com/https://github.com/ekkog/openwrt-dist/blob/packages/${IPK_ARCH}-21.02.5"
 S3="src/gz simonsmh https://ghproxy.com/https://github.com/simonsmh/openwrt-dist/blob/packages/${IPK_ARCH_STYLE_2}"
 
 echo "$S1" >> ./repositories.conf
-echo "$S2" >> ./repositories.conf
 echo "$S3" >> ./repositories.conf
 
 mkdir -p files/etc/opkg/
 echo "$S1" >> files/etc/opkg/customfeeds.conf
-echo "$S2" >> files/etc/opkg/customfeeds.conf
 echo "$S3" >> files/etc/opkg/customfeeds.conf
 # sed -i '/check_signature/d' ./repositories.conf
 
@@ -86,6 +80,13 @@ fi
 # 去广告相关
 mkdir -p files/etc/dnsfilter
 cp diy/other/dnsfilter_white.list files/etc/dnsfilter/white.list
+
+mkdir -p files/etc/openclash/core
+
+wget "https://github.com/MetaCubeX/Clash.Meta/releases/download/v1.13.1/Clash.Meta-linux-${CLASH_ARCH}-v1.13.1.gz"
+
+gzip -d "Clash.Meta-linux-${CLASH_ARCH}-v1.13.1.gz"
+cp "Clash.Meta-linux-${CLASH_ARCH}-v1.13.1" files/etc/openclash/core/clash_meta
 
 # # 添加本地软件源，安装自定义 ipk 使用
 # if [ "$OPENWRT_VERSION" = "21.02" ]; then

@@ -44,6 +44,10 @@ uci set openclash.@config_subscribe[-1]=config_subscribe
 uci set openclash.@config_subscribe[-1].enabled='1'
 uci set openclash.@config_subscribe[-1].address='CLASH_CONFIG_URL'
 uci set openclash.@config_subscribe[-1].sub_convert='0'
+
+# 默认 SOCKS 不需要认证
+while uci -q delete openclash.@authentication[0]; do :; done
+
 uci set openclash.config.ipv6_enable='1'
 uci set openclash.config.china_ip6_route='1'
 uci set openclash.config.china_ip_route='1'
@@ -59,6 +63,11 @@ uci set openclash.config.disable_udp_quic='0'
 uci set openclash.config.auto_update='1'
 uci set openclash.config.config_auto_update_mode='0'
 uci set openclash.config.config_update_week_time='*'
+
+uci set openclash.config.core_type='Meta'
+uci set openclash.config.enable_meta_core='1'
+uci set openclash.config.enable_meta_sniffer='1'
+uci set openclash.config.enable_meta_sniffer_custom='0'
 
 uci commit openclash
 
