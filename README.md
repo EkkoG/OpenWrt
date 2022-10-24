@@ -33,7 +33,7 @@
 - git clone https://github.com/ekkog/OpenWrt.git
 - cd OpenWrt
 - 新建 .env 文件，配置 PPPOE 等相关变量
-- ./run.sh rockchip_21/amd64_21/amd64_19
+- ./run.sh rockchip_21/rockchip_22/amd64_21/amd64_22
 
 ### 自定义
 
