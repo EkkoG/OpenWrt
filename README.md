@@ -8,7 +8,7 @@
 
 ### 特色
 
-- 采用官方原版 ImageBuilder 构建而非从源码构建，速度快，一般三四分钟即可构建好
+- 采用官方原版 [ImageBuilder](https://openwrt.org/docs/guide-user/additional-software/imagebuilder) 构建而非从源码构建，速度快，一般三四分钟即可构建好
 - 可按照官方提供的方式进行自定义，无需代码修改
 - 集成 OpenClash，可自行添加或者删除
 - 默认使用 Clash+Overture组合，两个组件间的联动配置已配置好，构建固件时只需要提供 clash 配置链接即可在刷机完成后，直接启动 OpenClash
