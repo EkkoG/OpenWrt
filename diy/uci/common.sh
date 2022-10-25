@@ -68,6 +68,7 @@ uci set openclash.config.core_type='Meta'
 uci set openclash.config.enable_meta_core='1'
 uci set openclash.config.enable_meta_sniffer='1'
 uci set openclash.config.enable_meta_sniffer_custom='0'
+uci set openclash.config.common_ports='1'
 
 uci commit openclash
 
