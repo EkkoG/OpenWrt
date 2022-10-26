@@ -13,22 +13,6 @@ uci commit system
 uci set luci.main.lang='zh_cn'
 uci commit luci
 
-uci set passwall.@global_forwarding[0].udp_no_redir_ports='disable'
-uci set passwall.@global_forwarding[0].tcp_no_redir_ports='disable'
-uci set passwall.@global_other[0].ipv6_tproxy='1'
-
-uci set passwall.@global_subscribe[0].auto_update_subscribe='1'
-uci set passwall.@global_subscribe[0].week_update_subscribe='7'
-uci set passwall.@global_subscribe[0].time_update_subscribe='5'
-
-uci add passwall subscribe_list
-uci set passwall.@subscribe_list[-1]=subscribe_list
-uci set passwall.@subscribe_list[-1].enabled='1'
-uci set passwall.@subscribe_list[-1].remark='neo'
-uci set passwall.@subscribe_list[-1].url='PASSWALL_SUBSCRIBE_URL'
-uci commit passwall
-
-
 while uci -q delete openclash.@dns_servers[0]; do :; done
 uci add openclash dns_servers
 uci set openclash.@dns_servers[-1]=dns_servers
