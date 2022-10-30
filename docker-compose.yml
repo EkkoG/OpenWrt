@@ -1,55 +1,55 @@
 version: "3.5"
 services:
-  imagebuilder_x86_64_21_02:
+  imagebuilder_x86_64_21:
     image: "openwrtorg/imagebuilder:x86-64-openwrt-21.02"
-    container_name: imagebuilder_x86_64_21_02
+    container_name: imagebuilder_x86_64_21
     environment:
       - TARGET=x86_64
       - OPENWRT_VERSION=21.02
     env_file:
       - ./.env
     volumes:
-      - ./bin/21_02:/home/build/openwrt/bin
+      - ./bin/21:/home/build/openwrt/bin
       - ./diy:/home/build/openwrt/diy
       - ./build.sh:/home/build/openwrt/build.sh
     command: "./build.sh"
 
-  imagebuilder_rockchip_21_02:
+  imagebuilder_rockchip_21:
     image: "openwrtorg/imagebuilder:rockchip-armv8-openwrt-21.02"
-    container_name: imagebuilder_rockchip_21_02
+    container_name: imagebuilder_rockchip_21
     env_file:
       - ./.env
     environment:
       - TARGET=rockchip
       - OPENWRT_VERSION=21.02
     volumes:
-      - ./bin/21_02:/home/build/openwrt/bin
+      - ./bin/21:/home/build/openwrt/bin
       - ./diy:/home/build/openwrt/diy
       - ./build.sh:/home/build/openwrt/build.sh
     command: "./build.sh"
-  imagebuilder_rockchip_22_03:
+  imagebuilder_rockchip_22:
     image: "openwrtorg/imagebuilder:rockchip-armv8-openwrt-22.03"
-    container_name: imagebuilder_rockchip_22_03
+    container_name: imagebuilder_rockchip_22
     env_file:
       - ./.env
     environment:
       - TARGET=rockchip
       - OPENWRT_VERSION=22.03
     volumes:
-      - ./bin/22_03:/home/build/openwrt/bin
+      - ./bin/22:/home/build/openwrt/bin
       - ./diy:/home/build/openwrt/diy
       - ./build.sh:/home/build/openwrt/build.sh
     command: "./build.sh"
-  imagebuilder_x86_64_22_03:
+  imagebuilder_x86_64_22:
     image: "openwrtorg/imagebuilder:x86-64-22.03.2"
-    container_name: imagebuilder_x86_64_22_03
+    container_name: imagebuilder_x86_64_22
     env_file:
       - ./.env
     environment:
       - TARGET=x86_64
       - OPENWRT_VERSION=22.03
     volumes:
-      - ./bin/22_03:/home/build/openwrt/bin
+      - ./bin/22:/home/build/openwrt/bin
       - ./diy:/home/build/openwrt/diy
       - ./build.sh:/home/build/openwrt/build.sh
     command: "./build.sh"

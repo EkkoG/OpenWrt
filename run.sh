@@ -1,12 +1,12 @@
 #!/bin/bash
 
 if [ "$1" = 'amd64_22' ]; then
-    docker-compose up imagebuilder_x86_64_22_03
+    docker-compose up imagebuilder_x86_64_22
 elif [ "$1" = 'amd64_21' ]; then
-    docker-compose up imagebuilder_x86_64_21_02
+    docker-compose up imagebuilder_x86_64_21
 elif [ "$1" = 'rockchip_21' ]; then
-    docker-compose up imagebuilder_rockchip_21_02
+    docker-compose up imagebuilder_rockchip_21
 elif [ "$1" = 'rockchip_22' ]; then
-    docker-compose up imagebuilder_rockchip_22_03
+    docker-compose up imagebuilder_rockchip_22
 fi
-docker-compose rm -f
+docker-compose rm -f 

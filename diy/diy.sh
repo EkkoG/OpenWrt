@@ -58,7 +58,6 @@ cat /tmp/init.sh | \
  sed "s/PPPOE_PASSWORD/$PPPOE_PASSWORD/g" | \
  sed "s/LAN_IP/$LAN_IP/g" | \
  sed "s~CLASH_CONFIG_URL~$CLASH_CONFIG_URL~g" | \
- sed "s~PASSWALL_SUBSCRIBE_URL~$PASSWALL_SUBSCRIBE_URL~g" \
  >  files/etc/uci-defaults/uci-diy
 
 # 添加 SSH 相关
