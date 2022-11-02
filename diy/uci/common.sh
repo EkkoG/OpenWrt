@@ -16,7 +16,7 @@ set system.@system[0].conloglevel='7'
 
 set luci.main.lang='zh_cn'
 
-uci add openclash dns_servers
+add openclash dns_servers
 set openclash.@dns_servers[-1]=dns_servers
 set openclash.@dns_servers[-1].group='nameserver'
 set openclash.@dns_servers[-1].type='udp'
@@ -24,7 +24,7 @@ set openclash.@dns_servers[-1].enabled='1'
 set openclash.@dns_servers[-1].ip='127.0.0.1'
 set openclash.@dns_servers[-1].port='7053'
 
-uci add openclash config_subscribe
+add openclash config_subscribe
 set openclash.@config_subscribe[-1]=config_subscribe
 set openclash.@config_subscribe[-1].enabled='1'
 set openclash.@config_subscribe[-1].address='CLASH_CONFIG_URL'
@@ -51,8 +51,8 @@ set openclash.config.enable_meta_core='1'
 set openclash.config.enable_meta_sniffer='1'
 set openclash.config.enable_meta_sniffer_custom='0'
 set openclash.config.common_ports='1'
-set openclash.config.append_default_dns '0'
-set openclash.config.enable_custom_dns '1'
+set openclash.config.append_default_dns='0'
+set openclash.config.enable_custom_dns='1'
 
 set network.lan.ipaddr='LAN_IP'
 commit

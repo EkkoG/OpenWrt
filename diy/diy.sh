@@ -44,7 +44,7 @@ printf "\n" >> /tmp/init.sh
 cat "diy/uci/network.sh" >> /tmp/init.sh
 printf "\n" >> /tmp/init.sh
 
-if [ -f "diy/uci/others.sh" ]; then
+if [ -f "diy/uci/other.sh" ]; then
     cat "diy/uci/other.sh" >> /tmp/init.sh
 fi
 printf "\n" >> /tmp/init.sh
