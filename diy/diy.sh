@@ -23,6 +23,8 @@ S3="src/gz simonsmh https://ghproxy.com/https://github.com/simonsmh/openwrt-dist
 echo "$S1" >> ./repositories.conf
 echo "$S3" >> ./repositories.conf
 
+sed -i 's/https:\/\/downloads.openwrt.org/https:\/\/mirrors.tuna.tsinghua.edu.cn\/openwrt/g' ./repositories.conf
+
 mkdir -p files/etc/opkg/
 echo "$S1" >> files/etc/opkg/customfeeds.conf
 echo "$S3" >> files/etc/opkg/customfeeds.conf
