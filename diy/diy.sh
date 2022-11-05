@@ -18,16 +18,16 @@ fi
 # 添加软件源
 
 S1="src/gz ekkog https://ghproxy.com/https://github.com/ekkog/openwrt-dist/blob/packages/${IPK_ARCH}-21.02.5"
-S3="src/gz simonsmh https://ghproxy.com/https://github.com/simonsmh/openwrt-dist/blob/packages/${IPK_ARCH_STYLE_2}"
+# S3="src/gz simonsmh https://ghproxy.com/https://github.com/simonsmh/openwrt-dist/blob/packages/${IPK_ARCH_STYLE_2}"
 
 echo "$S1" >> ./repositories.conf
-echo "$S3" >> ./repositories.conf
+# echo "$S3" >> ./repositories.conf
 
-sed -i 's/https:\/\/downloads.openwrt.org/https:\/\/mirrors.tuna.tsinghua.edu.cn\/openwrt/g' ./repositories.conf
+# sed -i 's/https:\/\/downloads.openwrt.org/https:\/\/mirrors.tuna.tsinghua.edu.cn\/openwrt/g' ./repositories.conf
 
-mkdir -p files/etc/opkg/
-echo "$S1" >> files/etc/opkg/customfeeds.conf
-echo "$S3" >> files/etc/opkg/customfeeds.conf
+# mkdir -p files/etc/opkg/
+# echo "$S1" >> files/etc/opkg/customfeeds.conf
+# echo "$S3" >> files/etc/opkg/customfeeds.conf
 # sed -i '/check_signature/d' ./repositories.conf
 
 # 添加签名验证的 key

@@ -53,3 +53,17 @@ services:
       - ./diy:/home/build/openwrt/diy
       - ./build.sh:/home/build/openwrt/build.sh
     command: "./build.sh"
+
+  immortalwrt_imagebuilder_rockchip_21:
+    image: "immortalwrt/imagebuilder:rockchip-armv8-openwrt-21.02.3"
+    container_name: immortalwrt_imagebuilder_rockchip_21
+    environment:
+      - TARGET=x86_64
+      - OPENWRT_VERSION=21.02
+    env_file:
+      - ./.env
+    volumes:
+      - ./bin/21:/home/build/immortalwrt/bin
+      - ./diy:/home/build/immortalwrt/diy
+      - ./build.sh:/home/build/immortalwrt/build.sh
+    command: "./build.sh"
