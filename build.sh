@@ -14,4 +14,4 @@ luci-app-openclash \
 
 all_packages="$all_packages luci-theme-argon"
 
-make image PACKAGES="$all_packages" FILES="files"
+make PROFILE="friendlyarm_nanopi-r2s" image PACKAGES="$all_packages" FILES="files"
