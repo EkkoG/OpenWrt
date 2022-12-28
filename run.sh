@@ -46,5 +46,9 @@ EOM
 
 echo "$docker_compose_file_content" > docker-compose.yml
 
+if [ "$2" = '--with-pull' ]; then
+    docker-compose pull
+fi
+
 docker-compose up --remove-orphans
 docker-compose rm -f 
