@@ -25,7 +25,7 @@ else
     exit 1
 fi
 
-read -r -d '' VAR << EOM
+read -r -d '' docker_compose_file_content << EOM
 version: "3.5"
 services:
   imagebuilder:
@@ -44,8 +44,7 @@ services:
 
 EOM
 
-echo "$VAR" > docker-compose.yml
+echo "$docker_compose_file_content" > docker-compose.yml
 
-docker-compose pull
 docker-compose up --remove-orphans
 docker-compose rm -f 
