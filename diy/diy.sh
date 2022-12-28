@@ -21,7 +21,7 @@ fi
 S3="src/gz simonsmh https://ghproxy.com/https://github.com/simonsmh/openwrt-dist/blob/packages/${IPK_ARCH_STYLE_2}"
 echo "$S3" >> ./repositories.conf
 
-# sed -i 's/https:\/\/downloads.openwrt.org/https:\/\/mirrors.tuna.tsinghua.edu.cn\/openwrt/g' ./repositories.conf
+sed -i 's/https:\/\/downloads.openwrt.org/https:\/\/mirrors.tuna.tsinghua.edu.cn\/openwrt/g' ./repositories.conf
 
 mkdir -p files/etc/opkg/
 echo "$S3" >> files/etc/opkg/customfeeds.conf
