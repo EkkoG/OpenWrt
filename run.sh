@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 if [ "$1" = 'amd64_21' ]; then
     IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:x86-64-openwrt-21.02"
@@ -24,8 +24,7 @@ else
     echo "Usage: $0 [amd64_21|amd64_22|rockchip_21|rockchip_22|immortalwrt_rockchip_21]"
     exit 1
 fi
-
-read -r -d '' docker_compose_file_content << EOM
+docker_compose_file_content=$(cat <<-END
 version: "3.5"
 services:
   imagebuilder:
@@ -41,8 +40,9 @@ services:
       - ./diy:/home/build/openwrt/diy
       - ./build.sh:/home/build/openwrt/build.sh
     command: "./build.sh"
+END
 
-EOM
+)
 
 echo "$docker_compose_file_content" > docker-compose.yml
 
