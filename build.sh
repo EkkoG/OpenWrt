@@ -8,10 +8,10 @@ all_packages="luci luci-compat -dnsmasq dnsmasq-full luci-i18n-base-zh-cn luci-i
 
 all_packages="$all_packages \
 wget curl vim-full \
-overture \
 luci-app-openclash \
 "
 
 all_packages="$all_packages luci-theme-argon"
 
-make PROFILE="friendlyarm_nanopi-r2s" image PACKAGES="$all_packages" FILES="files"
+# make PROFILE="friendlyarm_nanopi-r2s" image PACKAGES="$all_packages" FILES="files"
+make image PACKAGES="$all_packages" FILES="files"

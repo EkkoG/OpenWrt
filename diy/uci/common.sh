@@ -21,8 +21,7 @@ set openclash.@dns_servers[-1]=dns_servers
 set openclash.@dns_servers[-1].group='nameserver'
 set openclash.@dns_servers[-1].type='udp'
 set openclash.@dns_servers[-1].enabled='1'
-set openclash.@dns_servers[-1].ip='127.0.0.1'
-set openclash.@dns_servers[-1].port='7053'
+set openclash.@dns_servers[-1].ip='119.29.29.29'
 
 add openclash config_subscribe
 set openclash.@config_subscribe[-1]=config_subscribe
