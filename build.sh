@@ -13,6 +13,8 @@ luci-app-openclash \
 
 all_packages="$all_packages luci-theme-argon"
 
-# make PROFILE="friendlyarm_nanopi-r2s" image PACKAGES="$all_packages" FILES="files"
-make image PACKAGES="$all_packages" FILES="files"
-# make info
+if [ -z "$PROFILE" ]; then
+    make image PACKAGES="$all_packages" FILES="files"
+else
+    make PROFILE="$PROFILE" image PACKAGES="$all_packages" FILES="files"
+fi

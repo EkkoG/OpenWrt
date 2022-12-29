@@ -10,23 +10,35 @@ elif [ "$1" = 'amd64_22' ]; then
     OPENWRT_VERSION=22.03
     IPK_ARCH=x86_64
     CLASH_ARCH=amd64-compatible
-elif [ "$1" = 'rockchip_21' ]; then
+elif [ "$1" = 'rockchip_r2s_21' ]; then
     IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:rockchip-armv8-openwrt-21.02"
     OPENWRT_VERSION=21.02
     IPK_ARCH=aarch64_generic
     CLASH_ARCH=arm64
-elif [ "$1" = 'rockchip_22' ]; then
+elif [ "$1" = 'rockchip_r2s_22' ]; then
     IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:rockchip-armv8-openwrt-22.03"
     OPENWRT_VERSION=22.03
     IPK_ARCH=aarch64_generic
     CLASH_ARCH=arm64
-elif [ "$1" = 'immortalwrt_rockchip_21' ]; then
+elif [ "$1" = 'rockchip_r4s_21' ]; then
+    IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:rockchip-armv8-openwrt-21.02"
+    OPENWRT_VERSION=21.02
+    IPK_ARCH=aarch64_generic
+    CLASH_ARCH=arm64
+    PROFILE=friendlyarm_nanopi-r4s
+elif [ "$1" = 'rockchip_r4s_22' ]; then
+    IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:rockchip-armv8-openwrt-22.03"
+    OPENWRT_VERSION=22.03
+    IPK_ARCH=aarch64_generic
+    CLASH_ARCH=arm64
+    PROFILE=friendlyarm_nanopi-r4s
+elif [ "$1" = 'immortalwrt_rockchip_r2s_21' ]; then
     IMAGEBUILDER_IMAGE="immortalwrt/imagebuilder:rockchip-armv8-openwrt-21.02.3"
     OPENWRT_VERSION=21.02
     IPK_ARCH=aarch64_generic
     CLASH_ARCH=arm64
 else
-    echo "Usage: $0 [amd64_21|amd64_22|rockchip_21|rockchip_22|immortalwrt_rockchip_21]"
+    echo "Usage: $0 [amd64_21|amd64_22|rockchip_r2s_21|rockchip_r2s_22|rockchip_r4s_21|rockchip_r4s_22|immortalwrt_rockchip_r2s_21]"
     exit 1
 fi
 docker_compose_file_content=$(cat <<-END
@@ -40,6 +52,7 @@ services:
       - IPK_ARCH=$IPK_ARCH
       - CLASH_ARCH=$CLASH_ARCH
       - CLASH_META_VERSION=$CLASH_META_VERSION
+      - PROFILE=$PROFILE
     env_file:
       - ./.env
     volumes:
