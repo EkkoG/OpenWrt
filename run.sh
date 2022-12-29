@@ -38,11 +38,17 @@ fi
 SMALL_VERSION=${IMAGEBUILDER_IMAGE##*-}
 BIG_VERSION=$(echo "$SMALL_VERSION" | cut -d. -f1,2)
 
+if [[ $IMAGEBUILDER_IMAGE =~ "immortalwrt" ]]; then
+    BUILD_DIR=/home/build/immortalwrt
+else
+    BUILD_DIR=/home/build/openwrt
+fi
+
 docker_compose_file_content=$(cat <<-END
 version: "3.5"
 services:
   imagebuilder:
-    image: "${IMAGEBUILDER_IMAGE}"
+    image: "$IMAGEBUILDER_IMAGE"
     container_name: imagebuilder
     environment:
       - OPENWRT_VERSION=$BIG_VERSION
@@ -53,9 +59,9 @@ services:
     env_file:
       - ./.env
     volumes:
-      - ./bin:/home/build/openwrt/bin
-      - ./diy:/home/build/openwrt/diy
-      - ./build.sh:/home/build/openwrt/build.sh
+      - ./bin:$BUILD_DIR/bin
+      - ./diy:$BUILD_DIR/diy
+      - ./build.sh:$BUILD_DIR/build.sh
     command: "./build.sh"
 END
 
