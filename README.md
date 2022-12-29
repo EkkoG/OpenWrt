@@ -4,14 +4,13 @@
 
 ### 项目目标
 
-尽量减少新系统启动时必须的配置如 DNS, Clash 配置文件等，只需要提供必须的配置信息以构建固件，达到开机即可用！
+尽量减少新系统启动时必须的初始化配置如 DNS, Clash 配置以及其配置文件等，只需要提供必须的配置信息以构建固件，即可达到开机即可用
 
 ### 特色
 
-- 采用官方原版 [ImageBuilder](https://openwrt.org/docs/guide-user/additional-software/imagebuilder) 构建而非从源码构建，速度快，一般三四分钟即可构建好
+- 采用官方原版 [ImageBuilder](https://openwrt.org/docs/guide-user/additional-software/imagebuilder) 构建而非从源码构建，速度快，几分钟即可构建好
 - 可按照官方提供的方式进行自定义，无需代码修改
-- 集成 OpenClash，可自行添加或者删除
-- 默认使用 Clash+Overture组合，两个组件间的联动配置已配置好，构建固件时只需要提供 clash 配置链接即可在刷机完成后，直接启动 OpenClash
+- 集成 OpenClash，构建固件时只需要提供 clash 配置链接即可在刷机完成后，直接启动 OpenClash
 - 可配置默认 LAN 口 IP，PPPoE 账号密码，刷机完成后，不用配置网络
 - 支持其他自定义
 
@@ -25,7 +24,6 @@
 #### 软件列表
 
 - https://github.com/vernesong/OpenClash
-- https://github.com/EXSERENS/overture-openwrt
 - https://github.com/jerrykuku/luci-theme-argon
 
 ### 使用
@@ -59,6 +57,3 @@ CLASH_CONFIG_URL=
 - [OpenWrt](https://openwrt.org/)
 - [clash](https://github.com/Dreamacro/clash)
 - [OpenClash](https://github.com/vernesong/OpenClash)
-- [China-DNS](https://github.com/aa65535/openwrt-chinadns)
-- [Overture](https://github.com/shawn1m/overture)
-- [overture for OpenWrt](https://github.com/EXSERENS/overture-openwrt)
