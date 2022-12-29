@@ -74,4 +74,4 @@ if [ "$2" = '--with-pull' ]; then
 fi
 
 docker-compose up --remove-orphans
-docker-compose rm -f 
+docker-compose rm -f

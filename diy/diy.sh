@@ -7,7 +7,7 @@ src/gz ekkog https://ghproxy.com/https://github.com/ekkog/openwrt-dist/blob/pack
 END
 )
 
-if [[ $IMAGEBUILDER_IMAGE =~ "immortalwrt" ]]; then
+if [[ $PWD =~ "immortalwrt" ]]; then
     echo "no need to add third source"
 else
 # 添加软件源
