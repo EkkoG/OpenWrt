@@ -1,20 +1,22 @@
-### 介绍
+自用 OpenWrt x86_64/R2S/R4S 固件，以减少新系统启动时必须的初始化配置为目标，达到开机无需配置即可使用
 
-自用 OpenWrt x86_64/R2S 固件
+## 特色
 
-### 项目目标
-
-尽量减少新系统启动时必须的初始化配置如 DNS, Clash 配置以及其配置文件等，只需要提供必须的配置信息以构建固件，即可达到开机即可用
-
-### 特色
-
-- 采用官方原版 [ImageBuilder](https://openwrt.org/docs/guide-user/additional-software/imagebuilder) 构建而非从源码构建，速度快，几分钟即可构建好
-- 可按照官方提供的方式进行自定义，无需代码修改
+- 采用官方原版 [ImageBuilder](https://openwrt.org/docs/guide-user/additional-software/imagebuilder) 构建而非从源码构建，几分钟即可构建完成
 - 集成 OpenClash，构建固件时只需要提供 clash 配置链接即可在刷机完成后，直接启动 OpenClash
 - 可配置默认 LAN 口 IP，PPPoE 账号密码，刷机完成后，不用配置网络
-- 支持其他自定义
+- 可按照官方推荐的 uci 功能进行自定义，无需代码修改，您可以通过 uci 进行几乎任何自定义
 
-#### 版本支持情况
+## 使用
+
+```bash
+git clone https://github.com/ekkog/OpenWrt.git
+cd OpenWrt
+新建 .env 文件，配置 PPPOE 等相关变量
+./run.sh amd64_21|amd64_22|rockchip_r2s_21|rockchip_r2s_22|rockchip_r4s_21|rockchip_r4s_22|immortalwrt_amd_21|immortalwrt_rockchip_r2s_21|immortalwrt_rockchip_r4s_21
+```
+
+### 版本支持情况
 
 |  设备   | 21.02  | 22.03 |
 |  ----  | ----  | ---- |
@@ -22,29 +24,26 @@
 | R2S | ✅ | ✅ |
 | R4S | ✅ | ✅ |
 
-#### 软件列表
+另外支持了 [ImmortalWrt](https://github.com/immortalwrt/immortalwrt) 21.02
 
-- https://github.com/vernesong/OpenClash
-- https://github.com/jerrykuku/luci-theme-argon
+### 内置软件列表
 
-### 使用
+- <https://github.com/vernesong/OpenClash>
+- <https://github.com/jerrykuku/luci-theme-argon>
 
-- git clone https://github.com/ekkog/OpenWrt.git
-- cd OpenWrt
-- 新建 .env 文件，配置 PPPOE 等相关变量
-- ./run.sh rockchip_21/rockchip_22/amd64_21/amd64_22
 
-### 自定义
+## 自定义
 
-#### 添加 SSH key
+### 添加 SSH key
 
-在 diy 文件夹下创建文件夹 `ssh`，并将公钥录入到 `ssh/authorized_keys` 即可
+在根目录创建文件夹 `ssh`，并将公钥录入到 `ssh/authorized_keys` 即可
 
-#### UCI 自定义
+### UCI 自定义
 
-将需要 uci 命令录入 `diy/uci/other.sh` 即可，由于本项目也是使用 uci 命令来进行自定义，所以在录入时建议看一下内置的命令是否会冲突，内置的命令在 uci 文件夹的 common.sh 和 network.sh 两个文件中
+将 uci 命令录入 `uci/other.sh` 即可
+注意：由于本项目也是使用 uci 命令来进行自定义，所以在录入时建议看一下内置的命令是否会冲突，内置的命令在 uci 文件夹的 common.sh 和 network.sh 两个文件中
 
-### 支持配置的环境变量
+## 支持配置的环境变量
 
 ```bash
 PPPOE_PASSWORD=
