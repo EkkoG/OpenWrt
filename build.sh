@@ -15,3 +15,4 @@ all_packages="$all_packages luci-theme-argon"
 
 # make PROFILE="friendlyarm_nanopi-r2s" image PACKAGES="$all_packages" FILES="files"
 make image PACKAGES="$all_packages" FILES="files"
+# make info

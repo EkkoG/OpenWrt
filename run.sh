@@ -1,5 +1,5 @@
 #!/bin/bash -e
-
+CLASH_META_VERSION=1.13.2
 if [ "$1" = 'amd64_21' ]; then
     IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:x86-64-openwrt-21.02"
     OPENWRT_VERSION=21.02
@@ -36,8 +36,10 @@ services:
     image: "${IMAGEBUILDER_IMAGE}"
     container_name: imagebuilder
     environment:
-      - TARGET=${TARGET}
-      - OPENWRT_VERSION=${OPENWRT_VERSION}
+      - OPENWRT_VERSION=$OPENWRT_VERSION
+      - IPK_ARCH=$IPK_ARCH
+      - CLASH_ARCH=$CLASH_ARCH
+      - CLASH_META_VERSION=$CLASH_META_VERSION
     env_file:
       - ./.env
     volumes:
