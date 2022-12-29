@@ -6,6 +6,8 @@ if [ -z $LAN_IP ]; then
 fi
 
 # =================================================================
+# change files folder to current user
+sudo chown -R $(whoami):$(whoami) files
 
 THIRD_SOURCE=$(cat <<-END
 src/gz ekkog https://ghproxy.com/https://github.com/ekkog/openwrt-dist/blob/packages/${IPK_ARCH}-${OPENWRT_VERSION}
@@ -53,25 +55,13 @@ if [ -f "ssh/authorized_keys" ];then
     chmod 644 files/etc/dropbear/authorized_keys
 fi
 
-# 安装依赖
-sudo -E apt-get -qq install gzip
-
 # 扩大 rootfs 大小，不然编译 x86_64 会报错
-
 sed -i '/CONFIG_TARGET_ROOTFS_PARTSIZE/ c\CONFIG_TARGET_ROOTFS_PARTSIZE=200' .config
-
-mkdir -p files/etc/openclash/core
-
-wget "https://github.com/MetaCubeX/Clash.Meta/releases/download/v${CLASH_META_VERSION}/Clash.Meta-linux-${CLASH_ARCH}-v${CLASH_META_VERSION}.gz"
-
-gzip -d "Clash.Meta-linux-${CLASH_ARCH}-v${CLASH_META_VERSION}.gz"
-cp "Clash.Meta-linux-${CLASH_ARCH}-v${CLASH_META_VERSION}" files/etc/openclash/core/clash_meta
 
 # # 添加本地软件源，安装自定义 ipk 使用
 # if [ "$OPENWRT_VERSION" = "21.02" ]; then
 #     echo "src imagebuilder file:packages" >> ./repositories.conf
 # fi
-
 
 # base packages
 all_packages="luci luci-compat -dnsmasq dnsmasq-full luci-i18n-base-zh-cn luci-i18n-firewall-zh-cn"
