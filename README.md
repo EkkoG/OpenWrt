@@ -16,6 +16,15 @@ cd OpenWrt
 ./run.sh amd64_21|amd64_22|rockchip_r2s_21|rockchip_r2s_22|rockchip_r4s_21|rockchip_r4s_22|immortalwrt_amd_21|immortalwrt_rockchip_r2s_21|immortalwrt_rockchip_r4s_21
 ```
 
+### 必须配置的环境变量
+
+```bash
+PPPOE_USERNAME=
+PPPOE_PASSWORD=
+LAN_IP=
+CLASH_CONFIG_URL=
+```
+
 ### 版本支持情况
 
 |  设备   | 21.02  | 22.03 |
@@ -42,15 +51,6 @@ cd OpenWrt
 
 将 uci 命令录入 `uci/other.sh` 即可
 注意：由于本项目也是使用 uci 命令来进行自定义，所以在录入时建议看一下内置的命令是否会冲突，内置的命令在 uci 文件夹的 common.sh 和 network.sh 两个文件中
-
-## 支持配置的环境变量
-
-```bash
-PPPOE_PASSWORD=
-PPPOE_USERNAME=
-LAN_IP=
-CLASH_CONFIG_URL=
-```
 
 感谢以下项目，使得我的上网体验又有所提升
 
