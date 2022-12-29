@@ -16,7 +16,7 @@ fi
 # 添加软件源
 THIRD_SOURCE=$(cat <<-END
 src/gz simonsmh https://ghproxy.com/https://github.com/simonsmh/openwrt-dist/blob/packages/${IPK_ARCH_2}
-src/gz ekkog https://ghproxy.com/https://github.com/ekkog/openwrt-dist/blob/packages/${IPK_ARCH}-21.02.5
+src/gz ekkog https://ghproxy.com/https://github.com/ekkog/openwrt-dist/blob/packages/${IPK_ARCH}-${OPENWRT_VERSION}
 END
 
 )
