@@ -3,11 +3,9 @@
 CLASH_META_VERSION=1.13.2
 if [ "$TARGET" = "x86_64" ]; then
     IPK_ARCH=x86_64
-    IPK_ARCH_2=x86/64
     CLASH_ARCH=amd64-compatible
 elif [ "$TARGET" = "rockchip" ]; then
     IPK_ARCH=aarch64_generic
-    IPK_ARCH_2=rockchip/armv8
     CLASH_ARCH=arm64
 fi
 
@@ -15,7 +13,6 @@ fi
 
 # 添加软件源
 THIRD_SOURCE=$(cat <<-END
-src/gz simonsmh https://ghproxy.com/https://github.com/simonsmh/openwrt-dist/blob/packages/${IPK_ARCH_2}
 src/gz ekkog https://ghproxy.com/https://github.com/ekkog/openwrt-dist/blob/packages/${IPK_ARCH}-${OPENWRT_VERSION}
 END
 
