@@ -2,7 +2,6 @@
 CLASH_META_VERSION=1.13.2
 if [ "$1" = 'amd64_21' ]; then
     IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:x86-64-openwrt-21.02"
-    OPENWRT_VERSION=21.02
     IPK_ARCH=x86_64
     CLASH_ARCH=amd64-compatible
 elif [ "$1" = 'amd64_22' ]; then
@@ -12,35 +11,34 @@ elif [ "$1" = 'amd64_22' ]; then
     CLASH_ARCH=amd64-compatible
 elif [ "$1" = 'rockchip_r2s_21' ]; then
     IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:rockchip-armv8-openwrt-21.02"
-    OPENWRT_VERSION=21.02
     IPK_ARCH=aarch64_generic
     CLASH_ARCH=arm64
 elif [ "$1" = 'rockchip_r2s_22' ]; then
     IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:rockchip-armv8-openwrt-22.03"
-    OPENWRT_VERSION=22.03
     IPK_ARCH=aarch64_generic
     CLASH_ARCH=arm64
 elif [ "$1" = 'rockchip_r4s_21' ]; then
     IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:rockchip-armv8-openwrt-21.02"
-    OPENWRT_VERSION=21.02
     IPK_ARCH=aarch64_generic
     CLASH_ARCH=arm64
     PROFILE=friendlyarm_nanopi-r4s
 elif [ "$1" = 'rockchip_r4s_22' ]; then
     IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:rockchip-armv8-openwrt-22.03"
-    OPENWRT_VERSION=22.03
     IPK_ARCH=aarch64_generic
     CLASH_ARCH=arm64
     PROFILE=friendlyarm_nanopi-r4s
 elif [ "$1" = 'immortalwrt_rockchip_r2s_21' ]; then
     IMAGEBUILDER_IMAGE="immortalwrt/imagebuilder:rockchip-armv8-openwrt-21.02.3"
-    OPENWRT_VERSION=21.02
     IPK_ARCH=aarch64_generic
     CLASH_ARCH=arm64
 else
     echo "Usage: $0 [amd64_21|amd64_22|rockchip_r2s_21|rockchip_r2s_22|rockchip_r4s_21|rockchip_r4s_22|immortalwrt_rockchip_r2s_21]"
     exit 1
 fi
+
+SMALL_VERSION=${IMAGEBUILDER_IMAGE##*-}
+BIG_VERSION=$(echo "$SMALL_VERSION" | cut -d. -f1,2)
+
 docker_compose_file_content=$(cat <<-END
 version: "3.5"
 services:
@@ -48,7 +46,7 @@ services:
     image: "${IMAGEBUILDER_IMAGE}"
     container_name: imagebuilder
     environment:
-      - OPENWRT_VERSION=$OPENWRT_VERSION
+      - OPENWRT_VERSION=$BIG_VERSION
       - IPK_ARCH=$IPK_ARCH
       - CLASH_ARCH=$CLASH_ARCH
       - CLASH_META_VERSION=$CLASH_META_VERSION
