@@ -15,10 +15,15 @@ elif [ "$1" = 'rockchip_r4s_21' ]; then
 elif [ "$1" = 'rockchip_r4s_22' ]; then
     IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:rockchip-armv8-openwrt-22.03"
     PROFILE=friendlyarm_nanopi-r4s
+elif [ "$1" = 'immortalwrt_amd_21' ]; then
+    IMAGEBUILDER_IMAGE="immortalwrt/imagebuilder:x86-64-openwrt-21.02"
 elif [ "$1" = 'immortalwrt_rockchip_r2s_21' ]; then
     IMAGEBUILDER_IMAGE="immortalwrt/imagebuilder:rockchip-armv8-openwrt-21.02.3"
+elif [ "$1" = 'immortalwrt_rockchip_r4s_21' ]; then
+    IMAGEBUILDER_IMAGE="immortalwrt/imagebuilder:rockchip-armv8-openwrt-21.02.3"
+    PROFILE=friendlyarm_nanopi-r4s
 else
-    echo "Usage: $0 [amd64_21|amd64_22|rockchip_r2s_21|rockchip_r2s_22|rockchip_r4s_21|rockchip_r4s_22|immortalwrt_rockchip_r2s_21]"
+    echo "Usage: $0 [amd64_21|amd64_22|rockchip_r2s_21|rockchip_r2s_22|rockchip_r4s_21|rockchip_r4s_22|immortalwrt_amd_21|immortalwrt_rockchip_r2s_21]"
     exit 1
 fi
 

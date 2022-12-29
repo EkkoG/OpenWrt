@@ -2,19 +2,23 @@
 
 # =================================================================
 
-# 添加软件源
 THIRD_SOURCE=$(cat <<-END
 src/gz ekkog https://ghproxy.com/https://github.com/ekkog/openwrt-dist/blob/packages/${IPK_ARCH}-${OPENWRT_VERSION}
 END
-
 )
-echo "$THIRD_SOURCE" >> ./repositories.conf
 
-sed -i 's/https:\/\/downloads.openwrt.org/https:\/\/mirrors.tuna.tsinghua.edu.cn\/openwrt/g' ./repositories.conf
+if [[ $IMAGEBUILDER_IMAGE =~ "immortalwrt" ]]; then
+    echo "no need to add third source"
+else
+# 添加软件源
+    echo "$THIRD_SOURCE" >> ./repositories.conf
 
-mkdir -p files/etc/opkg/
-echo "$THIRD_SOURCE" >> files/etc/opkg/customfeeds.conf
-# sed -i '/check_signature/d' ./repositories.conf
+    sed -i 's/https:\/\/downloads.openwrt.org/https:\/\/mirrors.tuna.tsinghua.edu.cn\/openwrt/g' ./repositories.conf
+
+    mkdir -p files/etc/opkg/
+    echo "$THIRD_SOURCE" >> files/etc/opkg/customfeeds.conf
+    # sed -i '/check_signature/d' ./repositories.conf
+fi
 
 # 添加签名验证的 key
 cp diy/keys/* keys
