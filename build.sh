@@ -72,6 +72,7 @@ luci-app-openclash \
 "
 
 all_packages="$all_packages luci-theme-argon"
+chmod +x files/etc/openclash/core/clash_meta
 
 if [ -z "$PROFILE" ]; then
     make image PACKAGES="$all_packages" FILES="files"
