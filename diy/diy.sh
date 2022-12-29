@@ -1,14 +1,5 @@
 #!/bin/bash -e
 
-CLASH_META_VERSION=1.13.2
-if [ "$TARGET" = "x86_64" ]; then
-    IPK_ARCH=x86_64
-    CLASH_ARCH=amd64-compatible
-elif [ "$TARGET" = "rockchip" ]; then
-    IPK_ARCH=aarch64_generic
-    CLASH_ARCH=arm64
-fi
-
 # =================================================================
 
 # 添加软件源
@@ -71,9 +62,7 @@ sudo -E apt-get -qq install gzip
 
 # 扩大 rootfs 大小，不然编译 x86_64 会报错
 
-if [ "$TARGET" = "x86_64" ] || [ "$TARGET" = "rockchip" ];then
-    sed -i '/CONFIG_TARGET_ROOTFS_PARTSIZE/ c\CONFIG_TARGET_ROOTFS_PARTSIZE=200' .config
-fi
+sed -i '/CONFIG_TARGET_ROOTFS_PARTSIZE/ c\CONFIG_TARGET_ROOTFS_PARTSIZE=200' .config
 
 # 去广告相关
 mkdir -p files/etc/dnsfilter

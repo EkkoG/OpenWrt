@@ -2,24 +2,29 @@
 
 if [ "$1" = 'amd64_21' ]; then
     IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:x86-64-openwrt-21.02"
-    TARGET=x86_64
     OPENWRT_VERSION=21.02
+    IPK_ARCH=x86_64
+    CLASH_ARCH=amd64-compatible
 elif [ "$1" = 'amd64_22' ]; then
     IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:x86-64-22.03.2"
-    TARGET=x86_64
     OPENWRT_VERSION=22.03
+    IPK_ARCH=x86_64
+    CLASH_ARCH=amd64-compatible
 elif [ "$1" = 'rockchip_21' ]; then
     IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:rockchip-armv8-openwrt-21.02"
-    TARGET=rockchip
     OPENWRT_VERSION=21.02
+    IPK_ARCH=aarch64_generic
+    CLASH_ARCH=arm64
 elif [ "$1" = 'rockchip_22' ]; then
     IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:rockchip-armv8-openwrt-22.03"
-    TARGET=rockchip
     OPENWRT_VERSION=22.03
+    IPK_ARCH=aarch64_generic
+    CLASH_ARCH=arm64
 elif [ "$1" = 'immortalwrt_rockchip_21' ]; then
     IMAGEBUILDER_IMAGE="immortalwrt/imagebuilder:rockchip-armv8-openwrt-21.02.3"
-    TARGET=rockchip
     OPENWRT_VERSION=21.02
+    IPK_ARCH=aarch64_generic
+    CLASH_ARCH=arm64
 else
     echo "Usage: $0 [amd64_21|amd64_22|rockchip_21|rockchip_22|immortalwrt_rockchip_21]"
     exit 1
