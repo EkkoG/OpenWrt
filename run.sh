@@ -1,39 +1,33 @@
 #!/bin/bash -e
 CLASH_META_VERSION=1.13.2
+
 if [ "$1" = 'amd64_21' ]; then
     IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:x86-64-openwrt-21.02"
-    IPK_ARCH=x86_64
-    CLASH_ARCH=amd64-compatible
 elif [ "$1" = 'amd64_22' ]; then
     IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:x86-64-22.03.2"
-    OPENWRT_VERSION=22.03
-    IPK_ARCH=x86_64
-    CLASH_ARCH=amd64-compatible
 elif [ "$1" = 'rockchip_r2s_21' ]; then
     IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:rockchip-armv8-openwrt-21.02"
-    IPK_ARCH=aarch64_generic
-    CLASH_ARCH=arm64
 elif [ "$1" = 'rockchip_r2s_22' ]; then
     IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:rockchip-armv8-openwrt-22.03"
-    IPK_ARCH=aarch64_generic
-    CLASH_ARCH=arm64
 elif [ "$1" = 'rockchip_r4s_21' ]; then
     IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:rockchip-armv8-openwrt-21.02"
-    IPK_ARCH=aarch64_generic
-    CLASH_ARCH=arm64
     PROFILE=friendlyarm_nanopi-r4s
 elif [ "$1" = 'rockchip_r4s_22' ]; then
     IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:rockchip-armv8-openwrt-22.03"
-    IPK_ARCH=aarch64_generic
-    CLASH_ARCH=arm64
     PROFILE=friendlyarm_nanopi-r4s
 elif [ "$1" = 'immortalwrt_rockchip_r2s_21' ]; then
     IMAGEBUILDER_IMAGE="immortalwrt/imagebuilder:rockchip-armv8-openwrt-21.02.3"
-    IPK_ARCH=aarch64_generic
-    CLASH_ARCH=arm64
 else
     echo "Usage: $0 [amd64_21|amd64_22|rockchip_r2s_21|rockchip_r2s_22|rockchip_r4s_21|rockchip_r4s_22|immortalwrt_rockchip_r2s_21]"
     exit 1
+fi
+
+if [[ "$1" =~ "amd" ]]; then
+    IPK_ARCH=x86_64
+    CLASH_ARCH=amd64-compatible
+elif [[ "$1" =~ "rockchip" ]]; then
+    IPK_ARCH=aarch64_generic
+    CLASH_ARCH=arm64
 fi
 
 SMALL_VERSION=${IMAGEBUILDER_IMAGE##*-}
