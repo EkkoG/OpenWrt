@@ -1,8 +1,8 @@
 .env*
 bin/
 .DS_Store
-diy/uci/other.sh
-diy/ssh/authorized_keys
+uci/other.sh
+ssh/authorized_keys
 transfer.sh
 files
 docker-compose.yml

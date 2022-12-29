@@ -60,7 +60,9 @@ services:
       - ./.env
     volumes:
       - ./bin:$BUILD_DIR/bin
-      - ./diy:$BUILD_DIR/diy
+      - ./uci:$BUILD_DIR/uci
+      - ./ssh:$BUILD_DIR/ssh
+      - ./keys:$BUILD_DIR/third_party_keys
       - ./build.sh:$BUILD_DIR/build.sh
     command: "./build.sh"
 END
