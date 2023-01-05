@@ -1,5 +1,5 @@
 #!/bin/bash -e
-CLASH_META_VERSION=1.13.2
+CLASH_META_VERSION=1.14.0
 
 if [ "$1" = 'amd64_21' ]; then
     IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:x86-64-openwrt-21.02"
@@ -47,15 +47,24 @@ fi
 CLASH_FILE_NAME="Clash.Meta-linux-${CLASH_ARCH}-v${CLASH_META_VERSION}"
 CLASH_GZ_FILE_NAME="$CLASH_FILE_NAME.gz"
 
+gz_cmd() {
+    # macOS use gunzip, Linux use gzip
+    if [ "$(uname)" = 'Darwin' ]; then
+        gunzip -d "$1"
+    else
+        gzip -d "$1"
+    fi
+}
+
 if [ -f "/tmp/$CLASH_FILE_NAME" ]; then
     echo "Clash.Meta already exists, skip download"
 elif [ -f "/tmp/$CLASH_GZ_FILE_NAME" ]; then
     echo "Clash.Meta.gz already exists, skip download"
-    gz -d "/tmp/$CLASH_GZ_FILE_NAME"
+    gz_cmd "/tmp/$CLASH_GZ_FILE_NAME"
 else
     echo "Downloading Clash.Meta..."
-    wget "https://github.com/MetaCubeX/Clash.Meta/releases/download/v${CLASH_META_VERSION}/$CLASH_GZ_FILE_NAME"
-    gz -d "/tmp/$CLASH_GZ_FILE_NAME"
+    wget "https://github.com/MetaCubeX/Clash.Meta/releases/download/v${CLASH_META_VERSION}/$CLASH_GZ_FILE_NAME" -O "/tmp/$CLASH_GZ_FILE_NAME"
+    gz_cmd "/tmp/$CLASH_GZ_FILE_NAME"
 fi
 mkdir -p clashcore
 cp "/tmp/$CLASH_FILE_NAME" clashcore/clash_meta

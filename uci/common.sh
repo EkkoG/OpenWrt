@@ -6,8 +6,6 @@ while uci -q delete openclash.@config_subscribe[0]; do :; done
 while uci -q delete openclash.@authentication[0]; do :; done
 
 uci batch << EOF
-set overture.@overture[0].VerboseMode='0'
-set overture.@overture[0].LogToFile='/var/overture.log'
 
 set system.@system[0].zonename='Asia/Shanghai'
 set system.@system[0].timezone='CST-8'
