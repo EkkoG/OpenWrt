@@ -14,6 +14,10 @@ set system.@system[0].conloglevel='7'
 
 set luci.main.lang='zh_cn'
 
+add openclash authentication
+set openclash.@authentication[-1]=authentication
+set openclash.@authentication[-1].enabled='0'
+
 add openclash dns_servers
 set openclash.@dns_servers[-1]=dns_servers
 set openclash.@dns_servers[-1].group='nameserver'
