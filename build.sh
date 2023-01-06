@@ -20,7 +20,9 @@ else
 # 添加软件源
     echo "$THIRD_SOURCE" >> ./repositories.conf
 
-    sed -i 's/https:\/\/downloads.openwrt.org/https:\/\/mirrors.tuna.tsinghua.edu.cn\/openwrt/g' ./repositories.conf
+    if [ ! -z $TSINGHUA_MIRROR ]; then
+        sed -i 's/https:\/\/downloads.openwrt.org/https:\/\/mirrors.tuna.tsinghua.edu.cn\/openwrt/g' ./repositories.conf
+    fi
 
     mkdir -p files/etc/opkg/
     echo "$THIRD_SOURCE" >> files/etc/opkg/customfeeds.conf

@@ -1,36 +1,80 @@
 #!/bin/bash -e
 CLASH_META_VERSION=1.14.0
 
-if [ "$1" = 'amd64_21' ]; then
-    IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:x86-64-openwrt-21.02"
-elif [ "$1" = 'amd64_22' ]; then
-    IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:x86-64-22.03.2"
-elif [ "$1" = 'rockchip_r2s_21' ]; then
-    IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:rockchip-armv8-openwrt-21.02"
-elif [ "$1" = 'rockchip_r2s_22' ]; then
-    IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:rockchip-armv8-22.03.2"
-elif [ "$1" = 'rockchip_r4s_21' ]; then
-    IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:rockchip-armv8-openwrt-21.02"
-    PROFILE=friendlyarm_nanopi-r4s
-elif [ "$1" = 'rockchip_r4s_22' ]; then
-    IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:rockchip-armv8-22.03.2"
-    PROFILE=friendlyarm_nanopi-r4s
-elif [ "$1" = 'immortalwrt_amd_21' ]; then
-    IMAGEBUILDER_IMAGE="immortalwrt/imagebuilder:x86-64-openwrt-21.02"
-elif [ "$1" = 'immortalwrt_rockchip_r2s_21' ]; then
-    IMAGEBUILDER_IMAGE="immortalwrt/imagebuilder:rockchip-armv8-openwrt-21.02.3"
-elif [ "$1" = 'immortalwrt_rockchip_r4s_21' ]; then
-    IMAGEBUILDER_IMAGE="immortalwrt/imagebuilder:rockchip-armv8-openwrt-21.02.3"
-    PROFILE=friendlyarm_nanopi-r4s
-else
-    echo "Usage: $0 [amd64_21|amd64_22|rockchip_r2s_21|rockchip_r2s_22|rockchip_r4s_21|rockchip_r4s_22|immortalwrt_amd_21|immortalwrt_rockchip_r2s_21|immortalwrt_rockchip_r4s_21]"
+
+function usage()
+{
+    echo "--with-pull: pull image before build"
+    echo "--rm-first: remove container before build"
+    echo "--tsinghua-mirror: use tsinghua mirror"
+    echo "-h|--help: print this help"
+    echo "and a build target: amd64_21 | amd64_22 | rockchip_r2s_21 | rockchip_r2s_22 | rockchip_r4s_21 | rockchip_r4s_22 | immortalwrt_amd_21 | immortalwrt_rockchip_r2s_21 | immortalwrt_rockchip_r4s_21"
+    exit 1
+}
+
+while [ "$1" != "" ]; do
+    PARAM=`echo $1 | awk -F= '{print $1}'`
+    VALUE=`echo $1 | awk -F= '{print $2}'`
+    case $PARAM in
+        amd64_21 | amd64_22 | rockchip_r2s_21 | rockchip_r2s_22 | rockchip_r4s_21 | rockchip_r4s_22 | immortalwrt_amd_21 | immortalwrt_rockchip_r2s_21 | immortalwrt_rockchip_r4s_21)
+        TARGET=$PARAM
+            ;;
+        --with-pull)
+            WITH_PULL=1
+            ;;
+        --rm-first)
+            RM_FIRST=1
+            ;;
+        --tsinghua-mirror)
+            TSINGHUA_MIRROR=1
+            ;;
+        -h | --help)
+            usage
+            ;;
+        *)
+            echo "ERROR: unknown parameter \"$PARAM\""
+            usage
+            exit 1
+            ;;
+    esac
+    shift
+done
+
+if [ -z "$TARGET" ]; then
+    echo "ERROR: no target specified"
+    usage
     exit 1
 fi
 
-if [[ "$1" =~ "amd" ]]; then
+if [ "$TARGET" = 'amd64_21' ]; then
+    IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:x86-64-openwrt-21.02"
+elif [ "$TARGET" = 'amd64_22' ]; then
+    IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:x86-64-22.03.2"
+elif [ "$TARGET" = 'rockchip_r2s_21' ]; then
+    IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:rockchip-armv8-openwrt-21.02"
+elif [ "$TARGET" = 'rockchip_r2s_22' ]; then
+    IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:rockchip-armv8-22.03.2"
+elif [ "$TARGET" = 'rockchip_r4s_21' ]; then
+    IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:rockchip-armv8-openwrt-21.02"
+    PROFILE=friendlyarm_nanopi-r4s
+elif [ "$TARGET" = 'rockchip_r4s_22' ]; then
+    IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:rockchip-armv8-22.03.2"
+    PROFILE=friendlyarm_nanopi-r4s
+elif [ "$TARGET" = 'immortalwrt_amd_21' ]; then
+    IMAGEBUILDER_IMAGE="immortalwrt/imagebuilder:x86-64-openwrt-21.02"
+elif [ "$TARGET" = 'immortalwrt_rockchip_r2s_21' ]; then
+    IMAGEBUILDER_IMAGE="immortalwrt/imagebuilder:rockchip-armv8-openwrt-21.02.3"
+elif [ "$TARGET" = 'immortalwrt_rockchip_r4s_21' ]; then
+    IMAGEBUILDER_IMAGE="immortalwrt/imagebuilder:rockchip-armv8-openwrt-21.02.3"
+    PROFILE=friendlyarm_nanopi-r4s
+else
+    exit 1
+fi
+
+if [[ "$TARGET" =~ "amd" ]]; then
     IPK_ARCH=x86_64
     CLASH_ARCH=amd64-compatible
-elif [[ "$1" =~ "rockchip" ]]; then
+elif [[ "$TARGET" =~ "rockchip" ]]; then
     IPK_ARCH=aarch64_generic
     CLASH_ARCH=arm64
 fi
@@ -81,6 +125,7 @@ services:
       - CLASH_ARCH=$CLASH_ARCH
       - CLASH_META_VERSION=$CLASH_META_VERSION
       - PROFILE=$PROFILE
+      - TSINGHUA_MIRROR=$TSINGHUA_MIRROR
     env_file:
       - ./.env
     volumes:
@@ -97,8 +142,12 @@ END
 
 echo "$docker_compose_file_content" > docker-compose.yml
 
-if [ "$2" = '--with-pull' ]; then
+if [ ! -z $WITH_PULL ]; then
     docker-compose pull
+fi
+
+if [ ! -z $RM_FIRST ]; then
+    docker-compose rm -f
 fi
 
 docker-compose up --remove-orphans
