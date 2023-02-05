@@ -7,13 +7,6 @@ while uci -q delete openclash.@authentication[0]; do :; done
 
 uci batch << EOF
 
-set system.@system[0].zonename='Asia/Shanghai'
-set system.@system[0].timezone='CST-8'
-set system.@system[0].cronloglevel='8'
-set system.@system[0].conloglevel='7'
-
-set luci.main.lang='zh_cn'
-
 add openclash authentication
 set openclash.@authentication[-1]=authentication
 set openclash.@authentication[-1].enabled='0'
@@ -54,10 +47,5 @@ set openclash.config.enable_meta_sniffer_custom='0'
 set openclash.config.common_ports='1'
 set openclash.config.append_default_dns='0'
 set openclash.config.enable_custom_dns='1'
-
-set network.lan.ipaddr='LAN_IP'
 commit
 EOF
-
-mkdir -p /etc/dnsmasq.d/
-echo "conf-dir=/etc/dnsmasq.d/" >> /etc/dnsmasq.conf
