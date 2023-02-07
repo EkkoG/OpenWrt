@@ -49,23 +49,23 @@ fi
 if [ "$TARGET" = 'amd64_21' ]; then
     IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:x86-64-openwrt-21.02"
 elif [ "$TARGET" = 'amd64_22' ]; then
-    IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:x86-64-22.03.3"
+    IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:x86-64-openwrt-22.03"
 elif [ "$TARGET" = 'rockchip_r2s_21' ]; then
     IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:rockchip-armv8-openwrt-21.02"
 elif [ "$TARGET" = 'rockchip_r2s_22' ]; then
-    IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:rockchip-armv8-22.03.3"
+    IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:rockchip-armv8-openwrt-22.03"
 elif [ "$TARGET" = 'rockchip_r4s_21' ]; then
     IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:rockchip-armv8-openwrt-21.02"
     PROFILE=friendlyarm_nanopi-r4s
 elif [ "$TARGET" = 'rockchip_r4s_22' ]; then
-    IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:rockchip-armv8-22.03.3"
+    IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:rockchip-armv8-openwrt-22.03"
     PROFILE=friendlyarm_nanopi-r4s
 elif [ "$TARGET" = 'immortalwrt_amd_21' ]; then
     IMAGEBUILDER_IMAGE="immortalwrt/imagebuilder:x86-64-openwrt-21.02"
 elif [ "$TARGET" = 'immortalwrt_rockchip_r2s_21' ]; then
-    IMAGEBUILDER_IMAGE="immortalwrt/imagebuilder:rockchip-armv8-openwrt-21.02.3"
+    IMAGEBUILDER_IMAGE="immortalwrt/imagebuilder:rockchip-armv8-openwrt-21.02"
 elif [ "$TARGET" = 'immortalwrt_rockchip_r4s_21' ]; then
-    IMAGEBUILDER_IMAGE="immortalwrt/imagebuilder:rockchip-armv8-openwrt-21.02.3"
+    IMAGEBUILDER_IMAGE="immortalwrt/imagebuilder:rockchip-armv8-openwrt-21.02"
     PROFILE=friendlyarm_nanopi-r4s
 else
     exit 1
