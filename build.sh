@@ -35,20 +35,20 @@ cp third_party_keys/* keys
 mkdir -p files/etc/opkg/keys/
 cp third_party_keys/* files/etc/opkg/keys/
 
-# 添加自定义 uci 脚本
-mkdir -p files/etc/uci-defaults/
+mkdir -p files/etc/uci-defaults
+
+cp uci-defaults/* files/etc/uci-defaults/
 
 # merge files in uci folder to /tmp/init.sh
-for file in uci/*.sh; do
-    cat "$file" >> files/etc/uci-defaults/init
-    printf "\n" >> files/etc/uci-defaults/init
-done
+for file in files/etc/uci-defaults/*.sh; do
+    # 替换自定义参数
+    sed -i "s/PPPOE_USERNAME/$PPPOE_USERNAME/g" $file
+    sed -i "s/PPPOE_PASSWORD/$PPPOE_PASSWORD/g" $file
+    sed -i "s/LAN_IP/$LAN_IP/g" $file
+    sed -i "s~CLASH_CONFIG_URL~$CLASH_CONFIG_URL~g" $file
 
-# 替换自定义参数
-sed -i "s/PPPOE_USERNAME/$PPPOE_USERNAME/g" files/etc/uci-defaults/init
-sed -i "s/PPPOE_PASSWORD/$PPPOE_PASSWORD/g" files/etc/uci-defaults/init
-sed -i "s/LAN_IP/$LAN_IP/g" files/etc/uci-defaults/init
-sed -i "s~CLASH_CONFIG_URL~$CLASH_CONFIG_URL~g" files/etc/uci-defaults/init
+    cat $file
+done
 
 # 添加 SSH 相关
 if [ -f "ssh/authorized_keys" ];then
@@ -66,7 +66,7 @@ sed -i '/CONFIG_TARGET_ROOTFS_PARTSIZE/ c\CONFIG_TARGET_ROOTFS_PARTSIZE=200' .co
 # fi
 
 # base packages
-all_packages="luci luci-compat -dnsmasq dnsmasq-full luci-i18n-base-zh-cn luci-i18n-firewall-zh-cn"
+all_packages="luci luci-compat -dnsmasq dnsmasq-full luci-i18n-base-zh-cn luci-i18n-firewall-zh-cn openssl-util"
 
 all_packages="$all_packages \
 wget curl vim-full \

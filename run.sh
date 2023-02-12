@@ -47,21 +47,21 @@ if [ -z "$TARGET" ]; then
 fi
 
 if [ "$TARGET" = 'amd64_21' ]; then
-    IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:x86-64-openwrt-21.02"
+    IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:x86-64-21.02.5"
 elif [ "$TARGET" = 'amd64_22' ]; then
-    IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:x86-64-openwrt-22.03"
+    IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:x86-64-22.03.3"
 elif [ "$TARGET" = 'rockchip_r2s_21' ]; then
-    IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:rockchip-armv8-openwrt-21.02"
+    IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:rockchip-armv8-21.02.5"
 elif [ "$TARGET" = 'rockchip_r2s_22' ]; then
-    IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:rockchip-armv8-openwrt-22.03"
+    IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:rockchip-armv8-22.03.3"
 elif [ "$TARGET" = 'rockchip_r4s_21' ]; then
-    IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:rockchip-armv8-openwrt-21.02"
+    IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:rockchip-armv8-21.02.5"
     PROFILE=friendlyarm_nanopi-r4s
 elif [ "$TARGET" = 'rockchip_r4s_22' ]; then
-    IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:rockchip-armv8-openwrt-22.03"
+    IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:rockchip-armv8-22.03.3"
     PROFILE=friendlyarm_nanopi-r4s
 elif [ "$TARGET" = 'immortalwrt_amd_21' ]; then
-    IMAGEBUILDER_IMAGE="immortalwrt/imagebuilder:x86-64-openwrt-21.02"
+    IMAGEBUILDER_IMAGE="immortalwrt/imagebuilder:x86-64-21.02.5"
 elif [ "$TARGET" = 'immortalwrt_rockchip_r2s_21' ]; then
     IMAGEBUILDER_IMAGE="immortalwrt/imagebuilder:rockchip-armv8-openwrt-21.02"
 elif [ "$TARGET" = 'immortalwrt_rockchip_r4s_21' ]; then
@@ -130,7 +130,7 @@ services:
       - ./.env
     volumes:
       - ./bin:$BUILD_DIR/bin
-      - ./uci:$BUILD_DIR/uci
+      - ./uci-defaults:$BUILD_DIR/uci-defaults
       - ./ssh:$BUILD_DIR/ssh
       - ./keys:$BUILD_DIR/third_party_keys
       - ./build.sh:$BUILD_DIR/build.sh
@@ -152,3 +152,4 @@ fi
 
 docker-compose up --remove-orphans
 docker-compose rm -f
+rm docker-compose.yml
