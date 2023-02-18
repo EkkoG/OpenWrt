@@ -1,5 +1,5 @@
 #!/bin/bash -e
-CLASH_META_VERSION=1.14.1
+CLASH_META_VERSION=1.14.2
 
 
 function usage()
