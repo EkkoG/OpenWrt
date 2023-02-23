@@ -73,6 +73,26 @@ wget curl vim-full \
 luci-app-openclash \
 "
 
+if [ $OPENWRT_VERSION = "22.03" ]; then
+    all_packages="$all_packages \
+    kmod-nft-tproxy \
+    "
+else
+# ip6tables-mod-nat
+# ipset
+# iptables-mod-extra
+# iptables-mod-tproxy
+# iptables
+# kmod-inet-diag
+# kmod-ipt-nat
+    all_packages="$all_packages \
+    ip6tables-mod-nat \
+    ipset \
+    iptables-mod-extra \
+    iptables-mod-tproxy \
+    "
+fi
+
 all_packages="$all_packages luci-theme-argon"
 chmod +x files/etc/openclash/core/clash_meta
 
