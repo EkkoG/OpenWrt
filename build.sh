@@ -97,6 +97,8 @@ done
 
 all_packages="$all_packages luci-theme-argon"
 
+for dir in custom_files/*; do cp -r "$dir"/* "files/$(basename "$dir")"; done
+
 chmod +x files/etc/openclash/core/clash_meta
 
 if [ -z "$PROFILE" ]; then
