@@ -135,6 +135,7 @@ services:
       - ./keys:$BUILD_DIR/third_party_keys
       - ./build.sh:$BUILD_DIR/build.sh
       - ./clashcore:$BUILD_DIR/files/etc/openclash/core
+      - ./extra-pkgs:$BUILD_DIR/extra-pkgs
     command: "./build.sh"
 END
 

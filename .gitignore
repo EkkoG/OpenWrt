@@ -6,4 +6,5 @@ ssh/authorized_keys
 transfer.sh
 files
 docker-compose.yml
+extra-pkgs
 clashcore

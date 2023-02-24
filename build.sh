@@ -46,8 +46,6 @@ for file in files/etc/uci-defaults/*.sh; do
     sed -i "s/PPPOE_PASSWORD/$PPPOE_PASSWORD/g" $file
     sed -i "s/LAN_IP/$LAN_IP/g" $file
     sed -i "s~CLASH_CONFIG_URL~$CLASH_CONFIG_URL~g" $file
-
-    cat $file
 done
 
 # 添加 SSH 相关
@@ -93,7 +91,12 @@ else
     "
 fi
 
+for file in extra-pkgs/*; do
+    all_packages="$all_packages $(cat $file | tr '\n' ' ')"
+done
+
 all_packages="$all_packages luci-theme-argon"
+
 chmod +x files/etc/openclash/core/clash_meta
 
 if [ -z "$PROFILE" ]; then
