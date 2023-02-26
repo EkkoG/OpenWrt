@@ -49,3 +49,5 @@ set openclash.config.append_default_dns='0'
 set openclash.config.enable_custom_dns='1'
 commit
 EOF
+
+sed -i '/common_port=/ c\      common_port="21 22 23 53 80 123 143 194 443 465 587 853 993 995 998 2052 2053 2082 2083 2086 2095 2096 5222 5228 5229 5230 8080 8443 8880 8888 8889 9080 5900"' /etc/init.d/openclash
