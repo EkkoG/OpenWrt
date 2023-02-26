@@ -8,7 +8,7 @@ function usage()
     echo "--rm-first: remove container before build"
     echo "--tsinghua-mirror: use tsinghua mirror"
     echo "-h|--help: print this help"
-    echo "and a build target: amd64_21 | amd64_22 | rockchip_r2s_21 | rockchip_r2s_22 | rockchip_r4s_21 | rockchip_r4s_22 | immortalwrt_amd_21 | immortalwrt_rockchip_r2s_21 | immortalwrt_rockchip_r4s_21"
+    echo "and a build target: amd64_21 | amd64_22 | rockchip_r2s_21 | rockchip_r2s_22 | rockchip_r4s_21 | rockchip_r4s_22 | immortalwrt_amd64_21 | immortalwrt_rockchip_r2s_21 | immortalwrt_rockchip_r4s_21"
     exit 1
 }
 
@@ -16,7 +16,7 @@ while [ "$1" != "" ]; do
     PARAM=`echo $1 | awk -F= '{print $1}'`
     VALUE=`echo $1 | awk -F= '{print $2}'`
     case $PARAM in
-        amd64_21 | amd64_22 | rockchip_r2s_21 | rockchip_r2s_22 | rockchip_r4s_21 | rockchip_r4s_22 | immortalwrt_amd_21 | immortalwrt_rockchip_r2s_21 | immortalwrt_rockchip_r4s_21)
+        amd64_21 | amd64_22 | rockchip_r2s_21 | rockchip_r2s_22 | rockchip_r4s_21 | rockchip_r4s_22 | immortalwrt_amd64_21 | immortalwrt_rockchip_r2s_21 | immortalwrt_rockchip_r4s_21)
         TARGET=$PARAM
             ;;
         --with-pull)
@@ -60,8 +60,8 @@ elif [ "$TARGET" = 'rockchip_r4s_21' ]; then
 elif [ "$TARGET" = 'rockchip_r4s_22' ]; then
     IMAGEBUILDER_IMAGE="openwrtorg/imagebuilder:rockchip-armv8-22.03.3"
     PROFILE=friendlyarm_nanopi-r4s
-elif [ "$TARGET" = 'immortalwrt_amd_21' ]; then
-    IMAGEBUILDER_IMAGE="immortalwrt/imagebuilder:x86-64-21.02.5"
+elif [ "$TARGET" = 'immortalwrt_amd64_21' ]; then
+    IMAGEBUILDER_IMAGE="immortalwrt/imagebuilder:x86-64-openwrt-21.02"
 elif [ "$TARGET" = 'immortalwrt_rockchip_r2s_21' ]; then
     IMAGEBUILDER_IMAGE="immortalwrt/imagebuilder:rockchip-armv8-openwrt-21.02"
 elif [ "$TARGET" = 'immortalwrt_rockchip_r4s_21' ]; then
