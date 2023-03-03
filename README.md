@@ -24,6 +24,12 @@ PPPOE_PASSWORD=
 LAN_IP=
 CLASH_CONFIG_URL=
 ```
+### 可选环境变量
+
+添加额外软件包
+```bash
+EXTRA_PKGS=natmap python3-light
+```
 
 ### 版本支持情况
 
@@ -43,15 +49,16 @@ CLASH_CONFIG_URL=
 
 ## 自定义
 
-### 添加 SSH key
+OpenWrt 在首次启动时，会执行 `/etc/uci-defaults/` 目录下的所有脚本，因此您可以通过在该目录下添加脚本，来实现自定义功能。
 
-在根目录创建文件夹 `ssh`，并将公钥录入到 `ssh/authorized_keys` 即可
+自定义功能举例：
 
-### UCI 自定义
+- 设置默认密码
+- 添加信任 SSH 公钥
+- 添加 uci 脚本，实现自定义功能
 
-将 uci 命令录入 `uci/other.sh` 即可
-注意：由于本项目也是使用 uci 命令来进行自定义，所以在录入时建议看一下内置的命令是否会冲突，内置的命令在 uci 文件夹的 common.sh 和 network.sh 两个文件中
 
+## 致谢
 感谢以下项目，使得我的上网体验又有所提升
 
 - [OpenWrt](https://openwrt.org/)
