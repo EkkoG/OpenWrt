@@ -110,8 +110,8 @@ else
     wget "https://github.com/MetaCubeX/Clash.Meta/releases/download/v${CLASH_META_VERSION}/$CLASH_GZ_FILE_NAME" -O "/tmp/$CLASH_GZ_FILE_NAME"
     gz_cmd "/tmp/$CLASH_GZ_FILE_NAME"
 fi
-mkdir -p clashcore
-cp "/tmp/$CLASH_FILE_NAME" clashcore/clash_meta
+mkdir -p files/etc/openclash/core
+cp "/tmp/$CLASH_FILE_NAME" files/etc/openclash/core/clash_meta
 
 docker_compose_file_content=$(cat <<-END
 version: "3.5"
@@ -130,12 +130,7 @@ services:
       - ./.env
     volumes:
       - ./bin:$BUILD_DIR/bin
-      - ./uci-defaults:$BUILD_DIR/uci-defaults
-      - ./ssh:$BUILD_DIR/ssh
-      - ./keys:$BUILD_DIR/third_party_keys
       - ./build.sh:$BUILD_DIR/build.sh
-      - ./clashcore:$BUILD_DIR/files/etc/openclash/core
-      - ./extra-pkgs:$BUILD_DIR/extra-pkgs
       - ./files:$BUILD_DIR/custom_files
     command: "./build.sh"
 END

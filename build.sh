@@ -5,9 +5,11 @@ if [ -z $LAN_IP ]; then
     exit 1
 fi
 
-# =================================================================
-# change files folder to current user
-sudo chown -R $(whoami):$(whoami) files
+cp -r custom_files files
+
+# sudo apt-get update
+# sudo apt-get install tree
+# tree files
 
 THIRD_SOURCE=$(cat <<-END
 src/gz ekkog https://ghproxy.com/https://github.com/ekkog/openwrt-dist/blob/packages/${IPK_ARCH}-${OPENWRT_VERSION}
@@ -30,14 +32,7 @@ else
 fi
 
 # 添加签名验证的 key
-cp third_party_keys/* keys
-
-mkdir -p files/etc/opkg/keys/
-cp third_party_keys/* files/etc/opkg/keys/
-
-mkdir -p files/etc/uci-defaults
-
-cp uci-defaults/* files/etc/uci-defaults/
+cp files/etc/opkg/keys/* keys
 
 # merge files in uci folder to /tmp/init.sh
 for file in files/etc/uci-defaults/*.sh; do
@@ -49,9 +44,7 @@ for file in files/etc/uci-defaults/*.sh; do
 done
 
 # 添加 SSH 相关
-if [ -f "ssh/authorized_keys" ];then
-    mkdir -p files/etc/dropbear/
-    cat "ssh/authorized_keys" >> files/etc/dropbear/authorized_keys
+if [ -f "files/etc/dropbear/authorized_keys" ];then
     chmod 644 files/etc/dropbear/authorized_keys
 fi
 
@@ -76,13 +69,6 @@ if [ $OPENWRT_VERSION = "22.03" ]; then
     kmod-nft-tproxy \
     "
 else
-# ip6tables-mod-nat
-# ipset
-# iptables-mod-extra
-# iptables-mod-tproxy
-# iptables
-# kmod-inet-diag
-# kmod-ipt-nat
     all_packages="$all_packages \
     ip6tables-mod-nat \
     ipset \
@@ -91,13 +77,7 @@ else
     "
 fi
 
-for file in extra-pkgs/*; do
-    all_packages="$all_packages $(cat $file | tr '\n' ' ')"
-done
-
-all_packages="$all_packages luci-theme-argon"
-
-for dir in custom_files/*; do cp -r "$dir"/* "files/$(basename "$dir")"; done
+all_packages="$all_packages $EXTRA_PKGS luci-theme-argon"
 
 chmod +x files/etc/openclash/core/clash_meta
 
