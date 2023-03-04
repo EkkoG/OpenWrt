@@ -35,7 +35,7 @@ fi
 cp files/etc/opkg/keys/* keys
 
 # merge files in uci folder to /tmp/init.sh
-for file in files/etc/uci-defaults/*.sh; do
+for file in files/etc/uci-defaults/*; do
     # 替换自定义参数
     sed -i "s/PPPOE_USERNAME/$PPPOE_USERNAME/g" $file
     sed -i "s/PPPOE_PASSWORD/$PPPOE_PASSWORD/g" $file
