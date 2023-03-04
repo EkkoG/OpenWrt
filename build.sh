@@ -59,10 +59,8 @@ sed -i '/CONFIG_TARGET_ROOTFS_PARTSIZE/ c\CONFIG_TARGET_ROOTFS_PARTSIZE=200' .co
 # base packages
 all_packages="luci luci-compat -dnsmasq dnsmasq-full luci-i18n-base-zh-cn luci-i18n-firewall-zh-cn openssl-util"
 
-all_packages="$all_packages \
-wget curl vim-full \
-luci-app-openclash \
-"
+# openclash
+all_packages="$all_packages luci-app-openclash"
 
 if [ $OPENWRT_VERSION = "22.03" ]; then
     all_packages="$all_packages \
@@ -77,6 +75,7 @@ else
     "
 fi
 
+# theme
 all_packages="$all_packages $EXTRA_PKGS luci-theme-argon"
 
 chmod +x files/etc/openclash/core/clash_meta
