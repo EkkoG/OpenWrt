@@ -49,7 +49,7 @@ set openclash.config.config_update_week_time='*'
 set openclash.config.core_type='Meta'
 set openclash.config.enable_meta_core='1'
 set openclash.config.enable_meta_sniffer='0'
-set openclash.config.common_ports='1'
+set openclash.config.common_ports='0'
 set openclash.config.append_default_dns='0'
 set openclash.config.enable_custom_dns='1'
 commit
