@@ -1,5 +1,5 @@
 #!/bin/bash -e
-
+sudo chown -R $(whoami):$(whoami) bin
 if [ -z $LAN_IP ]; then
     echo "LAN_IP is empty"
     exit 1
