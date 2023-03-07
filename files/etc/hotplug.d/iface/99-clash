@@ -6,9 +6,10 @@ ps | grep openclash | grep nobody
     logger "iface wan up detected..."
     
     if [ $? -eq 0 ]; then
-        echo "OpenClash is running"
+        logger "OpenClash is running"
     else
         if [ ! -f /root/.first_boot ]; then
+            logger "First boot detected, starting OpenClash..."
             touch /root/.first_boot
             /etc/init.d/openclash start
             exit 0
