@@ -1,0 +1,17 @@
+#!/bin/sh
+
+ps | grep openclash | grep nobody
+
+[ "$ACTION" = "ifup" -a "$INTERFACE" = "wan" ] && {
+    logger "iface wan up detected..."
+    
+    if [ $? -eq 0 ]; then
+        echo "OpenClash is running"
+    else
+        if [ ! -f /root/.first_boot ]; then
+            touch /root/.first_boot
+            /etc/init.d/openclash start
+            exit 0
+        fi
+    fi
+}
