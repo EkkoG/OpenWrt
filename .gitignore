@@ -9,6 +9,7 @@ files/etc/opkg/*
 
 !files/etc/uci-defaults
 files/etc/uci-defaults/*
+files/root/*
 !files/etc/uci-defaults/89-network
 !files/etc/uci-defaults/90-openclash
 !files/etc/uci-defaults/91-system

@@ -10,8 +10,14 @@ ps | grep openclash | grep nobody
     else
         if [ ! -f /root/.first_boot ]; then
             logger "First boot detected, starting OpenClash..."
-            touch /root/.first_boot
+
+            /usr/share/openclash/openclash_ipdb.sh
+            /usr/share/openclash/openclash_geoip.sh
+            /usr/share/openclash/openclash_chnroute.sh
+
             /etc/init.d/openclash start
+
+            touch /root/.first_boot
             exit 0
         fi
     fi
