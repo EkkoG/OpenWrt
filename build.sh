@@ -7,6 +7,9 @@ fi
 
 cp -r custom_files files
 
+mkdir -p files/etc/openclash/config
+wget $CLASH_CONFIG_URL -O files/etc/openclash/config/config.yaml
+
 # sudo apt-get update
 # sudo apt-get install tree
 # tree files
