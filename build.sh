@@ -13,9 +13,14 @@ wget $CLASH_CONFIG_URL -O files/etc/openclash/config/config.yaml
 # sudo apt-get update
 # sudo apt-get install tree
 # tree files
+IPK_ARCH=$(cat ./repositories.conf | grep _packages | awk -F '/' '{print $8}')
+OPENWRT_VERSION=$(cat ./repositories.conf | grep _packages | awk -F '/' '{print $6}')
+BIG_VERSION=$(echo $OPENWRT_VERSION | awk -F '.' '{print $1"."$2}')
+
+echo "IPK_ARCH: $IPK_ARCH OPENWRT_VERSION: $OPENWRT_VERSION BIG_VERSION: $BIG_VERSION"
 
 THIRD_SOURCE=$(cat <<-END
-src/gz ekkog https://ghproxy.com/https://github.com/ekkog/openwrt-dist/blob/packages/${IPK_ARCH}-${OPENWRT_VERSION}
+src/gz ekkog https://ghproxy.com/https://github.com/ekkog/openwrt-dist/blob/packages/${IPK_ARCH}-${BIG_VERSION}
 END
 )
 
@@ -33,6 +38,8 @@ else
     echo "$THIRD_SOURCE" >> files/etc/opkg/customfeeds.conf
     # sed -i '/check_signature/d' ./repositories.conf
 fi
+
+cat ./repositories.conf
 
 # 添加签名验证的 key
 cp files/etc/opkg/keys/* keys
@@ -63,7 +70,7 @@ sed -i '/CONFIG_TARGET_ROOTFS_PARTSIZE/ c\CONFIG_TARGET_ROOTFS_PARTSIZE=200' .co
 all_packages="luci luci-compat -dnsmasq dnsmasq-full luci-i18n-base-zh-cn luci-i18n-firewall-zh-cn openssl-util"
 
 # openclash
-all_packages="$all_packages luci-app-openclash"
+all_packages="$all_packages luci-app-openclash clash-meta-for-openclash"
 
 if [ $OPENWRT_VERSION = "22.03" ]; then
     all_packages="$all_packages \
@@ -83,6 +90,7 @@ all_packages="$all_packages $EXTRA_PKGS luci-theme-argon"
 
 chmod +x files/etc/openclash/core/clash_meta
 
+make info
 if [ -z "$PROFILE" ]; then
     make image PACKAGES="$all_packages" FILES="files"
 else

@@ -1,4 +1,4 @@
-自用 OpenWrt x86_64/R2S/R4S 固件，以减少新系统启动时必须的初始化配置为目标，达到开机无需配置即可使用
+自用 OpenWrt 固件，以减少新系统启动时必须的初始化配置为目标，达到开机无需配置即可使用
 
 ## 特色
 
@@ -13,8 +13,12 @@
 git clone https://github.com/ekkog/OpenWrt.git
 cd OpenWrt
 新建 .env 文件，配置 PPPOE 等相关变量
-./run.sh amd64_21|amd64_22|rockchip_r2s_21|rockchip_r2s_22|rockchip_r4s_21|rockchip_r4s_22|immortalwrt_amd_21|immortalwrt_rockchip_r2s_21|immortalwrt_rockchip_r4s_21
+./run.sh --image=openwrtorg/imagebuilder:mvebu-cortexa9-22.03.3 --profile=linksys_wrt3200acm
 ```
+
+OpenWrt 的 image 名字可以从 [Docker Hub](https://hub.docker.com/r/openwrtorg/imagebuilder/tags) 上找到
+
+ImmortalWrt 的 image 名字可以从 [Docker Hub](https://hub.docker.com/r/immortalwrt/imagebuilder/tags) 上找到
 
 ### 必须配置的环境变量
 
@@ -32,14 +36,12 @@ EXTRA_PKGS=natmap python3-light
 ```
 
 ### 版本支持情况
+支持 [OpenWrt](https://openwrt.org/) 和 [ImmortalWrt](https://github.com/immortalwrt/immortalwrt) 所有版本 
 
-|  设备   | 21.02  | 22.03 |
-|  ----  | ----  | ---- |
-| x86_64  | ✅ | ✅ |
-| R2S | ✅ | ✅ |
-| R4S | ✅ | ✅ |
+测试过的版本
 
-另外支持了 [ImmortalWrt](https://github.com/immortalwrt/immortalwrt) 21.02
+- openwrtorg/imagebuilder:x86-64-22.03.3
+- openwrtorg/rockchip-armv8-22.03.3 (R2S)
 
 ### 内置软件列表
 
