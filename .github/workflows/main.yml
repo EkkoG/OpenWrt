@@ -31,5 +31,5 @@ jobs:
           echo "PPPOE_USERNAME=123" >> .env
           echo "PPPOE_PASSWORD=123" >> .env
           echo "LAN_IP=192.168.1.1" >> .env
-          echo "CLASH_CONFIG_URL=https://example.com/Pro.yaml" >> .env
+          echo "CLASH_CONFIG_URL=https://gist.github.com/EkkoG/20a52db0169c4a4769689521b1c5500e/raw/cf61a9397d0bdbd5b6bbad8fbb388ec851116470/clash_example.yaml" >> .env
           ./run.sh --image=openwrtorg/imagebuilder:x86-64-22.03.3  
