@@ -86,5 +86,11 @@ if [ ! -z $RM_FIRST ]; then
 fi
 
 docker-compose up --remove-orphans
+build_status=$?
 docker-compose rm -f
 rm docker-compose.yml
+
+if [ $build_status -ne 0 ]; then
+    echo "build failed"
+    exit 1
+fi
