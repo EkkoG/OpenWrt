@@ -86,8 +86,6 @@ fi
 # theme
 all_packages="$all_packages $EXTRA_PKGS luci-theme-argon"
 
-chmod +x files/etc/openclash/core/clash_meta
-
 make info
 if [ -z "$PROFILE" ]; then
     make image PACKAGES="$all_packages" FILES="files"
