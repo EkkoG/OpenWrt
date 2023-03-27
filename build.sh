@@ -1,5 +1,11 @@
 #!/bin/bash -e
 sudo chown -R $(whoami):$(whoami) bin
+if [[ $PWD =~ "immortalwrt" ]]; then
+    PROJECT_NAME="immortalwrt"
+else
+    PROJECT_NAME="openwrt"
+fi
+
 if [ -z $LAN_IP ]; then
     echo "LAN_IP is empty"
     exit 1
@@ -13,23 +19,24 @@ wget $CLASH_CONFIG_URL -O files/etc/openclash/config/config.yaml
 # sudo apt-get update
 # sudo apt-get install tree
 # tree files
-IPK_ARCH=$(cat ./repositories.conf | grep _packages | awk -F '/' '{print $8}')
-OPENWRT_VERSION=$(cat ./repositories.conf | grep _packages | awk -F '/' '{print $6}')
+PACKAGES_ARCH=$(cat .config | grep CONFIG_TARGET_ARCH_PACKAGES | awk -F '=' '{print $2}' | sed 's/"//g')
+OPENWRT_VERSION=$(cat ./include/version.mk | grep 'VERSION_NUMBER:=$(if' | awk -F ',' '{print $3}' | awk -F ')' '{print $1}')
+if [ $OPENWRT_VERSION = "SNAPSHOT" ]; then
+    OPENWRT_VERSION=22.03
+fi
 BIG_VERSION=$(echo $OPENWRT_VERSION | awk -F '.' '{print $1"."$2}')
 
-echo "IPK_ARCH: $IPK_ARCH OPENWRT_VERSION: $OPENWRT_VERSION BIG_VERSION: $BIG_VERSION"
+echo "PACKAGES_ARCH: $PACKAGES_ARCH OPENWRT_VERSION: $OPENWRT_VERSION BIG_VERSION: $BIG_VERSION"
+
+# src/gz ekkog https://ghproxy.com/https://github.com/ekkog/openwrt-dist/blob/packages/${PACKAGES_ARCH}-${BIG_VERSION}
 
 THIRD_SOURCE=$(cat <<-END
-src/gz ekkog https://ghproxy.com/https://github.com/ekkog/openwrt-dist/blob/packages/${IPK_ARCH}-${BIG_VERSION}
+src/gz ekkog https://github.com/ekkog/openwrt-dist/raw/packages/${PACKAGES_ARCH}-${BIG_VERSION}
 END
 )
 
-if [[ $PWD =~ "immortalwrt" ]]; then
-    echo "pass"
-else
-    if [ ! -z $TSINGHUA_MIRROR ]; then
-        sed -i 's/https:\/\/downloads.openwrt.org/https:\/\/mirrors.tuna.tsinghua.edu.cn\/openwrt/g' ./repositories.conf
-    fi
+if [ ! -z $USE_MIRROR ]; then
+    sed -i 's/https:\/\/downloads.'"$PROJECT_NAME"'.org/https:\/\/mirrors.pku.edu.cn\/'"$PROJECT_NAME"'/g' ./repositories.conf
 fi
 # 添加软件源
 echo "$THIRD_SOURCE" >> ./repositories.conf
@@ -70,7 +77,7 @@ all_packages="luci luci-compat -dnsmasq dnsmasq-full luci-i18n-base-zh-cn luci-i
 # openclash
 all_packages="$all_packages luci-app-openclash clash-meta-for-openclash"
 
-if [ $OPENWRT_VERSION = "22.03" ]; then
+if [ $BIG_VERSION = "22.03" ]; then
     all_packages="$all_packages \
     kmod-nft-tproxy \
     "

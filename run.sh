@@ -20,8 +20,8 @@ while [ "$1" != "" ]; do
         --rm-first)
             RM_FIRST=1
             ;;
-        --tsinghua-mirror)
-            TSINGHUA_MIRROR=1
+        --use-mirror)
+            USE_MIRROR=1
             ;;
         --profile)
             PROFILE=$VALUE
@@ -63,7 +63,7 @@ services:
     container_name: imagebuilder
     environment:
       - PROFILE=$PROFILE
-      - TSINGHUA_MIRROR=$TSINGHUA_MIRROR
+      - USE_MIRROR=$USE_MIRROR
     env_file:
       - ./.env
     volumes:
