@@ -21,7 +21,7 @@ while [ "$1" != "" ]; do
             RM_FIRST=1
             ;;
         --use-mirror)
-            USE_MIRROR=1
+            USE_MIRROR=$VALUE
             ;;
         --profile)
             PROFILE=$VALUE
@@ -45,6 +45,10 @@ if [ -z "$IMAGEBUILDER_IMAGE" ]; then
     echo "ERROR: no image specified"
     usage
     exit 1
+fi
+
+if [ -z "$USE_MIRROR" ]; then
+    USE_MIRROR=1
 fi
 
 echo "IMAGEBUILDER_IMAGE: $IMAGEBUILDER_IMAGE PROFILE: $PROFILE"

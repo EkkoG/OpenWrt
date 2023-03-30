@@ -21,10 +21,11 @@ wget $CLASH_CONFIG_URL -O files/etc/openclash/config/config.yaml
 # tree files
 PACKAGES_ARCH=$(cat .config | grep CONFIG_TARGET_ARCH_PACKAGES | awk -F '=' '{print $2}' | sed 's/"//g')
 OPENWRT_VERSION=$(cat ./include/version.mk | grep 'VERSION_NUMBER:=$(if' | awk -F ',' '{print $3}' | awk -F ')' '{print $1}')
-if [ $OPENWRT_VERSION = "SNAPSHOT" ]; then
-    OPENWRT_VERSION=22.03
-fi
 BIG_VERSION=$(echo $OPENWRT_VERSION | awk -F '.' '{print $1"."$2}')
+if [ $OPENWRT_VERSION = "SNAPSHOT" ]; then
+    OPENWRT_VERSION=snapshot
+    BIG_VERSION=snapshot
+fi
 
 echo "PACKAGES_ARCH: $PACKAGES_ARCH OPENWRT_VERSION: $OPENWRT_VERSION BIG_VERSION: $BIG_VERSION"
 
@@ -35,7 +36,7 @@ src/gz ekkog https://github.com/ekkog/openwrt-dist/raw/packages/${PACKAGES_ARCH}
 END
 )
 
-if [ ! -z $USE_MIRROR ]; then
+if [ $USE_MIRROR = '1' ]; then
     sed -i 's/https:\/\/downloads.'"$PROJECT_NAME"'.org/https:\/\/mirrors.pku.edu.cn\/'"$PROJECT_NAME"'/g' ./repositories.conf
 fi
 # 添加软件源
@@ -65,6 +66,13 @@ fi
 
 # 扩大 rootfs 大小，不然编译 x86_64 会报错
 sed -i '/CONFIG_TARGET_ROOTFS_PARTSIZE/ c\CONFIG_TARGET_ROOTFS_PARTSIZE=200' .config
+# 不需要的镜像
+sed -i '/CONFIG_ISO_IMAGES/ c\# CONFIG_ISO_IMAGES is not set' .config
+sed -i '/CONFIG_TARGET_IMAGES_PAD/ c\# CONFIG_TARGET_IMAGES_PAD is not set' .config
+sed -i '/CONFIG_VDI_IMAGES/ c\# CONFIG_VDI_IMAGES is not set' .config
+sed -i '/CONFIG_VMDK_IMAGES/ c\# CONFIG_VMDK_IMAGES is not set' .config
+sed -i '/CONFIG_VHDX_IMAGES/ c\# CONFIG_VHDX_IMAGES is not set' .config
+
 
 # # 添加本地软件源，安装自定义 ipk 使用
 # if [ "$OPENWRT_VERSION" = "21.02" ]; then
