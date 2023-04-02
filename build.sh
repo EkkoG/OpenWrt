@@ -23,8 +23,8 @@ PACKAGES_ARCH=$(cat .config | grep CONFIG_TARGET_ARCH_PACKAGES | awk -F '=' '{pr
 OPENWRT_VERSION=$(cat ./include/version.mk | grep 'VERSION_NUMBER:=$(if' | awk -F ',' '{print $3}' | awk -F ')' '{print $1}')
 BIG_VERSION=$(echo $OPENWRT_VERSION | awk -F '.' '{print $1"."$2}')
 if [ $OPENWRT_VERSION = "SNAPSHOT" ]; then
-    OPENWRT_VERSION=snapshot
-    BIG_VERSION=snapshot
+    OPENWRT_VERSION=22.03
+    BIG_VERSION=22.03
 fi
 
 echo "PACKAGES_ARCH: $PACKAGES_ARCH OPENWRT_VERSION: $OPENWRT_VERSION BIG_VERSION: $BIG_VERSION"
