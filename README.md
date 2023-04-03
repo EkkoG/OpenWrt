@@ -41,7 +41,7 @@ EXTRA_PKGS=natmap python3-light
 测试过的版本
 
 - openwrtorg/imagebuilder:x86-64-22.03.3
-- openwrtorg/rockchip-armv8-22.03.3 (R2S)
+- openwrtorg/imagebuilder:rockchip-armv8-22.03.3 (R2S)
 - immortalwrtorg/imagebuilder:rockchip-armv8-openwrt-21.02.4 (R2S)
 - immortalwrtorg/imagebuilder:x86-64-openwrt-21.02.5
 
