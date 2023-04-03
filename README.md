@@ -50,6 +50,7 @@ R2S 推荐使用 ImmortalWrt，因为其对 R2S 的优化更好，比如内存�
 ### 内置软件列表
 
 - <https://github.com/vernesong/OpenClash>
+- <https://github.com/MetaCubeX/Clash.Meta>
 - <https://github.com/jerrykuku/luci-theme-argon>
 
 
@@ -68,5 +69,7 @@ OpenWrt 在首次启动时，会执行 `/etc/uci-defaults/` 目录下的所有�
 感谢以下项目，使得我的上网体验又有所提升
 
 - [OpenWrt](https://openwrt.org/)
+- [ImmortalWrt](http://immortalwrt.org/)
 - [clash](https://github.com/Dreamacro/clash)
 - [OpenClash](https://github.com/vernesong/OpenClash)
+- [Clash.Meta](https://github.com/MetaCubeX/Clash.Meta)
