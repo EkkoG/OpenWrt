@@ -42,6 +42,10 @@ EXTRA_PKGS=natmap python3-light
 
 - openwrtorg/imagebuilder:x86-64-22.03.3
 - openwrtorg/rockchip-armv8-22.03.3 (R2S)
+- immortalwrtorg/imagebuilder:rockchip-armv8-openwrt-21.02.4 (R2S)
+- immortalwrtorg/imagebuilder:x86-64-openwrt-21.02.5
+
+R2S 推荐使用 ImmortalWrt，因为其对 R2S 的优化更好，比如内存，ImmortalWrt  打了 [DMC patch](https://github.com/immortalwrt/immortalwrt/blob/master/target/linux/rockchip/patches-5.15/806-arm64-dts-rockchip-enable-dmc-for-rk3328-boards.patch)，OpenWrt 没有
 
 ### 内置软件列表
 
