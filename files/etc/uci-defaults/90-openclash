@@ -53,5 +53,7 @@ set openclash.config.enable_meta_sniffer='0'
 set openclash.config.common_ports='0'
 set openclash.config.append_default_dns='0'
 set openclash.config.enable_custom_dns='1'
+
+set openclash.config.find_process_mode='off'
 commit
 EOF
