@@ -64,6 +64,7 @@ OpenWrt 在首次启动时，会执行 `/etc/uci-defaults/` 目录下的所有�
 - 添加信任 SSH 公钥
 - 添加 uci 脚本，实现自定义功能
 
+示例：https://github.com/EkkoG/OpenWrt/wiki/%E8%87%AA%E5%AE%9A%E4%B9%89%E5%8A%9F%E8%83%BD%E4%B8%BE%E4%BE%8B
 
 ## 致谢
 感谢以下项目，使得我的上网体验又有所提升
