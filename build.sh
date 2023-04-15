@@ -6,12 +6,18 @@ else
     PROJECT_NAME="openwrt"
 fi
 
+if [ -z $PROXY_CLIENT ]; then
+    PROXY_CLIENT="openclash"
+fi
+
 if [ -z $LAN_IP ]; then
     echo "LAN_IP is empty"
     exit 1
 fi
 
 cp -r custom_files files
+
+cp files/etc/uci-defaults-proxy-client/90-$PROXY_CLIENT files/etc/uci-defaults/90-$PROXY_CLIENT
 
 mkdir -p files/etc/openclash/config
 wget $CLASH_CONFIG_URL -O files/etc/openclash/config/config.yaml
@@ -33,6 +39,9 @@ echo "PACKAGES_ARCH: $PACKAGES_ARCH OPENWRT_VERSION: $OPENWRT_VERSION BIG_VERSIO
 
 THIRD_SOURCE=$(cat <<-END
 src/gz ekkog https://github.com/ekkog/openwrt-dist/raw/packages/${PACKAGES_ARCH}-${BIG_VERSION}
+src/gz passwall_luci https://free.nchc.org.tw/osdn/storage/g/o/op/openwrt-passwall-build/releases/packages-$BIG_VERSION/$PACKAGES_ARCH/passwall_luci
+src/gz passwall_packages https://free.nchc.org.tw/osdn/storage/g/o/op/openwrt-passwall-build/releases/packages-$BIG_VERSION/$PACKAGES_ARCH/passwall_packages
+src/gz passwall2 https://free.nchc.org.tw/osdn/storage/g/o/op/openwrt-passwall-build/releases/packages-$BIG_VERSION/$PACKAGES_ARCH/passwall2
 END
 )
 
@@ -64,8 +73,6 @@ if [ -f "files/etc/dropbear/authorized_keys" ];then
     chmod 644 files/etc/dropbear/authorized_keys
 fi
 
-# 扩大 rootfs 大小，不然编译 x86_64 会报错
-sed -i '/CONFIG_TARGET_ROOTFS_PARTSIZE/ c\CONFIG_TARGET_ROOTFS_PARTSIZE=200' .config
 # 不需要的镜像
 sed -i '/CONFIG_ISO_IMAGES/ c\# CONFIG_ISO_IMAGES is not set' .config
 sed -i '/CONFIG_TARGET_IMAGES_PAD/ c\# CONFIG_TARGET_IMAGES_PAD is not set' .config
@@ -82,20 +89,24 @@ sed -i '/CONFIG_VHDX_IMAGES/ c\# CONFIG_VHDX_IMAGES is not set' .config
 # base packages
 all_packages="luci luci-compat -dnsmasq dnsmasq-full luci-i18n-base-zh-cn luci-i18n-firewall-zh-cn openssl-util"
 
-# openclash
-all_packages="$all_packages luci-app-openclash clash-meta-for-openclash"
+if [ -z $PROXY_CLIENT] || [ $PROXY_CLIENT = "openclash" ]; then
+    # openclash
+    all_packages="$all_packages luci-app-openclash clash-meta-for-openclash"
 
-if [ $BIG_VERSION = "22.03" ]; then
-    all_packages="$all_packages \
-    kmod-nft-tproxy \
-    "
-else
-    all_packages="$all_packages \
-    ip6tables-mod-nat \
-    ipset \
-    iptables-mod-extra \
-    iptables-mod-tproxy \
-    "
+    if [ $BIG_VERSION = "22.03" ]; then
+        all_packages="$all_packages \
+        kmod-nft-tproxy \
+        "
+    else
+        all_packages="$all_packages \
+        ip6tables-mod-nat \
+        ipset \
+        iptables-mod-extra \
+        iptables-mod-tproxy \
+        "
+    fi
+elif [ $PROXY_CLIENT = "passwall" ]; then
+    all_packages="$all_packages luci-app-passwall"
 fi
 
 # theme

@@ -11,8 +11,10 @@ files/etc/opkg/*
 files/etc/uci-defaults/*
 files/root/*
 !files/etc/uci-defaults/89-network
-!files/etc/uci-defaults/90-openclash
 !files/etc/uci-defaults/91-system
+!files/etc/uci-defaults-proxy-client
+files/etc/uci-defaults-proxy-client/*
+!files/etc/uci-defaults-proxy-client/90-openclash
 
 !files/etc/hotplug.d/
 files/etc/hotplug.d/*
