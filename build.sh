@@ -18,37 +18,28 @@ cp -r custom_files files
 PACKAGES_ARCH=$(cat .config | grep CONFIG_TARGET_ARCH_PACKAGES | awk -F '=' '{print $2}' | sed 's/"//g')
 OPENWRT_VERSION=$(cat ./include/version.mk | grep 'VERSION_NUMBER:=$(if' | awk -F ',' '{print $3}' | awk -F ')' '{print $1}')
 
+echo "PACKAGES_ARCH: $PACKAGES_ARCH OPENWRT_VERSION: $OPENWRT_VERSION BIG_VERSION: $BIG_VERSION"
 
-PASSWALL_FEED=$(cat <<-END
-src/gz passwall_luci https://free.nchc.org.tw/osdn/storage/g/o/op/openwrt-passwall-build/releases/packages-$BIG_VERSION/$PACKAGES_ARCH/passwall_luci
-src/gz passwall_packages https://free.nchc.org.tw/osdn/storage/g/o/op/openwrt-passwall-build/releases/packages-$BIG_VERSION/$PACKAGES_ARCH/passwall_packages
-src/gz passwall2 https://free.nchc.org.tw/osdn/storage/g/o/op/openwrt-passwall-build/releases/packages-$BIG_VERSION/$PACKAGES_ARCH/passwall2
-END
-)
 
 if [ $OPENWRT_VERSION = "SNAPSHOT" ]; then
-PASSWALL_FEED=$(cat <<-END
+THIRD_SOURCE=$(cat <<-END
+src/gz ekkog_packages https://github.com/ekkog/openwrt-packages/raw/${PACKAGES_ARCH}-SNAPSHOT
+src/gz ekkog_luci https://github.com/ekkog/openwrt-luci/raw/SNAPSHOT
 src/gz passwall_luci https://free.nchc.org.tw/osdn/storage/g/o/op/openwrt-passwall-build/snapshots/packages/$PACKAGES_ARCH/passwall_luci
 src/gz passwall_packages https://free.nchc.org.tw/osdn/storage/g/o/op/openwrt-passwall-build/snapshots/packages/$PACKAGES_ARCH/passwall_packages
 src/gz passwall2 https://free.nchc.org.tw/osdn/storage/g/o/op/openwrt-passwall-build/snapshots/packages/$PACKAGES_ARCH/passwall2
 END
 )
-fi
-
-BIG_VERSION=$(echo $OPENWRT_VERSION | awk -F '.' '{print $1"."$2}')
-if [ $OPENWRT_VERSION = "SNAPSHOT" ]; then
-    OPENWRT_VERSION=22.03
-    BIG_VERSION=22.03
-fi
-
-echo "PACKAGES_ARCH: $PACKAGES_ARCH OPENWRT_VERSION: $OPENWRT_VERSION BIG_VERSION: $BIG_VERSION"
-
+else
 THIRD_SOURCE=$(cat <<-END
 src/gz ekkog_packages https://github.com/ekkog/openwrt-packages/raw/${PACKAGES_ARCH}-${BIG_VERSION}
 src/gz ekkog_luci https://github.com/ekkog/openwrt-luci/raw/${BIG_VERSION}
-$PASSWALL_FEED
+src/gz passwall_luci https://free.nchc.org.tw/osdn/storage/g/o/op/openwrt-passwall-build/releases/packages-$BIG_VERSION/$PACKAGES_ARCH/passwall_luci
+src/gz passwall_packages https://free.nchc.org.tw/osdn/storage/g/o/op/openwrt-passwall-build/releases/packages-$BIG_VERSION/$PACKAGES_ARCH/passwall_packages
+src/gz passwall2 https://free.nchc.org.tw/osdn/storage/g/o/op/openwrt-passwall-build/releases/packages-$BIG_VERSION/$PACKAGES_ARCH/passwall2
 END
 )
+fi
 
 if [ $USE_MIRROR = '1' ]; then
     sed -i 's/https:\/\/downloads.'"$PROJECT_NAME"'.org/https:\/\/mirrors.pku.edu.cn\/'"$PROJECT_NAME"'/g' ./repositories.conf
