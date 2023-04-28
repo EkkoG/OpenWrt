@@ -6,27 +6,35 @@ else
     PROJECT_NAME="openwrt"
 fi
 
-if [ -z $PROXY_CLIENT ]; then
-    PROXY_CLIENT="openclash"
-fi
-
 if [ -z $LAN_IP ]; then
-    echo "LAN_IP is empty"
-    exit 1
+    LAN_IP="192.168.3.1"
 fi
 
 cp -r custom_files files
-
-cp files/etc/uci-defaults-proxy-client/90-$PROXY_CLIENT files/etc/uci-defaults/90-$PROXY_CLIENT
-
-mkdir -p files/etc/openclash/config
-wget $CLASH_CONFIG_URL -O files/etc/openclash/config/config.yaml
 
 # sudo apt-get update
 # sudo apt-get install tree
 # tree files
 PACKAGES_ARCH=$(cat .config | grep CONFIG_TARGET_ARCH_PACKAGES | awk -F '=' '{print $2}' | sed 's/"//g')
 OPENWRT_VERSION=$(cat ./include/version.mk | grep 'VERSION_NUMBER:=$(if' | awk -F ',' '{print $3}' | awk -F ')' '{print $1}')
+
+
+PASSWALL_FEED=$(cat <<-END
+src/gz passwall_luci https://free.nchc.org.tw/osdn/storage/g/o/op/openwrt-passwall-build/releases/packages-$BIG_VERSION/$PACKAGES_ARCH/passwall_luci
+src/gz passwall_packages https://free.nchc.org.tw/osdn/storage/g/o/op/openwrt-passwall-build/releases/packages-$BIG_VERSION/$PACKAGES_ARCH/passwall_packages
+src/gz passwall2 https://free.nchc.org.tw/osdn/storage/g/o/op/openwrt-passwall-build/releases/packages-$BIG_VERSION/$PACKAGES_ARCH/passwall2
+END
+)
+
+if [ $OPENWRT_VERSION = "SNAPSHOT" ]; then
+PASSWALL_FEED=$(cat <<-END
+src/gz passwall_luci https://free.nchc.org.tw/osdn/storage/g/o/op/openwrt-passwall-build/snapshots/packages/$PACKAGES_ARCH/passwall_luci
+src/gz passwall_packages https://free.nchc.org.tw/osdn/storage/g/o/op/openwrt-passwall-build/snapshots/packages/$PACKAGES_ARCH/passwall_packages
+src/gz passwall2 https://free.nchc.org.tw/osdn/storage/g/o/op/openwrt-passwall-build/snapshots/packages/$PACKAGES_ARCH/passwall2
+END
+)
+fi
+
 BIG_VERSION=$(echo $OPENWRT_VERSION | awk -F '.' '{print $1"."$2}')
 if [ $OPENWRT_VERSION = "SNAPSHOT" ]; then
     OPENWRT_VERSION=22.03
@@ -35,13 +43,10 @@ fi
 
 echo "PACKAGES_ARCH: $PACKAGES_ARCH OPENWRT_VERSION: $OPENWRT_VERSION BIG_VERSION: $BIG_VERSION"
 
-# src/gz ekkog https://ghproxy.com/https://github.com/ekkog/openwrt-dist/blob/packages/${PACKAGES_ARCH}-${BIG_VERSION}
-
 THIRD_SOURCE=$(cat <<-END
-src/gz ekkog https://github.com/ekkog/openwrt-dist/raw/packages/${PACKAGES_ARCH}-${BIG_VERSION}
-src/gz passwall_luci https://free.nchc.org.tw/osdn/storage/g/o/op/openwrt-passwall-build/releases/packages-$BIG_VERSION/$PACKAGES_ARCH/passwall_luci
-src/gz passwall_packages https://free.nchc.org.tw/osdn/storage/g/o/op/openwrt-passwall-build/releases/packages-$BIG_VERSION/$PACKAGES_ARCH/passwall_packages
-src/gz passwall2 https://free.nchc.org.tw/osdn/storage/g/o/op/openwrt-passwall-build/releases/packages-$BIG_VERSION/$PACKAGES_ARCH/passwall2
+src/gz ekkog_packages https://github.com/ekkog/openwrt-packages/raw/${PACKAGES_ARCH}-${BIG_VERSION}
+src/gz ekkog_luci https://github.com/ekkog/openwrt-luci/raw/${BIG_VERSION}
+$PASSWALL_FEED
 END
 )
 
@@ -58,15 +63,6 @@ cat ./repositories.conf
 
 # 添加签名验证的 key
 cp files/etc/opkg/keys/* keys
-
-# merge files in uci folder to /tmp/init.sh
-for file in files/etc/uci-defaults/*; do
-    # 替换自定义参数
-    sed -i "s/PPPOE_USERNAME/$PPPOE_USERNAME/g" $file
-    sed -i "s/PPPOE_PASSWORD/$PPPOE_PASSWORD/g" $file
-    sed -i "s/LAN_IP/$LAN_IP/g" $file
-    sed -i "s~CLASH_CONFIG_URL~$CLASH_CONFIG_URL~g" $file
-done
 
 # 添加 SSH 相关
 if [ -f "files/etc/dropbear/authorized_keys" ];then
@@ -87,30 +83,23 @@ sed -i '/CONFIG_VHDX_IMAGES/ c\# CONFIG_VHDX_IMAGES is not set' .config
 # fi
 
 # base packages
-all_packages="luci luci-compat -dnsmasq dnsmasq-full luci-i18n-base-zh-cn luci-i18n-firewall-zh-cn openssl-util"
+all_packages="luci luci-compat luci-lib-ipkg luci-i18n-opkg-zh-cn -dnsmasq dnsmasq-full luci-i18n-base-zh-cn luci-i18n-firewall-zh-cn openssl-util"
 
-if [ -z $PROXY_CLIENT] || [ $PROXY_CLIENT = "openclash" ]; then
+if [ $PROXY_CLIENT = "openclash" ]; then
     # openclash
     all_packages="$all_packages luci-app-openclash clash-meta-for-openclash"
 
-    if [ $BIG_VERSION = "22.03" ]; then
-        all_packages="$all_packages \
-        kmod-nft-tproxy \
-        "
-    else
-        all_packages="$all_packages \
-        ip6tables-mod-nat \
-        ipset \
-        iptables-mod-extra \
-        iptables-mod-tproxy \
-        "
-    fi
+    mkdir -p files/etc/openclash/config
+    wget $CLASH_CONFIG_URL -O files/etc/openclash/config/config.yaml
+
 elif [ $PROXY_CLIENT = "passwall" ]; then
     all_packages="$all_packages luci-app-passwall"
 fi
 
 # theme
 all_packages="$all_packages $EXTRA_PKGS luci-theme-argon"
+
+echo "EXTRA_PKGS: $EXTRA_PKGS"
 
 make info
 if [ -z "$PROFILE" ]; then

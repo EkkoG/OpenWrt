@@ -20,19 +20,21 @@ OpenWrt 的 image 名字可以从 [Docker Hub](https://hub.docker.com/r/openwrto
 
 ImmortalWrt 的 image 名字可以从 [Docker Hub](https://hub.docker.com/r/immortalwrt/imagebuilder/tags) 上找到
 
-### 必须配置的环境变量
+### 环境变量
 
 ```bash
-PPPOE_USERNAME=
-PPPOE_PASSWORD=
-LAN_IP=
+# 设置 LAN 口 IP, 不配置则使用默认值 192.168.3.1
+LAN_IP=192.168.3.1
+# 默认代理客户端, 可选值: openclash, passwall
+PROXY_CLIENT=openclash
+# 当 PROXY_CLIENT=openclash 时，需要设置
 CLASH_CONFIG_URL=
-```
-### 可选环境变量
-
-添加额外软件包
-```bash
+# 添加额外软件包
 EXTRA_PKGS=natmap python3-light
+# 设置 ROOT 密码
+ROOT_PASSWORD=123456
+# 使用推荐的 IPv6 配置
+PREFFER_IPV6=1
 ```
 
 ### 版本支持情况

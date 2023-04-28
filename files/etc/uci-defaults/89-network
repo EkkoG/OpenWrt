@@ -1,9 +1,20 @@
-uci batch << EOF
-set network.wan.proto='pppoe'
-set network.wan.username='PPPOE_USERNAME'
-set network.wan.password='PPPOE_PASSWORD'
+. /root/.config.init
 
-set network.lan.ipaddr='LAN_IP'
+if [ -z $PPPOE_USERNAME ] || [ -z $PPPOE_PASSWORD ]; then
+    echo "Use default pppoe settings"
+else
+    uci batch << EOF
+    set network.wan.proto='pppoe'
+    set network.wan.username='$PPPOE_USERNAME'
+    set network.wan.password='$PPPOE_PASSWORD'
+
+    commit
+    EOF
+fi
+
+uci batch << EOF
+
+set network.lan.ipaddr='$LAN_IP'
 
 commit
 EOF

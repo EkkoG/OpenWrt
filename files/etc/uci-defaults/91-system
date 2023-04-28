@@ -1,3 +1,4 @@
+. /root/.config.init
 
 uci batch << EOF
 
@@ -10,3 +11,7 @@ set luci.main.lang='zh_cn'
 
 commit
 EOF
+
+if [ ! -z $ROOT_PASSWORD ]; then
+  (echo "$ROOT_PASSWORD"; sleep 1; echo "$ROOT_PASSWORD") | passwd > /dev/null
+fi
