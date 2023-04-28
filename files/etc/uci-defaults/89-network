@@ -3,13 +3,13 @@
 if [ -z $PPPOE_USERNAME ] || [ -z $PPPOE_PASSWORD ]; then
     echo "Use default pppoe settings"
 else
-    uci batch << EOF
-    set network.wan.proto='pppoe'
-    set network.wan.username='$PPPOE_USERNAME'
-    set network.wan.password='$PPPOE_PASSWORD'
+uci batch << EOF
+set network.wan.proto='pppoe'
+set network.wan.username='$PPPOE_USERNAME'
+set network.wan.password='$PPPOE_PASSWORD'
 
-    commit
-    EOF
+commit
+EOF
 fi
 
 uci batch << EOF
