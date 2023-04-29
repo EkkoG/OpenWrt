@@ -1,4 +1,9 @@
 #!/bin/sh
+. /root/.config.init
+
+if [ $PROXY_CLIENT != 'openclash' ]; then
+    exit 0
+fi
 
 echo "iface $INTERFACE $ACTION detected..."
 
