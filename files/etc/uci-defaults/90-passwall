@@ -7,9 +7,6 @@ if [ $? -ne 0 ]; then
 fi
 
 uci batch << EOF
-set passwall.@global[0].udp_proxy_mode='gfwlist'
-set passwall.@global[0].tcp_proxy_mode='gfwlist'
-set passwall.@global[0].filter_proxy_ipv6='1'
 
 add passwall subscribe_list
 set passwall.@subscribe_list[-1]=subscribe_list

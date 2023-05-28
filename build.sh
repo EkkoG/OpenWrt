@@ -21,19 +21,29 @@ OPENWRT_VERSION=$(cat ./include/version.mk | grep 'VERSION_NUMBER:=$(if' | awk -
 echo "PACKAGES_ARCH: $PACKAGES_ARCH OPENWRT_VERSION: $OPENWRT_VERSION BIG_VERSION: $BIG_VERSION"
 
 
-if [ $OPENWRT_VERSION = "SNAPSHOT" ]; then
-THIRD_SOURCE=$(cat <<-END
-src/gz ekkog_packages https://github.com/ekkog/openwrt-packages/raw/${PACKAGES_ARCH}-SNAPSHOT
-src/gz ekkog_luci https://github.com/ekkog/openwrt-luci/raw/SNAPSHOT
+if [[ $OPENWRT_VERSION =~ "SNAPSHOT" ]]; then
+EKKOG_FEED=$(cat <<-END
+src/gz ekkog_packages https://github.com/ekkog/openwrt-packages/raw/${PACKAGES_ARCH}-${OPENWRT_VERSION}
+src/gz ekkog_luci https://github.com/ekkog/openwrt-luci/raw/${OPENWRT_VERSION}
+END
+)
+else
+EKKOG_FEED=$(cat <<-END
+src/gz ekkog_packages https://github.com/ekkog/openwrt-packages/raw/${PACKAGES_ARCH}-${BIG_VERSION}
+src/gz ekkog_luci https://github.com/ekkog/openwrt-luci/raw/${BIG_VERSION}
+END
+)
+fi
+
+if [[ $OPENWRT_VERSION =~ "SNAPSHOT" ]]; then
+PASSWALL_FEED=$(cat <<-END
 src/gz passwall_luci https://free.nchc.org.tw/osdn/storage/g/o/op/openwrt-passwall-build/snapshots/packages/$PACKAGES_ARCH/passwall_luci
 src/gz passwall_packages https://free.nchc.org.tw/osdn/storage/g/o/op/openwrt-passwall-build/snapshots/packages/$PACKAGES_ARCH/passwall_packages
 src/gz passwall2 https://free.nchc.org.tw/osdn/storage/g/o/op/openwrt-passwall-build/snapshots/packages/$PACKAGES_ARCH/passwall2
 END
 )
 else
-THIRD_SOURCE=$(cat <<-END
-src/gz ekkog_packages https://github.com/ekkog/openwrt-packages/raw/${PACKAGES_ARCH}-${BIG_VERSION}
-src/gz ekkog_luci https://github.com/ekkog/openwrt-luci/raw/${BIG_VERSION}
+PASSWALL_FEED=$(cat <<-END
 src/gz passwall_luci https://free.nchc.org.tw/osdn/storage/g/o/op/openwrt-passwall-build/releases/packages-$BIG_VERSION/$PACKAGES_ARCH/passwall_luci
 src/gz passwall_packages https://free.nchc.org.tw/osdn/storage/g/o/op/openwrt-passwall-build/releases/packages-$BIG_VERSION/$PACKAGES_ARCH/passwall_packages
 src/gz passwall2 https://free.nchc.org.tw/osdn/storage/g/o/op/openwrt-passwall-build/releases/packages-$BIG_VERSION/$PACKAGES_ARCH/passwall2
@@ -41,14 +51,20 @@ END
 )
 fi
 
+
 if [ $USE_MIRROR = '1' ]; then
     sed -i 's/https:\/\/downloads.'"$PROJECT_NAME"'.org/https:\/\/mirrors.pku.edu.cn\/'"$PROJECT_NAME"'/g' ./repositories.conf
 fi
 # 添加软件源
-echo "$THIRD_SOURCE" >> ./repositories.conf
+echo "$EKKOG_FEED" >> ./repositories.conf
 
 mkdir -p files/etc/opkg/
-echo "$THIRD_SOURCE" >> files/etc/opkg/customfeeds.conf
+echo "$EKKOG_FEED" >> files/etc/opkg/customfeeds.conf
+
+if [ $PROJECT_NAME = "openwrt" ]; then
+    echo "$PASSWALL_FEED" >> ./repositories.conf
+    echo "$PASSWALL_FEED" >> files/etc/opkg/customfeeds.conf
+fi
 
 cat ./repositories.conf
 
@@ -86,6 +102,14 @@ if [ $PROXY_CLIENT = "openclash" ]; then
 elif [ $PROXY_CLIENT = "passwall" ]; then
     all_packages="$all_packages luci-app-passwall"
 fi
+
+# printenv | grep 'CONFIG_', export all config
+for config in $(printenv | grep '^CONFIG_'); do
+    config_name=$(echo $config | awk -F '=' '{print $1}')
+    config_value=$(echo $config | awk -F '=' '{print $2}')
+    sed -i "/$config_name/ c\\$config_name=$config_value" .config
+done
+
 
 # theme
 all_packages="$all_packages $EXTRA_PKGS luci-theme-argon"

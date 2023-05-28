@@ -5,7 +5,7 @@ function usage()
     echo "--profile: specify profile"
     echo "--with-pull: pull image before build"
     echo "--rm-first: remove container before build"
-    echo "--tsinghua-mirror: use tsinghua mirror, only for openwrt, not for immortalwrt"
+    echo "--use-mirror: use mirror"
     echo "-h|--help: print this help"
     exit 1
 }
