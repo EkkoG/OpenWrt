@@ -12,8 +12,9 @@ while uci -q delete openclash.@config_subscribe[0]; do :; done
 # 默认 SOCKS 不需要认证
 while uci -q delete openclash.@authentication[0]; do :; done
 
+random_dashboard_password=$(openssl rand -base64 12)
 uci batch << EOF
-
+set openclash.config.dashboard_password='$random_dashboard_password'
 add openclash authentication
 set openclash.@authentication[-1]=authentication
 set openclash.@authentication[-1].enabled='0'

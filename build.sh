@@ -15,8 +15,10 @@ cp -r custom_files files
 # sudo apt-get update
 # sudo apt-get install tree
 # tree files
+
 PACKAGES_ARCH=$(cat .config | grep CONFIG_TARGET_ARCH_PACKAGES | awk -F '=' '{print $2}' | sed 's/"//g')
 OPENWRT_VERSION=$(cat ./include/version.mk | grep 'VERSION_NUMBER:=$(if' | awk -F ',' '{print $3}' | awk -F ')' '{print $1}')
+BIG_VERSION=$(echo $OPENWRT_VERSION | awk -F '.' '{print $1"."$2}')
 
 echo "PACKAGES_ARCH: $PACKAGES_ARCH OPENWRT_VERSION: $OPENWRT_VERSION BIG_VERSION: $BIG_VERSION"
 
@@ -100,7 +102,7 @@ if [ $PROXY_CLIENT = "openclash" ]; then
     wget $CLASH_CONFIG_URL -O files/etc/openclash/config/config.yaml
 
 elif [ $PROXY_CLIENT = "passwall" ]; then
-    all_packages="$all_packages luci-app-passwall"
+    all_packages="$all_packages luci-app-passwall luci-i18n-passwall-zh-cn"
 fi
 
 # printenv | grep 'CONFIG_', export all config
