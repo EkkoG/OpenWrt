@@ -1,10 +1,12 @@
 #!/bin/bash -e
-sudo chown -R $(whoami):$(whoami) bin
 if [[ $PWD =~ "immortalwrt" ]]; then
     PROJECT_NAME="immortalwrt"
+    sudo chown -R $(whoami):$(whoami) bin
 else
     PROJECT_NAME="openwrt"
+    chown -R $(whoami):$(whoami) bin
 fi
+
 
 if [ -z $LAN_IP ]; then
     LAN_IP="192.168.3.1"
