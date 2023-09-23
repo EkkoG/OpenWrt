@@ -14,6 +14,7 @@ files/root/*
 !files/etc/uci-defaults/90-passwall
 !files/etc/uci-defaults/90-openclash
 !files/etc/uci-defaults/91-system
+!files/etc/uci-defaults/99-ipv6
 !files/etc/uci-defaults-proxy-client
 
 !files/etc/hotplug.d/
@@ -21,5 +22,6 @@ files/etc/hotplug.d/*
 !files/etc/hotplug.d/iface
 files/etc/hotplug.d/iface/*
 !files/etc/hotplug.d/iface/99-clash
+!files/etc/hotplug.d/iface/99-odhcpd
 
 docker-compose.yml

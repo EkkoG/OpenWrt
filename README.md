@@ -33,8 +33,8 @@ CLASH_CONFIG_URL=
 EXTRA_PKGS=natmap python3-light
 # 设置 ROOT 密码
 ROOT_PASSWORD=123456
-# 使用推荐的 IPv6 配置
-PREFFER_IPV6=1
+# 禁用推荐的 IPv6 配置 https://t.me/ctcgfw_openwrt_discuss/1025497
+DISABLE_PREFFER_IPV6=1
 ```
 
 ### 版本支持情况

@@ -1,0 +1,9 @@
+#!/bin/sh
+
+# 解决lan启动过快，wan没拿到pd，odhcpd以为没v6，直接装死的问题, by 某 bot
+[ "$ACTION" = ifup -o "$ACTION" = ifupdate ] || exit 0
+[ "$ACTION" = ifupdate -a -z "$IFUPDATE_ADDRESSES" -a -z "$IFUPDATE_DATA" ] && exit 0
+
+logger -t odhcpd "Reloading odhcpd due to $ACTION of $INTERFACE ($DEVICE)"
+
+"/etc/init.d/odhcpd" restart
