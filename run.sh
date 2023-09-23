@@ -80,11 +80,18 @@ services:
     env_file:
       - ./.env
     volumes:
-      - ./bin:$BUILD_DIR/bin
+      - bin:$BUILD_DIR/bin
       - ./build.sh:$BUILD_DIR/build.sh
       - ./files:$BUILD_DIR/custom_files
       - ./.env:$BUILD_DIR/.env
     command: "./build.sh"
+
+volumes:
+  bin:
+    driver_opts:
+      type: none
+      device: $PWD/bin
+      o: bind
 END
 
 )
@@ -106,12 +113,12 @@ if [ ! -z $RM_FIRST ]; then
     compose rm -f
 fi
 
-mkdir -p bin
-# macOS no need to change the owner
-# change the owner of bin to 1000:1000 when running on linux
-if [[ $(uname) =~ "Linux" ]]; then
-    sudo chown -R 1000:1000 bin
-fi
+# mkdir -p bin
+# # macOS no need to change the owner
+# # change the owner of bin to 1000:1000 when running on linux
+# if [[ $(uname) =~ "Linux" ]]; then
+#     sudo chown -R 1000:1000 bin
+# fi
 
 compose up --remove-orphans
 build_status=$?
@@ -121,4 +128,6 @@ rm docker-compose.yml
 if [ $build_status -ne 0 ]; then
     echo "build failed"
     exit 1
+else
+    ls -R bin
 fi
