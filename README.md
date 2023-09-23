@@ -42,6 +42,7 @@ DISABLE_PREFFER_IPV6=1
 
 测试过的版本
 
+- immortalwrt/imagebuilder:x86-64-openwrt-23.05.0-rc2
 - openwrtorg/imagebuilder:x86-64-22.03.3
 - openwrtorg/imagebuilder:rockchip-armv8-22.03.3 (R2S)
 - immortalwrtorg/imagebuilder:rockchip-armv8-openwrt-21.02.4 (R2S)
