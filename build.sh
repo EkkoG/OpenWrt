@@ -24,20 +24,23 @@ echo "PACKAGES_ARCH: $PACKAGES_ARCH OPENWRT_VERSION: $OPENWRT_VERSION BIG_VERSIO
 DISTRIB_ARCH=$PACKAGES_ARCH
 DISTRIB_RELEASE=$OPENWRT_VERSION
 add_packages() {
-    feed=$1
+    echo "try add $1"
 
-    all_supported=$(curl https://sourceforge.net/projects/ekko-openwrt-dist/files/$feed/ | grep -e "<th.*files/$feed" | grep -o 'href="/projects[^"]*"' | sed 's/href="//' | sed 's/"$//' | awk -F/ '{print $6}')
+    all_supported=$(curl https://sourceforge.net/projects/ekko-openwrt-dist/files/$1/ | grep -e "<th.*files/$1" | grep -o 'href="/projects[^"]*"' | sed 's/href="//' | sed 's/"$//' | awk -F/ '{print $6}')
     echo "All supported version: "
     echo "$all_supported"
 
     version=$(echo "$DISTRIB_RELEASE" | awk -F- '{print $1}')
     echo "Current version: $version"
 
-    if [ "$feed" == "luci" ]; then
-        supported=$(echo "$all_supported" | grep $version)
+    # get the first two version number
+    big_version=$(echo "$version" | awk -F. '{print $1"."$2}')
+
+    if [ "$1" == "luci" ]; then
+        supported=$(echo "$all_supported" | grep "$big_version")
         feed_version="$DISTRIB_RELEASE"
     else
-        supported=$(echo "$all_supported" | grep $DISTRIB_ARCH | grep $version)
+        supported=$(echo "$all_supported" | grep $DISTRIB_ARCH | grep $big_version)
         feed_version="$DISTRIB_ARCH-v$DISTRIB_RELEASE"
     fi
 
@@ -71,7 +74,7 @@ add_packages() {
         fi
     fi
     echo "Feed version: $feed_version"
-    EKKOG_FEED="src/gz ekkog_$feed https://ghproxy.imciel.com/https://downloads.sourceforge.net/project/ekko-openwrt-dist/$feed/$feed_version"
+    EKKOG_FEED="src/gz ekkog_$1 https://ghproxy.imciel.com/https://downloads.sourceforge.net/project/ekko-openwrt-dist/$1/$feed_version"
     # 添加软件源到第一行
     echo "$EKKOG_FEED" | cat - ./repositories.conf > temp && mv temp ./repositories.conf
 }
@@ -113,7 +116,10 @@ fi
 
 add_packages "luci"
 add_packages "packages"
-add_packages "dae"
+# if big version great than 23.05 or snapshot
+if [[ $OPENWRT_VERSION =~ "23.05" ]] || [[ $OPENWRT_VERSION =~ "SNAPSHOT" ]]; then
+    add_packages "dae"
+fi
 add_packages "clash"
 
 mkdir -p files/etc/opkg/

@@ -1,7 +1,7 @@
 #!/bin/bash -e
 function usage()
 {
-    echo "--image: specify imagebuilder docker image, find it in https://hub.docker.com/r/openwrtorg/imagebuilder/tags or https://hub.docker.com/r/immortalwrt/imagebuilder/tags"
+    echo "--image: specify imagebuilder docker image, find it in https://hub.docker.com/r/openwrt/imagebuilder/tags or https://hub.docker.com/r/immortalwrt/imagebuilder/tags"
     echo "--profile: specify profile"
     echo "--with-pull: pull image before build"
     echo "--rm-first: remove container before build"
