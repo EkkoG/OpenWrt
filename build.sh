@@ -4,7 +4,7 @@ if [[ $PWD =~ "immortalwrt" ]]; then
     sudo chown -R $(whoami):$(whoami) bin
 else
     PROJECT_NAME="openwrt"
-    chown -R $(whoami):$(whoami) bin
+    sudo chown -R $(whoami):$(whoami) bin
 fi
 
 
