@@ -56,7 +56,7 @@ echo "IMAGEBUILDER_IMAGE: $IMAGEBUILDER_IMAGE PROFILE: $PROFILE"
 if [[ $IMAGEBUILDER_IMAGE =~ "immortalwrt" ]]; then
     BUILD_DIR=/home/build/immortalwrt
 else
-    BUILD_DIR=/home/build/openwrt
+    BUILD_DIR=/builder
 fi
 
 docker_compose_file_content=$(cat <<-END
