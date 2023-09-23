@@ -23,6 +23,10 @@ cd OpenWrt
 ./run.sh --image=openwrtorg/imagebuilder:mvebu-cortexa9-22.03.3 --profile=linksys_wrt3200acm
 ```
 
+## 更多
+
+请查看 [Wiki](https://github.com/EkkoG/OpenWrt/wiki)
+
 ## 致谢
 感谢以下项目，使得我的上网体验又有所提升
 
