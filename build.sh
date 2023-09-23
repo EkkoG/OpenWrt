@@ -76,8 +76,15 @@ add_packages() {
     fi
     echo "Feed version: $feed_version"
     EKKOG_FEED="src/gz ekkog_$1 https://ghproxy.imciel.com/https://downloads.sourceforge.net/project/ekko-openwrt-dist/$1/$feed_version"
+    echo "$EKKOG_FEED" >> files/etc/opkg/customfeeds.conf
     # 添加软件源到第一行
     echo "$EKKOG_FEED" | cat - ./repositories.conf > temp && mv temp ./repositories.conf
+}
+
+add_geodata() {
+    FEED_URL="src/gz ekkog_geodata https://ghproxy.imciel.com/https://downloads.sourceforge.net/project/ekko-openwrt-dist/$1" 
+    echo "$FEED_URL" | cat - ./repositories.conf > temp && mv temp ./repositories.conf
+    echo "$FEED_URL" >> files/etc/opkg/customfeeds.conf
 }
 
 if [[ $OPENWRT_VERSION =~ "SNAPSHOT" ]]; then
@@ -115,6 +122,10 @@ if [ $USE_MIRROR = '1' ]; then
     sed -i 's/https:\/\/downloads.'"$PROJECT_NAME"'.org/https:\/\/mirrors.pku.edu.cn\/'"$PROJECT_NAME"'/g' ./repositories.conf
 fi
 
+mkdir -p files/etc/opkg/
+touch files/etc/opkg/customfeeds.conf
+
+add_geodata "geodata/Loyalsoldier"
 add_packages "luci"
 add_packages "packages"
 # if big version great than 23.05 or snapshot
@@ -123,7 +134,6 @@ if [[ $OPENWRT_VERSION =~ "23.05" ]] || [[ $OPENWRT_VERSION =~ "SNAPSHOT" ]]; th
 fi
 add_packages "clash"
 
-mkdir -p files/etc/opkg/
 echo "$EKKOG_FEED" >> files/etc/opkg/customfeeds.conf
 
 if [ $PROJECT_NAME = "openwrt" ]; then
@@ -157,15 +167,18 @@ sed -i '/CONFIG_VHDX_IMAGES/ c\# CONFIG_VHDX_IMAGES is not set' .config
 # base packages
 all_packages="luci luci-compat luci-lib-ipkg luci-i18n-opkg-zh-cn -dnsmasq dnsmasq-full luci-i18n-base-zh-cn luci-i18n-firewall-zh-cn openssl-util"
 
-if [ $PROXY_CLIENT = "openclash" ]; then
+if [ "$PROXY_CLIENT" = "openclash" ]; then
     # openclash
     all_packages="$all_packages luci-app-openclash clash-meta-for-openclash"
 
     mkdir -p files/etc/openclash/config
     wget --user-agent='clash' $CLASH_CONFIG_URL -O files/etc/openclash/config/config.yaml
 
-elif [ $PROXY_CLIENT = "passwall" ]; then
+elif [ "$PROXY_CLIENT" = "passwall" ]; then
     all_packages="$all_packages luci-app-passwall luci-i18n-passwall-zh-cn"
+
+elif [ "$PROXY_CLIENT" = "daed" ]; then
+    all_packages="$all_packages v2ray-geoip v2ray-geosite daed-geoip daed-geosite luci-app-daed"
 fi
 
 # printenv | grep 'CONFIG_', export all config
