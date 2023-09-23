@@ -58,12 +58,14 @@ if [[ $IMAGEBUILDER_IMAGE =~ "immortalwrt" ]]; then
 else
     BUILD_DIR=/builder
 fi
-
+uid=$(id -u)
+gid=$(id -g)
 docker_compose_file_content=$(cat <<-END
 version: "3.5"
 services:
   imagebuilder:
     image: "$IMAGEBUILDER_IMAGE"
+    user: "$uid:$gid"
     container_name: imagebuilder
     environment:
       - PROFILE=$PROFILE

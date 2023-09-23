@@ -95,16 +95,16 @@ fi
 
 if [[ $OPENWRT_VERSION =~ "SNAPSHOT" ]]; then
 PASSWALL_FEED=$(cat <<-END
-src/gz passwall_luci https://free.nchc.org.tw/osdn/storage/g/o/op/openwrt-passwall-build/snapshots/packages/$PACKAGES_ARCH/passwall_luci
-src/gz passwall_packages https://free.nchc.org.tw/osdn/storage/g/o/op/openwrt-passwall-build/snapshots/packages/$PACKAGES_ARCH/passwall_packages
-src/gz passwall2 https://free.nchc.org.tw/osdn/storage/g/o/op/openwrt-passwall-build/snapshots/packages/$PACKAGES_ARCH/passwall2
+src/gz passwall_luci https://ghproxy.imciel.com/https://downloads.sourceforge.net/project/openwrt-passwall-build/snapshots/packages/$PACKAGES_ARCH/passwall_luci
+src/gz passwall_packages https://ghproxy.imciel.com/https://downloads.sourceforge.net/project/openwrt-passwall-build/snapshots/packages/$PACKAGES_ARCH/passwall_packages
+src/gz passwall2 https://ghproxy.imciel.com/https://downloads.sourceforge.net/project/openwrt-passwall-build/snapshots/packages/$PACKAGES_ARCH/passwall2
 END
 )
 else
 PASSWALL_FEED=$(cat <<-END
-src/gz passwall_luci https://free.nchc.org.tw/osdn/storage/g/o/op/openwrt-passwall-build/releases/packages-$BIG_VERSION/$PACKAGES_ARCH/passwall_luci
-src/gz passwall_packages https://free.nchc.org.tw/osdn/storage/g/o/op/openwrt-passwall-build/releases/packages-$BIG_VERSION/$PACKAGES_ARCH/passwall_packages
-src/gz passwall2 https://free.nchc.org.tw/osdn/storage/g/o/op/openwrt-passwall-build/releases/packages-$BIG_VERSION/$PACKAGES_ARCH/passwall2
+src/gz passwall_luci https://ghproxy.imciel.com/https://downloads.sourceforge.net/project/openwrt-passwall-build/releases/packages-$BIG_VERSION/$PACKAGES_ARCH/passwall_luci
+src/gz passwall_packages https://ghproxy.imciel.com/https://downloads.sourceforge.net/project/openwrt-passwall-build/releases/packages-$BIG_VERSION/$PACKAGES_ARCH/passwall_packages
+src/gz passwall2 https://ghproxy.imciel.com/https://downloads.sourceforge.net/project/openwrt-passwall-build/releases/packages-$BIG_VERSION/$PACKAGES_ARCH/passwall2
 END
 )
 fi
