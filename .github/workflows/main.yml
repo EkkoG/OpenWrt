@@ -8,8 +8,10 @@ on:
   push:
     branches: [ "master" ]
     paths:
+      - '**'
       - '!README*'
       - '!changelog.txt'
+
   pull_request:
     branches: [ "master" ]
 
