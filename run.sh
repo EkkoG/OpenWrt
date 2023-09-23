@@ -1,4 +1,14 @@
 #!/bin/bash -e
+
+function compose() {
+    # if docker-compose is not installed, use it
+    if ! command -v docker-compose &> /dev/null; then
+        docker compose "$@"
+    else
+        docker-compose "$@"
+    fi
+}
+
 function usage()
 {
     echo "--image: specify imagebuilder docker image, find it in https://hub.docker.com/r/openwrt/imagebuilder/tags or https://hub.docker.com/r/immortalwrt/imagebuilder/tags"
@@ -89,16 +99,16 @@ fi
 cp .env files/root/.config.init
 
 if [ ! -z $WITH_PULL ]; then
-    docker-compose pull
+    compose pull
 fi
 
 if [ ! -z $RM_FIRST ]; then
-    docker-compose rm -f
+    compose rm -f
 fi
 
-docker-compose up --remove-orphans
+compose up --remove-orphans
 build_status=$?
-docker-compose rm -f
+compose rm -f
 rm docker-compose.yml
 
 if [ $build_status -ne 0 ]; then
