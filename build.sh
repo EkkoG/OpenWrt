@@ -88,20 +88,6 @@ add_geodata() {
 }
 
 if [[ $OPENWRT_VERSION =~ "SNAPSHOT" ]]; then
-EKKOG_FEED=$(cat <<-END
-src/gz ekkog_packages https://github.com/ekkog/openwrt-packages/raw/${PACKAGES_ARCH}-${OPENWRT_VERSION}
-src/gz ekkog_luci https://github.com/ekkog/openwrt-luci/raw/${OPENWRT_VERSION}
-END
-)
-else
-EKKOG_FEED=$(cat <<-END
-src/gz ekkog_packages https://github.com/ekkog/openwrt-packages/raw/${PACKAGES_ARCH}-${BIG_VERSION}
-src/gz ekkog_luci https://github.com/ekkog/openwrt-luci/raw/${BIG_VERSION}
-END
-)
-fi
-
-if [[ $OPENWRT_VERSION =~ "SNAPSHOT" ]]; then
 PASSWALL_FEED=$(cat <<-END
 src/gz passwall_luci https://ghproxy.imciel.com/https://downloads.sourceforge.net/project/openwrt-passwall-build/snapshots/packages/$PACKAGES_ARCH/passwall_luci
 src/gz passwall_packages https://ghproxy.imciel.com/https://downloads.sourceforge.net/project/openwrt-passwall-build/snapshots/packages/$PACKAGES_ARCH/passwall_packages
@@ -125,7 +111,6 @@ fi
 mkdir -p files/etc/opkg/
 touch files/etc/opkg/customfeeds.conf
 
-add_geodata "geodata/Loyalsoldier"
 add_packages "luci"
 add_packages "packages"
 # if big version great than 23.05 or snapshot
@@ -133,8 +118,7 @@ if [[ $OPENWRT_VERSION =~ "23.05" ]] || [[ $OPENWRT_VERSION =~ "SNAPSHOT" ]]; th
     add_packages "dae"
 fi
 add_packages "clash"
-
-echo "$EKKOG_FEED" >> files/etc/opkg/customfeeds.conf
+add_geodata "geodata/Loyalsoldier"
 
 if [ $PROJECT_NAME = "openwrt" ]; then
     echo "$PASSWALL_FEED" >> ./repositories.conf
@@ -173,11 +157,13 @@ if [ "$PROXY_CLIENT" = "openclash" ] || [[ "$EXTRA_PROXY_CLIENT" =~ "openclash" 
 
     mkdir -p files/etc/openclash/config
     wget --user-agent='clash' $CLASH_CONFIG_URL -O files/etc/openclash/config/config.yaml
+fi
 
-elif [ "$PROXY_CLIENT" = "passwall" ] || [[ "$EXTRA_PROXY_CLIENT" =~ "passwall" ]]; then
+if [ "$PROXY_CLIENT" = "passwall" ] || [[ "$EXTRA_PROXY_CLIENT" =~ "passwall" ]]; then
     all_packages="$all_packages luci-i18n-passwall-zh-cn"
+fi
 
-elif [ "$PROXY_CLIENT" = "daed" ] || [[ "$EXTRA_PROXY_CLIENT" =~ "daed" ]]; then
+if [ "$PROXY_CLIENT" = "daed" ] || [[ "$EXTRA_PROXY_CLIENT" =~ "daed" ]]; then
     all_packages="$all_packages daed-geoip daed-geosite luci-app-daed"
 fi
 
