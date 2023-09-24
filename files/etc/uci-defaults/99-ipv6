@@ -6,7 +6,7 @@ if [ $DISABLE_PREFFER_IPV6 = 1 ]; then
 fi
 
 uci batch << EOF
-
+delete network.globals.ula_prefix
 del dhcp.lan
 set dhcp.lan=dhcp
 set dhcp.lan.interface='lan'

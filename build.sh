@@ -167,18 +167,18 @@ sed -i '/CONFIG_VHDX_IMAGES/ c\# CONFIG_VHDX_IMAGES is not set' .config
 # base packages
 all_packages="luci luci-compat luci-lib-ipkg luci-i18n-opkg-zh-cn -dnsmasq dnsmasq-full luci-i18n-base-zh-cn luci-i18n-firewall-zh-cn openssl-util"
 
-if [ "$PROXY_CLIENT" = "openclash" ]; then
+if [ "$PROXY_CLIENT" = "openclash" ] || [[ "$EXTRA_PROXY_CLIENT" =~ "openclash" ]]; then
     # openclash
     all_packages="$all_packages luci-app-openclash clash-meta-for-openclash"
 
     mkdir -p files/etc/openclash/config
     wget --user-agent='clash' $CLASH_CONFIG_URL -O files/etc/openclash/config/config.yaml
 
-elif [ "$PROXY_CLIENT" = "passwall" ]; then
-    all_packages="$all_packages luci-app-passwall luci-i18n-passwall-zh-cn"
+elif [ "$PROXY_CLIENT" = "passwall" ] || [[ "$EXTRA_PROXY_CLIENT" =~ "passwall" ]]; then
+    all_packages="$all_packages luci-i18n-passwall-zh-cn"
 
-elif [ "$PROXY_CLIENT" = "daed" ]; then
-    all_packages="$all_packages v2ray-geoip v2ray-geosite daed-geoip daed-geosite luci-app-daed"
+elif [ "$PROXY_CLIENT" = "daed" ] || [[ "$EXTRA_PROXY_CLIENT" =~ "daed" ]]; then
+    all_packages="$all_packages daed-geoip daed-geosite luci-app-daed"
 fi
 
 # printenv | grep 'CONFIG_', export all config
