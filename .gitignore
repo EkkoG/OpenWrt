@@ -16,6 +16,7 @@ files/root/*
 !files/etc/uci-defaults/91-system
 !files/etc/uci-defaults/99-ipv6
 !files/etc/uci-defaults/99-daed
+!files/etc/uci-defaults/99-opkg
 !files/etc/uci-defaults-proxy-client
 
 !files/etc/hotplug.d/
