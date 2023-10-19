@@ -8,14 +8,11 @@ fi
 
 
 if [ -z $LAN_IP ]; then
-    LAN_IP="192.168.3.1"
+    echo "LAN IP 不可为空"
+    exit 1
 fi
 
 cp -r custom_files files
-
-# sudo apt-get update
-# sudo apt-get install tree
-# tree files
 
 PACKAGES_ARCH=$(cat .config | grep CONFIG_TARGET_ARCH_PACKAGES | awk -F '=' '{print $2}' | sed 's/"//g')
 OPENWRT_VERSION=$(cat ./include/version.mk | grep 'VERSION_NUMBER:=$(if' | awk -F ',' '{print $3}' | awk -F ')' '{print $1}')
@@ -150,6 +147,8 @@ sed -i '/CONFIG_VHDX_IMAGES/ c\# CONFIG_VHDX_IMAGES is not set' .config
 
 # base packages
 all_packages="luci luci-compat luci-lib-ipkg luci-i18n-opkg-zh-cn -dnsmasq dnsmasq-full luci-i18n-base-zh-cn luci-i18n-firewall-zh-cn openssl-util"
+# Make time correct at OpenWrt https://github.com/daeuniverse/dae/discussions/345
+all_packages="$all_packages zoneinfo-all"
 
 if [ "$PROXY_CLIENT" = "openclash" ] || [[ "$EXTRA_PROXY_CLIENT" =~ "openclash" ]]; then
     # openclash
