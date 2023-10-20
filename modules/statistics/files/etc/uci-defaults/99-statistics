@@ -1,0 +1,24 @@
+uci batch << EOF
+set luci_statistics.collectd_sensors.enable=1
+set luci_statistics.collectd_sensors.IgnoreSelected=1
+
+set luci_statistics.collectd_irq.enable=1
+set luci_statistics.collectd_irq.IgnoreSelected=1
+
+set luci_statistics.collectd_memory.enable=0
+set luci_statistics.collectd_network.enable=0
+set luci_statistics.collectd_iwinfo.enable=0
+
+set luci_statistics.collectd_interface.enable=1
+del luci_statistics.collectd_interface.Interfaces
+add_list luci_statistics.collectd_interface.Interfaces=eth1
+
+add_list luci_statistics.collectd_rrdtool.RRATimespans='2hour'
+add_list luci_statistics.collectd_rrdtool.RRATimespans='1day'
+add_list luci_statistics.collectd_rrdtool.RRATimespans='1week'
+add_list luci_statistics.collectd_rrdtool.RRATimespans='1month'
+add_list luci_statistics.collectd_rrdtool.RRATimespans='1year'
+
+set luci_statistics.collectd.Include='/etc/collectd/conf.d/*.conf'
+commit
+EOF

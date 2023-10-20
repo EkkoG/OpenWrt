@@ -1,0 +1,2 @@
+uci del dhcp.@dnsmasq[0].dns_redirect
+uci commit

@@ -82,7 +82,7 @@ services:
     volumes:
       - ./bin:$BUILD_DIR/bin
       - ./build.sh:$BUILD_DIR/build.sh
-      - ./files:$BUILD_DIR/custom_files
+      - ./modules:$BUILD_DIR/modules
       - ./.env:$BUILD_DIR/.env
     command: "./build.sh"
 END
@@ -90,13 +90,6 @@ END
 )
 
 echo "$docker_compose_file_content" > docker-compose.yml
-
-
-if [ ! -d "files/root/" ];then
-    mkdir -p files/root
-fi
-
-cp .env files/root/.config.init
 
 if [ ! -z $WITH_PULL ]; then
     compose pull

@@ -1,0 +1,16 @@
+uci batch << EOF
+
+add passwall subscribe_list
+set passwall.@subscribe_list[-1]=subscribe_list
+set passwall.@subscribe_list[-1].allowInsecure='0'
+set passwall.@subscribe_list[-1].auto_update='1'
+set passwall.@subscribe_list[-1].filter_keyword_mode='5'
+set passwall.@subscribe_list[-1].remark='XF'
+set passwall.@subscribe_list[-1].ss_aead_type='global'
+set passwall.@subscribe_list[-1].time_update='0'
+set passwall.@subscribe_list[-1].trojan_type='global'
+set passwall.@subscribe_list[-1].url='$PASSWALL_SUBSCRIBE_URL'
+set passwall.@subscribe_list[-1].user_agent='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.122 Safari/537.36'
+set passwall.@subscribe_list[-1].week_update='7'
+commit
+EOF

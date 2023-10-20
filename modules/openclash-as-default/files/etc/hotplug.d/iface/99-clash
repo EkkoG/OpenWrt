@@ -1,0 +1,26 @@
+#!/bin/sh
+
+echo "iface $INTERFACE $ACTION detected..."
+
+[ "$ACTION" = "ifup" -a "$INTERFACE" = "wan" ] && {
+
+    sleep 3
+
+    ps | grep openclash | grep nobody
+    if [ $? -eq 0 ]; then
+        logger "OpenClash is running"
+    else
+        if [ ! -f /root/.openclash_first_boot ]; then
+            logger "First boot detected, starting OpenClash..."
+
+            uci -q set openclash.config.enable=1
+            uci -q commit openclash
+
+            /etc/init.d/openclash start
+
+            touch /root/.openclash_first_boot
+        else
+            logger "Not first boot, openclash start according to config"
+        fi
+    fi
+}

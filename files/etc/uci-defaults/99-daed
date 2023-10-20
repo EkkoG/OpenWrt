@@ -1,8 +1,0 @@
-. /root/.config.init
-
-if [ "$PROXY_CLIENT" != 'daed' ]; then
-    exit 0
-fi
-
-uci del dhcp.@dnsmasq[0].dns_redirect
-uci commit

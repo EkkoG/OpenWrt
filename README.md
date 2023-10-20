@@ -3,14 +3,40 @@
 ## 特色
 
 - 采用官方原版 [ImageBuilder](https://openwrt.org/docs/guide-user/additional-software/imagebuilder) 构建而非从源码构建，几分钟即可构建完成
-- 集成 OpenClash，构建固件时只需要提供 clash 配置链接即可在刷机完成后，直接启动 OpenClash
-- 可配置默认 LAN 口 IP，PPPoE 账号密码，推荐的 IPv6 配置，刷机完成后，不用配置网络
+- 集成常用代理软件及其最佳实践配置，包括 [openclsh](https://github.com/vernesong/OpenClash), [daed](https://github.com/daeuniverse/daed), [passwall](https://github.com/xiaorouji/openwrt-passwall)
+- 可配置默认 LAN 口 IP，PPPoE 账号密码，推荐的 IPv6 配置，刷机完成后，无需配置网络
 - 可按照官方推荐的 uci 功能进行自定义，无需代码修改，您可以通过 uci 进行几乎任何自定义
+- 模块化配置，详见 [modules](https://github.com/EkkoG/OpenWrt#modules%20%E4%BB%8B%E7%BB%8D)
+
+## modules 介绍
+
+本项目所有的特性均通过 modules 进行配置，您可以根据自己的需求，自由选择需要的模块，或者自行添加新的模块
+
+### modules 目录结构
+
+```bash
+packages #定义本 module 依赖的软件包
+files/ #定义本 module 需要的文件，按照 [OpenWrt 的 files](https://openwrt.org/docs/guide-developer/toolchain/use-buildsystem#custom_files) 规范，放置到对应的目录下，最后会将所有 module 的 files 合并到一个目录下
+post-files.sh #定义本 module 的预处理脚本，会在将当前 module 的 files 合并到最终目录后执行
+.env #定义本 module 的环境变量，会将其中的变量的值替换到 files/uci-defaults/ 目录下的文件中
+```
+
+您可以通过在项目根目录下的 .env 中定义 MODULES 变量，来选择需要的 module，例如
+
+```bash
+MODULES="python -tools"
+```
+
+以减号开头的 module 会被排除，上面的例子中，会增加 python module，并排除 tools module
+
+默认使用的 modules 参见 https://github.com/EkkoG/OpenWrt/blob/master/build.sh 开头
+
 
 ## 依赖
 
 - Docker
 - docker-compose v1 or v2
+
 ## 使用
 
 本项目通过改变使用不同的 ImageBuilder 镜像，来构建不同的固件，镜像名可以从 [Docker Hub](https://hub.docker.com/r/openwrtorg/imagebuilder/tags) 上查看

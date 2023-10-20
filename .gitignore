@@ -26,4 +26,24 @@ files/etc/hotplug.d/iface/*
 !files/etc/hotplug.d/iface/99-clash
 !files/etc/hotplug.d/iface/99-odhcpd
 
+modules/*
+!modules/add-feed
+!modules/add-feed-base
+!modules/base
+!modules/argon
+!modules/daed
+!modules/daed-as-default/
+!modules/ib/
+!modules/network/
+!modules/openclash/
+!modules/openclash-as-default/
+!modules/opkg-mirror/
+!modules/passwall/
+!modules/prefer-ipv6-settings/
+!modules/python/
+!modules/root-password/
+!modules/statistics/
+!modules/system/
+!modules/tools/
+
 docker-compose.yml
