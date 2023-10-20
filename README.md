@@ -6,7 +6,7 @@
 - 集成常用代理软件及其最佳实践配置，包括 [openclsh](https://github.com/vernesong/OpenClash), [daed](https://github.com/daeuniverse/daed), [passwall](https://github.com/xiaorouji/openwrt-passwall)
 - 可配置默认 LAN 口 IP，PPPoE 账号密码，推荐的 IPv6 配置，刷机完成后，无需配置网络
 - 可按照官方推荐的 uci 功能进行自定义，无需代码修改，您可以通过 uci 进行几乎任何自定义
-- 模块化配置，详见 [modules](https://github.com/EkkoG/OpenWrt#modules%20%E4%BB%8B%E7%BB%8D)
+- 模块化配置，详见 [modules](https://github.com/EkkoG/OpenWrt#modules-%E4%BB%8B%E7%BB%8D)
 
 ## modules 介绍
 
