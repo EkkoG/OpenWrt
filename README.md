@@ -61,3 +61,4 @@ cd OpenWrt
 - [clash](https://github.com/Dreamacro/clash)
 - [OpenClash](https://github.com/vernesong/OpenClash)
 - [Clash.Meta](https://github.com/MetaCubeX/Clash.Meta)
+- [dae](https://github.com/daeuniverse/dae)
