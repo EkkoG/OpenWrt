@@ -45,5 +45,6 @@ modules/*
 !modules/statistics/
 !modules/system/
 !modules/tools/
+!modules/openclash-stun-direct/
 
 docker-compose.yml
