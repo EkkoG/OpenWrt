@@ -1,11 +1,10 @@
-自用 OpenWrt 固件，以减少新系统启动时必须的初始化配置为目标，达到开机无需配置即可使用
+自定义 OpenWrt 固件，以减少新系统启动时必须的初始化配置为目标，尽可能达到开机无需配置即可使用
 
 ## 特色
 
-- 采用官方原版 [ImageBuilder](https://openwrt.org/docs/guide-user/additional-software/imagebuilder) 构建而非从源码构建，几分钟即可构建完成
+- 采用官方原版 [ImageBuilder](https://openwrt.org/docs/guide-user/additional-software/imagebuilder) 构建而，几分钟即可构建完成
 - 集成常用代理软件及其最佳实践配置，包括 [openclsh](https://github.com/vernesong/OpenClash), [daed](https://github.com/daeuniverse/daed), [passwall](https://github.com/xiaorouji/openwrt-passwall)
 - 可配置默认 LAN 口 IP，PPPoE 账号密码，推荐的 IPv6 配置，刷机完成后，无需配置网络
-- 可按照官方推荐的 uci 功能进行自定义，无需代码修改，您可以通过 uci 进行几乎任何自定义
 - 模块化配置，详见 [modules](https://github.com/EkkoG/OpenWrt#modules-%E4%BB%8B%E7%BB%8D)
 
 ## modules 介绍
@@ -29,13 +28,13 @@ MODULES="python -tools"
 
 以减号开头的 module 会被排除，上面的例子中，会增加 python module，并排除 tools module
 
-默认使用的 modules 参见 https://github.com/EkkoG/OpenWrt/blob/master/build.sh 开头
+内置 modules https://github.com/EkkoG/OpenWrt/tree/master/modules
+默认使用的 modules 参见 https://github.com/EkkoG/OpenWrt/blob/master/build.sh
 
 
 ## 依赖
 
-- Docker
-- docker-compose v1 or v2
+- [Docker Compose](https://docs.docker.com/compose/install/)
 
 ## 使用
 
