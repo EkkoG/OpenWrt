@@ -2,7 +2,7 @@
 
 ## 特色
 
-- 采用官方原版 [ImageBuilder](https://openwrt.org/docs/guide-user/additional-software/imagebuilder) 构建而，几分钟即可构建完成
+- 采用官方原版 [ImageBuilder](https://openwrt.org/docs/guide-user/additional-software/imagebuilder) 构建，几分钟即可构建完成
 - 集成常用代理软件及其最佳实践配置，包括 [openclsh](https://github.com/vernesong/OpenClash), [daed](https://github.com/daeuniverse/daed), [passwall](https://github.com/xiaorouji/openwrt-passwall)
 - 可配置默认 LAN 口 IP，PPPoE 账号密码，推荐的 IPv6 配置，刷机完成后，无需配置网络
 - 模块化配置，详见 [modules](https://github.com/EkkoG/OpenWrt#modules-%E4%BB%8B%E7%BB%8D)
