@@ -24,7 +24,6 @@ done
 final_modules="$(echo "$final_modules" | tr '\n' ' ')"
 echo "Final modules: $final_modules"
 cp -r modules work_modules
-ls work_modules
 
 for module in $final_modules; do
 
@@ -33,15 +32,14 @@ for module in $final_modules; do
     fi
 
     if [ -f "work_modules/$module/.env" ]; then
-        echo "Running envsubst for $module"
-        mv work_modules/$module/.env work_modules/$module/.env.tmp
-        # add export to .env, every line
-        sed -i 's/^/export /' work_modules/$module/.env.tmp
-        . work_modules/$module/.env.tmp
-        # envsubst
+        . work_modules/$module/.env
         for file in $(find "work_modules/$module/files/etc/uci-defaults" -type f); do
-            envsubst < $file | sed -e 's/§/$/g' > $file.tmp
-            mv $file.tmp $file
+            all_env="$(cat work_modules/$module/.env)"
+            for env in $all_env; do
+                env_name="$(echo "$env" | cut -d '=' -f 1)"
+                env_value="$(echo "$env" | cut -d '=' -f 2)"
+                sed -e "s|\$$env_name|$env_value|g" -i $file
+            done
         done
     fi
 

@@ -5,12 +5,12 @@ while uci -q delete openclash.@config_subscribe[0]; do :; done
 while uci -q delete openclash.@authentication[0]; do :; done
 
 password=$DASHBOARD_PASSWORD
-if [ -z "§password" ]; then
+if [ -z "$password" ]; then
     password=$(openssl rand -base64 12)
 fi
  
 uci batch << EOF
-set openclash.config.dashboard_password='§password'
+set openclash.config.dashboard_password='$password'
 add openclash authentication
 set openclash.@authentication[-1]=authentication
 set openclash.@authentication[-1].enabled='0'
