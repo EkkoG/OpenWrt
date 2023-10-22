@@ -37,7 +37,7 @@ for module in $final_modules; do
             all_env="$(cat modules/$module/.env)"
             for env in $all_env; do
                 env_name="$(echo "$env" | cut -d '=' -f 1)"
-                env_value="$(echo "$env" | cut -d '=' -f 2)"
+                env_value="${!env_name}"
                 sed -e "s|\$$env_name|$env_value|g" -i $file
             done
         done
