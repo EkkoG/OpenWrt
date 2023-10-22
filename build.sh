@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-default_modules="add-feed ib argon base network opkg-mirror prefer-ipv6-settings statistics system tools"
+default_modules="add-feed-key add-feed ib argon base network opkg-mirror prefer-ipv6-settings statistics system tools"
 
 echo "Default modules: $default_modules"
 
@@ -23,18 +23,18 @@ for module in $MODULES; do
 done
 final_modules="$(echo "$final_modules" | tr '\n' ' ')"
 echo "Final modules: $final_modules"
-cp -r modules work_modules
+cp -r custom_modules modules
 
 for module in $final_modules; do
 
-    if [ -f "work_modules/$module/packages" ]; then
-        all_packages="$all_packages $(cat work_modules/$module/packages)"
+    if [ -f "modules/$module/packages" ]; then
+        all_packages="$all_packages $(cat modules/$module/packages)"
     fi
 
-    if [ -f "work_modules/$module/.env" ]; then
-        . work_modules/$module/.env
-        for file in $(find "work_modules/$module/files/etc/uci-defaults" -type f); do
-            all_env="$(cat work_modules/$module/.env)"
+    if [ -f "modules/$module/.env" ]; then
+        . modules/$module/.env
+        for file in $(find "modules/$module/files/etc/uci-defaults" -type f); do
+            all_env="$(cat modules/$module/.env)"
             for env in $all_env; do
                 env_name="$(echo "$env" | cut -d '=' -f 1)"
                 env_value="$(echo "$env" | cut -d '=' -f 2)"
@@ -43,14 +43,14 @@ for module in $final_modules; do
         done
     fi
 
-    if [ -d "work_modules/$module/files" ]; then
+    if [ -d "modules/$module/files" ]; then
         mkdir -p files
-        cp -r work_modules/$module/files/** files/
+        cp -r modules/$module/files/** files/
     fi
 
-    if [ -f "work_modules/$module/post-files.sh" ]; then
+    if [ -f "modules/$module/post-files.sh" ]; then
         echo "Running post-files.sh for $module"
-        . work_modules/$module/post-files.sh
+        . modules/$module/post-files.sh
     fi
 done
 

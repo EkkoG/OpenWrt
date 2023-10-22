@@ -82,7 +82,7 @@ services:
     volumes:
       - ./bin:$BUILD_DIR/bin
       - ./build.sh:$BUILD_DIR/build.sh
-      - ./modules:$BUILD_DIR/modules
+      - ./modules:$BUILD_DIR/custom_modules
       - ./.env:$BUILD_DIR/.env
     command: "./build.sh"
 END
