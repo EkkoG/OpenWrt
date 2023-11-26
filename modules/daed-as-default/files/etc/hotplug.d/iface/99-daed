@@ -1,0 +1,23 @@
+#!/bin/sh
+
+echo "iface $INTERFACE $ACTION detected..."
+
+[ "$ACTION" = "ifup" -a "$INTERFACE" = "wan" ] && {
+
+    sleep 3
+
+    # check if daed is running, use ps
+    if ps | grep -v grep | grep -q daed; then
+        logger "daed is running"
+    else
+        if [ ! -f /root/.daed_first_boot ]; then
+            logger "First boot detected, starting daed..."
+
+            /etc/init.d/daed start
+
+            touch /root/.daed_first_boot
+        else
+            logger "Not first boot, daed start according to config"
+        fi
+    fi
+}
