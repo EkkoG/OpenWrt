@@ -29,6 +29,7 @@ MODULES="python -tools"
 以减号开头的 module 会被排除，上面的例子中，会增加 python module，并排除 tools module
 
 内置 modules https://github.com/EkkoG/OpenWrt/tree/master/modules
+
 默认使用的 modules 参见 https://github.com/EkkoG/OpenWrt/blob/master/build.sh
 
 
@@ -38,7 +39,10 @@ MODULES="python -tools"
 
 ## 使用
 
-本项目通过改变使用不同的 ImageBuilder 镜像，来构建不同的固件，镜像名可以从 [Docker Hub](https://hub.docker.com/r/openwrtorg/imagebuilder/tags) 上查看
+本项目通过改变使用不同的 ImageBuilder 镜像，来构建不同的固件
+
+镜像名可以从 [Docker Hub](https://hub.docker.com/r/openwrtorg/imagebuilder/tags) 上查看
+
 ImmortalWrt 的镜像名字可以从 [Docker Hub](https://hub.docker.com/r/immortalwrt/imagebuilder/tags) 查看
 
 ```bash
@@ -47,6 +51,9 @@ cd OpenWrt
 新建 .env 文件，配置 PPPOE 等相关变量
 ./run.sh --image=openwrtorg/imagebuilder:mvebu-cortexa9-22.03.3 --profile=linksys_wrt3200acm
 ```
+
+如果不需要 ext4 格式的固件，可以通过在 .env 中设置 `CONFIG_TARGET_ROOTFS_EXT4FS=n` 来跳过 ext4 格式的固件构建
+
 
 ## 更多
 
