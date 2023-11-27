@@ -1,11 +1,3 @@
-# 不需要的镜像
-sed -i '/CONFIG_ISO_IMAGES/ c\# CONFIG_ISO_IMAGES is not set' .config
-sed -i '/CONFIG_TARGET_IMAGES_PAD/ c\# CONFIG_TARGET_IMAGES_PAD is not set' .config
-sed -i '/CONFIG_VDI_IMAGES/ c\# CONFIG_VDI_IMAGES is not set' .config
-sed -i '/CONFIG_VMDK_IMAGES/ c\# CONFIG_VMDK_IMAGES is not set' .config
-sed -i '/CONFIG_VHDX_IMAGES/ c\# CONFIG_VHDX_IMAGES is not set' .config
-
-# printenv | grep 'CONFIG_', export all config
 for config in $(printenv | grep '^CONFIG_'); do
     config_name=$(echo $config | awk -F '=' '{print $1}')
     config_value=$(echo $config | awk -F '=' '{print $2}')
