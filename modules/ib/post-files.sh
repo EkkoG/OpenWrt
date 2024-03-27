@@ -5,5 +5,5 @@ for config in $(printenv | grep '^CONFIG_'); do
 done
 
 if [ $USE_MIRROR = '1' ]; then
-    sed -i 's/https:\/\/downloads.'"$PROJECT_NAME"'.org/https:\/\/mirrors.pku.edu.cn\/'"$PROJECT_NAME"'/g' ./repositories.conf
+    sed -i 's/https:\/\/downloads.'"$PROJECT_NAME"'.org/https:\/\/'"$MIRROR"'\/'"$PROJECT_NAME"'/g' ./repositories.conf
 fi

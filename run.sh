@@ -16,6 +16,7 @@ function usage()
     echo "--with-pull: pull image before build"
     echo "--rm-first: remove container before build"
     echo "--use-mirror: use mirror"
+    echo "--mirror: specify mirror url, like mirrors.jlu.edu.cn, do not add http:// or https://"
     echo "-h|--help: print this help"
     exit 1
 }
@@ -32,6 +33,9 @@ while [ "$1" != "" ]; do
             ;;
         --use-mirror)
             USE_MIRROR=$VALUE
+            ;;
+        --mirror)
+            MIRROR=$VALUE
             ;;
         --profile)
             PROFILE=$VALUE
@@ -61,6 +65,10 @@ if [ -z "$USE_MIRROR" ]; then
     USE_MIRROR=1
 fi
 
+if [ -z "$MIRROR" ]; then
+    MIRROR="mirrors.pku.edu.cn"
+fi
+
 echo "IMAGEBUILDER_IMAGE: $IMAGEBUILDER_IMAGE PROFILE: $PROFILE"
 
 if [[ $IMAGEBUILDER_IMAGE =~ "immortalwrt" ]]; then
@@ -77,6 +85,7 @@ services:
     environment:
       - PROFILE=$PROFILE
       - USE_MIRROR=$USE_MIRROR
+      - MIRROR=$MIRROR
     env_file:
       - ./.env
     volumes:
