@@ -23,36 +23,46 @@ for module in $MODULES; do
 done
 final_modules="$(echo "$final_modules" | tr '\n' ' ')"
 echo "Final modules: $final_modules"
-cp -r custom_modules modules
+cp -r modules_in_container modules
+cp -r user_modules_in_container user_modules
 
-for module in $final_modules; do
+all_packages=
 
-    if [ -f "modules/$module/packages" ]; then
-        all_packages="$all_packages $(cat modules/$module/packages)"
-    fi
+deal() {
+    modules_dir=$1
 
-    if [ -f "modules/$module/.env" ]; then
-        . modules/$module/.env
-        for file in $(find "modules/$module/files/etc/uci-defaults" -type f); do
-            all_env="$(cat modules/$module/.env)"
-            for env in $all_env; do
-                env_name="$(echo "$env" | cut -d '=' -f 1)"
-                env_value="${!env_name}"
-                sed -e "s|\$$env_name|$env_value|g" -i $file
+    for module in $final_modules; do
+
+        if [ -f "$modules_dir/$module/packages" ]; then
+            all_packages="$all_packages $(cat $modules_dir/$module/packages)"
+        fi
+
+        if [ -f "$modules_dir/$module/.env" ]; then
+            . $modules_dir/$module/.env
+            for file in $(find "$modules_dir/$module/files/etc/uci-defaults" -type f); do
+                all_env="$(cat $modules_dir/$module/.env)"
+                for env in $all_env; do
+                    env_name="$(echo "$env" | cut -d '=' -f 1)"
+                    env_value="${!env_name}"
+                    sed -e "s|\$$env_name|$env_value|g" -i $file
+                done
             done
-        done
-    fi
+        fi
 
-    if [ -d "modules/$module/files" ]; then
-        mkdir -p files
-        cp -r modules/$module/files/** files/
-    fi
+        if [ -d "$modules_dir/$module/files" ]; then
+            mkdir -p files
+            cp -r $modules_dir/$module/files/** files/
+        fi
 
-    if [ -f "modules/$module/post-files.sh" ]; then
-        echo "Running post-files.sh for $module"
-        . modules/$module/post-files.sh
-    fi
-done
+        if [ -f "$modules_dir/$module/post-files.sh" ]; then
+            echo "Running post-files.sh for $module"
+            . $modules_dir/$module/post-files.sh
+        fi
+    done
+}
+
+deal modules
+deal user_modules
 
 echo "All packages: $all_packages"
 

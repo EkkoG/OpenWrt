@@ -91,7 +91,8 @@ services:
     volumes:
       - ./bin:$BUILD_DIR/bin
       - ./build.sh:$BUILD_DIR/build.sh
-      - ./modules:$BUILD_DIR/custom_modules
+      - ./modules:$BUILD_DIR/modules_in_container
+      - ./user_modules:$BUILD_DIR/user_modules_in_container
       - ./.env:$BUILD_DIR/.env
     command: "./build.sh"
 END

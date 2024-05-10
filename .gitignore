@@ -3,6 +3,6 @@ bin/
 .DS_Store
 transfer.sh
 
-modules/z-*
+user_modules
 docker-compose.yml
 _run.sh
