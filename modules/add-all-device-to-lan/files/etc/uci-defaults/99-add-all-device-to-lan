@@ -1,0 +1,12 @@
+wan_device=$(uci get network.wan.device)
+all_devices=$(ip link show | grep -o "eth[0-9]\+")
+all_devices=$(echo $all_devices | sed "s/$wan_device//g")
+
+uci delete network.@device[0].ports
+
+for device in $all_devices; do
+    uci add_list network.@device[0].ports=$device
+done
+
+uci commit network
+/etc/init.d/network restart
