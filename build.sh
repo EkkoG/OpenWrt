@@ -23,6 +23,7 @@ for module in $MODULES; do
 done
 final_modules="$(echo "$final_modules" | tr '\n' ' ')"
 echo "Final modules: $final_modules"
+
 cp -r modules_in_container modules
 cp -r user_modules_in_container user_modules
 
@@ -61,10 +62,27 @@ deal() {
     done
 }
 
+echo "Checking module existence..."
+for module in $final_modules; do
+    echo "$module"
+
+    if [ ! -d "modules/$module" ]; then
+        if [ ! -d "user_modules/$module" ]; then
+            echo "Module $module does not exist"
+            exit 1
+        fi
+    fi
+done
+
+
 deal modules
 deal user_modules
 
 echo "All packages: $all_packages"
+
+echo ""
+ls files -R
+echo ""
 
 make info
 cat ./repositories.conf
