@@ -37,7 +37,9 @@ jobs:
           echo "PPPOE_PASSWORD=123" >> modules/network/.env
           echo "LAN_IP=192.168.1.1" >> modules/network/.env
           echo "CLASH_CONFIG_URL=https://gist.github.com/EkkoG/20a52db0169c4a4769689521b1c5500e/raw/cf61a9397d0bdbd5b6bbad8fbb388ec851116470/clash_example.yaml" >> modules/openclash/.env
-          echo "MODULES=openclash openclash-as-default" > .env
-          ./run.sh --image=openwrt/imagebuilder:x86-64-23.05.0-rc3
+          echo "CONFIG_TARGET_KERNEL_PARTSIZE=16" > .env
+          echo "CONFIG_TARGET_ROOTFS_PARTSIZE=256" >> .env
+          echo "MODULES=openclash openclash-as-default" >> .env
+          ./run.sh --image=openwrt/imagebuilder:x86-64-23.05.5
           ./run.sh --image=openwrt/imagebuilder:x86-64-22.03.3  
           ./run.sh --image=openwrt/imagebuilder:x86-64-21.02.7

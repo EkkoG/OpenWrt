@@ -116,13 +116,13 @@ if [[ $(uname) =~ "Linux" ]]; then
     sudo chown -R 1000:1000 bin
 fi
 
-compose up --remove-orphans
+compose up --exit-code-from imagebuilder --remove-orphans
 build_status=$?
 compose rm -f
 rm docker-compose.yml
 
 if [ $build_status -ne 0 ]; then
-    echo "build failed"
+    echo "build failed with exit code $build_status"
     exit 1
 else
     ls -R bin
