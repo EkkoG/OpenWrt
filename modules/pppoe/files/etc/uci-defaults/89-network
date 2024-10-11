@@ -5,10 +5,3 @@ set network.wan.password='$PPPOE_PASSWORD'
 
 commit
 EOF
-
-uci batch << EOF
-
-set network.lan.ipaddr='$LAN_IP'
-
-commit
-EOF

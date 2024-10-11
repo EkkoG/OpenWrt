@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-default_modules="add-all-device-to-lan add-feed-key add-feed ib argon base network opkg-mirror prefer-ipv6-settings statistics system tools"
+default_modules="add-all-device-to-lan add-feed-key add-feed ib argon base opkg-mirror prefer-ipv6-settings statistics system tools"
 
 echo "Default modules: $default_modules"
 
