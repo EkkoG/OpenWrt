@@ -22,12 +22,23 @@ set openclash.@dns_servers[-1].type='udp'
 set openclash.@dns_servers[-1].enabled='1'
 set openclash.@dns_servers[-1].ip='119.29.29.29'
 
+add openclash dns_servers
+set openclash.@dns_servers[-1]=dns_servers
+set openclash.@dns_servers[-1].enabled='1'
+set openclash.@dns_servers[-1].group='fallback'
+set openclash.@dns_servers[-1].type='tcp'
+set openclash.@dns_servers[-1].ip='8.8.8.8'
+set openclash.@dns_servers[-1].interface='Disable'
+set openclash.@dns_servers[-1].node_resolve='0'
+set openclash.@dns_servers[-1].specific_group='Disable'
+
 add openclash config_subscribe
 set openclash.@config_subscribe[-1]=config_subscribe
 set openclash.@config_subscribe[-1].enabled='1'
 set openclash.@config_subscribe[-1].address='$CLASH_CONFIG_URL'
 set openclash.@config_subscribe[-1].sub_convert='0'
 
+set openclash.config.custom_fallback_filter='1'
 set openclash.config.ipv6_enable='1'
 set openclash.config.china_ip6_route='1'
 set openclash.config.china_ip_route='1'
