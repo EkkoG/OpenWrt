@@ -37,7 +37,7 @@ set openclash.@config_subscribe[-1]=config_subscribe
 set openclash.@config_subscribe[-1].enabled='1'
 set openclash.@config_subscribe[-1].address='$CLASH_CONFIG_URL'
 set openclash.@config_subscribe[-1].sub_convert='0'
-
+set openclash.config.enable_respect_rules='1'
 set openclash.config.custom_fallback_filter='1'
 set openclash.config.ipv6_enable='1'
 set openclash.config.china_ip6_route='1'
