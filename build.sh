@@ -21,6 +21,7 @@ for module in $MODULES; do
         final_modules="$final_modules $module"
     fi
 done
+
 final_modules="$(echo "$final_modules" | tr '\n' ' ')"
 echo "Final modules: $final_modules"
 
@@ -28,6 +29,8 @@ cp -r modules_in_container modules
 cp -r user_modules_in_container user_modules
 
 all_packages=
+# system env by calling env
+system_env=$(env)
 
 deal() {
     modules_dir=$1
@@ -40,9 +43,17 @@ deal() {
 
         if [ -f "$modules_dir/$module/.env" ]; then
             . $modules_dir/$module/.env
+            all_env="$(cat $modules_dir/$module/.env)"
+            # merge system env
+            all_env="$all_env"$'\n'"$system_env"
+        else
+            all_env="$system_env"
+        fi
+
+        # ensure uci-defaults dir exists
+        if [ -d "$modules_dir/$module/files/etc/uci-defaults" ]; then
             for file in $(find "$modules_dir/$module/files/etc/uci-defaults" -type f); do
-                all_env="$(cat $modules_dir/$module/.env)"
-                for env in $all_env; do
+                echo "$all_env" | while IFS= read -r env; do
                     env_name="$(echo "$env" | cut -d '=' -f 1)"
                     env_value="${!env_name}"
                     sed -e "s|\$$env_name|$env_value|g" -i $file
