@@ -2,6 +2,14 @@
 
 default_modules="add-all-device-to-lan add-feed-key add-feed ib argon base opkg-mirror prefer-ipv6-settings statistics system tools"
 
+LOG() {
+    # echo when $LOG_ENABLE is not set or set to 1
+    if [ -z "$LOG_ENABLE" ] || [ "$LOG_ENABLE" == "1" ]; then
+        echo -e "\033[32m$1\033[0m"
+    fi
+    
+}
+
 echo "Default modules: $default_modules"
 
 final_modules=$default_modules
@@ -30,12 +38,16 @@ cp -r user_modules_in_container user_modules
 
 all_packages=
 # system env by calling env
-system_env=$(env)
+system_env=""
+if [ $USE_SYTEM_ENV ]; then
+    system_env="$(env)"
+fi
 
 deal() {
     modules_dir=$1
 
     for module in $final_modules; do
+        LOG "Processing $module in $modules_dir"
 
         if [ -f "$modules_dir/$module/packages" ]; then
             all_packages="$all_packages $(cat $modules_dir/$module/packages)"
@@ -55,8 +67,12 @@ deal() {
             for file in $(find "$modules_dir/$module/files/etc/uci-defaults" -type f); do
                 echo "$all_env" | while IFS= read -r env; do
                     env_name="$(echo "$env" | cut -d '=' -f 1)"
-                    env_value="${!env_name}"
-                    sed -e "s|\$$env_name|$env_value|g" -i $file
+                    echo "env_name: $env_name"
+                    if [ ! -z "$env_name" ]; then
+                        env_value="${!env_name}"
+                        LOG "Replacing $env_name with $env_value in $file"
+                        sed -e "s|\$$env_name|$env_value|g" -i $file
+                    fi
                 done
             done
         fi

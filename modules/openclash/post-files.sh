@@ -3,4 +3,4 @@ wget --user-agent='clash' $CLASH_CONFIG_URL -O files/etc/openclash/config/config
 
 . ./modules/add-feed-base/base.sh
 
-add_packages "clash"
+add_packages "mihomo"
