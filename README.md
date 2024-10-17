@@ -8,9 +8,6 @@
 
 另外项目会将配置持久化，相比 Firmware Selector，无需每次生成固件都需要重新配置
 
-<!-- Built With -->
-## 基于
-
 - 基于 [ImageBuilder](https://openwrt.org/docs/guide-user/additional-software/imagebuilder) 构建，几分钟即可构建完成
 - 使用 [Docker](https://www.docker.com/) 运行 ImageBuilder，无需安装额外的软件和依赖
 
@@ -18,7 +15,8 @@
 
 - 集成常用代理软件及其最佳实践配置，如 openclash, daed, passwall
 - 可配置默认 LAN 口 IP，PPPoE 账号密码，推荐的 IPv6 配置，刷机完成后，无需配置网络
-- 模块化，方便添加和维护
+- 模块化，更易维护
+
 <!-- Prerequisites -->
 ## 准备
 
@@ -69,6 +67,8 @@ files/ #定义本 module 需要的文件，按照 [OpenWrt 的 files](https://op
 post-files.sh #定义本 module 的预处理脚本，会在将当前 module 的 files 合并到最终目录后执行
 .env #定义本 module 的环境变量，会将其中的变量的值替换到 files/uci-defaults/ 目录下的文件中
 ```
+
+如果您想在项目根目录的 .env 中统一定义变量，以便在 module 中使用，可以在根目录的 .env 中设置 `USE_SYTEM_ENV=1`，这样在 module 中就可以使用系统环境变量了
 
 您可以通过在项目根目录下的 .env 中定义 MODULES 变量，来选择需要的 module，例如
 
