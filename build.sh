@@ -3,14 +3,25 @@
 default_modules="add-all-device-to-lan add-feed-key add-feed ib argon base opkg-mirror prefer-ipv6-settings statistics system tools"
 
 LOG() {
-    # echo when $LOG_ENABLE is not set or set to 1
-    if [ -z "$LOG_ENABLE" ] || [ "$LOG_ENABLE" == "1" ]; then
+    # echo when $LOG_ENABLE is set or set to 1
+    if [ "$LOG_ENABLE" == "1" ]; then
         echo -e "\033[32m$1\033[0m"
     fi
-    
 }
 
-echo "Default modules: $default_modules"
+LOG_ERR() {
+    if [ "$LOG_ENABLE" == "1" ]; then
+        echo -e "\033[31m$1\033[0m"
+    fi
+}
+
+LOG_DEBUG() {
+    if [ "$LOG_ENABLE" == "1" ] && [ "$DEBUG" == "1" ]; then
+        echo -e "\033[33m$1\033[0m"
+    fi
+}
+
+LOG "Default enabled modules: $default_modules"
 
 final_modules=$default_modules
 for module in $MODULES; do
@@ -31,7 +42,7 @@ for module in $MODULES; do
 done
 
 final_modules="$(echo "$final_modules" | tr '\n' ' ')"
-echo "Final modules: $final_modules"
+LOG "Final enabled modules: $final_modules"
 
 cp -r modules_in_container modules
 cp -r user_modules_in_container user_modules
@@ -47,6 +58,9 @@ deal() {
     modules_dir=$1
 
     for module in $final_modules; do
+        if [ ! -d "$modules_dir/$module" ]; then
+            continue
+        fi
         LOG "Processing $module in $modules_dir"
 
         if [ -f "$modules_dir/$module/packages" ]; then
@@ -67,10 +81,9 @@ deal() {
             for file in $(find "$modules_dir/$module/files/etc/uci-defaults" -type f); do
                 echo "$all_env" | while IFS= read -r env; do
                     env_name="$(echo "$env" | cut -d '=' -f 1)"
-                    echo "env_name: $env_name"
                     if [ ! -z "$env_name" ]; then
                         env_value="${!env_name}"
-                        LOG "Replacing $env_name with $env_value in $file"
+                        LOG_DEBUG "Replacing $env_name with $env_value in $file"
                         sed -e "s|\$$env_name|$env_value|g" -i $file
                     fi
                 done
@@ -83,21 +96,17 @@ deal() {
         fi
 
         if [ -f "$modules_dir/$module/post-files.sh" ]; then
-            echo "Running post-files.sh for $module"
+            LOG "Running post-files.sh for $module"
             . $modules_dir/$module/post-files.sh
         fi
     done
 }
 
-echo "Checking module existence..."
+LOG "Ensure all modules exist"
 for module in $final_modules; do
-    echo "$module"
-
-    if [ ! -d "modules/$module" ]; then
-        if [ ! -d "user_modules/$module" ]; then
-            echo "Module $module does not exist"
-            exit 1
-        fi
+    if [ ! -d "modules/$module" ] && [ ! -d "user_modules/$module" ]; then
+        LOG_ERR "Module $module does not exist"
+        exit 1
     fi
 done
 
@@ -105,11 +114,11 @@ done
 deal modules
 deal user_modules
 
-echo "All packages: $all_packages"
+LOG "All packages will be installed: $all_packages"
 
-echo ""
+LOG ""
 ls files -R
-echo ""
+LOG ""
 
 make info
 cat ./repositories.conf
