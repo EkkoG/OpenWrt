@@ -92,7 +92,19 @@ deal() {
 
         if [ -d "$modules_dir/$module/files" ]; then
             mkdir -p files
-            cp -r $modules_dir/$module/files/** files/
+            # cp -r $modules_dir/$module/files/** files/
+
+            # copy files to files dir, exit when destination file exists
+            # ignore .DS_Store
+            for file in $(find "$modules_dir/$module/files" -type f | grep -v .DS_Store); do
+                dest_file="files/${file#$modules_dir/$module/files/}"
+                if [ -f "$dest_file" ]; then
+                    LOG_ERR "File $dest_file already exists"
+                    exit 1
+                fi
+                mkdir -p $(dirname $dest_file)
+                cp $file $dest_file
+            done
         fi
 
         if [ -f "$modules_dir/$module/post-files.sh" ]; then
