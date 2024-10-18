@@ -3,7 +3,7 @@
 default_modules="add-all-device-to-lan add-feed-key add-feed ib argon base opkg-mirror prefer-ipv6-settings statistics system tools"
 
 LOG() {
-    # echo when $LOG_ENABLE is set or set to 1
+    # echo when $LOG_ENABLE set to 1
     if [ "$LOG_ENABLE" == "1" ]; then
         echo -e "\033[32m$1\033[0m"
     fi
@@ -135,7 +135,7 @@ LOG ""
 make info
 cat ./repositories.conf
 if [ -z "$PROFILE" ]; then
-    make image PACKAGES="$all_packages" FILES="files"
+    make image PACKAGES="$all_packages" FILES="files" -S
 else
-    make PROFILE="$PROFILE" image PACKAGES="$all_packages" FILES="files"
+    make PROFILE="$PROFILE" image PACKAGES="$all_packages" FILES="files" -S
 fi
