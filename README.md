@@ -4,7 +4,7 @@
 
 ## 关于此项目
 
-通常在官方下载的固件会缺少一些软件包，且在初次启动时需要配置拨号账号密码等，官方提供的 [Firmware Selector](https://firmware-selector.openwrt.org/)，不能添加自定义软件源，此项目就是为了解决这些问题，目标是简化以减少新系统启动时必须的初始化配置为，达到开机无需配置即可使用
+通常在官方下载的固件会缺少一些软件包，且在初次启动时需要配置拨号账号密码等，官方提供的 [Firmware Selector](https://firmware-selector.openwrt.org/)，不能添加自定义软件源，此项目就是为了解决这些问题，以减少新系统启动时必须的初始化配置为目的，达到开机无需配置即可使用
 
 另外项目会将配置持久化，相比 Firmware Selector，无需每次生成固件都需要重新配置
 
@@ -13,7 +13,7 @@
 
 ## 特性
 
-- 集成常用代理软件及其最佳实践配置，如 openclash, daed, passwall
+- 集成常用代理软件及其最佳实践配置，如 OpenClash, daed, passwall
 - 可配置默认 LAN 口 IP，PPPoE 账号密码，推荐的 IPv6 配置，刷机完成后，无需配置网络
 - 模块化，更易维护
 
@@ -62,8 +62,8 @@ cd OpenWrt
 每个 module 都是一个目录，目录名即为 module 名，目录下包含以下文件
 
 ```bash
-packages #一个文本文件，定义本 module 依赖的软件包
-files/ #定义本 module 需要的文件，按照 [OpenWrt 的 files](https://openwrt.org/docs/guide-developer/toolchain/use-buildsystem#custom_files) 规范，放置到对应的目录下，最后会将所有 module 的 files 合并到一个目录下
+packages #一个文本文件，定义本 module 依赖的软件包, 空格分隔
+files/ #定义本 module 需要的文件，按照 [OpenWrt 的 files](https://openwrt.org/docs/guide-developer/toolchain/use-buildsystem#custom_files) 规范，放置到对应的目录下，最后会将所有 module 的 files 合并到 files 目录下
 post-files.sh #定义本 module 的预处理脚本，会在将当前 module 的 files 合并到最终目录后执行
 .env #定义本 module 的环境变量，会将其中的变量的值替换到 files/uci-defaults/ 目录下的文件中
 ```
