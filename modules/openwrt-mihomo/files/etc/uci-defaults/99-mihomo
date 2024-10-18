@@ -1,0 +1,13 @@
+uci batch << EOF
+set mihomo.config.fast_reload='0'
+set mihomo.proxy.tcp_transparent_proxy_mode='tproxy'
+set mihomo.proxy.udp_transparent_proxy_mode='tproxy'
+set mihomo.proxy.ipv6_proxy='1'
+set mihomo.proxy.bypass_china_mainland_ip='1'
+set mihomo.subscription.url='$CLASH_CONFIG_URL'
+set mihomo.mixin.ipv6='1'
+set mihomo.mixin.dns_mode='normal'
+set mihomo.mixin.dns_ipv6='1'
+set mihomo.mixin.dns_system_hosts='1'
+commit
+EOF
