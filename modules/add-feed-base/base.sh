@@ -1,10 +1,3 @@
-if [[ $PWD =~ "immortalwrt" ]]; then
-    PROJECT_NAME="immortalwrt"
-    sudo chown -R $(whoami):$(whoami) bin
-else
-    PROJECT_NAME="openwrt"
-fi
-
 PACKAGES_ARCH=$(cat .config | grep CONFIG_TARGET_ARCH_PACKAGES | awk -F '=' '{print $2}' | sed 's/"//g')
 
 add_packages() {
