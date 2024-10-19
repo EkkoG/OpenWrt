@@ -9,5 +9,8 @@ set mihomo.mixin.ipv6='1'
 set mihomo.mixin.dns_mode='normal'
 set mihomo.mixin.dns_ipv6='1'
 set mihomo.mixin.dns_system_hosts='1'
+set mihomo.mixin.dns_respect_rules='1'
+set mihomo.mixin.geox_auto_update='1'
+set mihomo.config.scheduled_restart='1'
 commit
 EOF
