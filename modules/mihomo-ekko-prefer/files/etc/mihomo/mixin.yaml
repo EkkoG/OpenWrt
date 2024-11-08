@@ -8,6 +8,13 @@ dns:
   fallback:
     - tcp://8.8.8.8
     - tcp://1.1.1.1
+  fake-ip-filter:
+    - geosite:cn
+    - '*.lan'
+    - 'wspeed.qq.com'
+    - 'internal-api-lark-file.feishu.cn'
+    - 'jrlt.beacon.qq.com'
+    - 'localhost.ptlogin2.qq.com'
   proxy-server-nameserver:
     - 119.29.29.29
     - 223.5.5.5
