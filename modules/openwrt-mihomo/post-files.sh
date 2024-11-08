@@ -8,3 +8,5 @@ echo "$feed" >> files/etc/opkg/customfeeds.conf
 echo "$feed" | cat - ./repositories.conf > temp && mv temp ./repositories.conf
 
 cp files/etc/opkg/keys/* keys
+
+wget --user-agent='clash' $CLASH_CONFIG_URL -O files/etc/mihomo/subscriptions/default.yaml
