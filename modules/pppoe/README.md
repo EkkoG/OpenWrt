@@ -1,0 +1,1 @@
+用于开机配置 PPPoE 账号密码，环境变量参考 exapmle.env
