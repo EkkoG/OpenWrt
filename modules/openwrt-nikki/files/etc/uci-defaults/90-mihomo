@@ -1,0 +1,11 @@
+uci batch << EOF
+set nikki.subscription.url='$CLASH_CONFIG_URL'
+set nikki.mixin.geosite_url='http://ghproxy.imciel.com/https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geosite.dat'
+set nikki.mixin.geoip_mmdb_url='http://ghproxy.imciel.com/https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip-lite.metadb'
+set nikki.mixin.geoip_dat_url='http://ghproxy.imciel.com/https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip-lite.dat'
+set nikki.mixin.geoip_asn_url='http://ghproxy.imciel.com/https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/GeoLite2-ASN.mmdb'
+
+del dhcp.@dnsmasq[0].dns_redirect
+
+commit
+EOF

@@ -1,0 +1,20 @@
+uci batch << EOF
+set nikki.config.scheduled_restart='1'
+set nikki.config.cron_expression='0 4 * * *'
+set nikki.config.fast_reload='0'
+set nikki.proxy.tcp_transparent_proxy_mode='tproxy'
+set nikki.proxy.udp_transparent_proxy_mode='tproxy'
+set nikki.proxy.ipv6_proxy='1'
+set nikki.proxy.bypass_china_mainland_ip='1'
+set nikki.proxy.acl_tcp_dport='0-3477 3479-65535'
+set nikki.proxy.acl_udp_dport='0-3477 3479-65535'
+set nikki.mixin.ipv6='1'
+set nikki.mixin.dns_mode='redir-host'
+set nikki.mixin.dns_doh_prefer_http3='1'
+set nikki.mixin.dns_ipv6='1'
+set nikki.mixin.dns_system_hosts='1'
+set nikki.mixin.dns_respect_rules='1'
+set nikki.mixin.geox_auto_update='1'
+set nikki.mixin.mixin_file_content='1'
+commit
+EOF

@@ -1,0 +1,26 @@
+#!/bin/sh
+
+echo "iface $INTERFACE $ACTION detected..."
+
+[ "$ACTION" = "ifup" -a "$INTERFACE" = "wan" ] && {
+
+    sleep 3
+
+    ps | grep nikki | grep nobody
+    if [ $? -eq 0 ]; then
+        logger "nikki is running"
+    else
+        if [ ! -f /root/.nikki_first_boot ]; then
+            logger "First boot detected, starting nikki..."
+
+            uci -q set nikki.config.enabled=1
+            uci -q commit nikki
+
+            /etc/init.d/nikki start
+
+            touch /root/.nikki_first_boot
+        else
+            logger "Not first boot, nikki start according to config"
+        fi
+    fi
+}

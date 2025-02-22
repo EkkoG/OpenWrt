@@ -1,4 +1,0 @@
-uci batch << EOF
-set mihomo.subscription.url='$CLASH_CONFIG_URL'
-commit
-EOF
