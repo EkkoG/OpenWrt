@@ -1,10 +1,16 @@
 dns:
   default-nameserver:
-    - 119.29.29.29
     - 223.5.5.5
-  nameserver:
-    - https://dot.pub/dns-query
+    - 119.29.29.29
+  proxy-server-nameserver:
     - https://dns.alidns.com/dns-query
+    - https://doh.pub/dns-query
+  direct-nameserver:
+    - https://dns.alidns.com/dns-query
+    - https://doh.pub/dns-query
+  nameserver:
+    - https://dns.alidns.com/dns-query
+    - https://doh.pub/dns-query
   fallback:
     - tcp://8.8.8.8
     - tcp://1.1.1.1
@@ -15,9 +21,6 @@ dns:
     - 'internal-api-lark-file.feishu.cn'
     - 'jrlt.beacon.qq.com'
     - 'localhost.ptlogin2.qq.com'
-  proxy-server-nameserver:
-    - 119.29.29.29
-    - 223.5.5.5
   fallback-filter:
     geoip: true
     geoip-code: CN
