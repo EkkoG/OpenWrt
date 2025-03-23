@@ -10,4 +10,4 @@ echo "$feed" | cat - ./repositories.conf > temp && mv temp ./repositories.conf
 cp files/etc/opkg/keys/* keys
 
 mkdir -p files/etc/nikki/subscriptions
-wget --user-agent='clash' $CLASH_CONFIG_URL -O files/etc/nikki/subscriptions/default.yaml
+wget --user-agent='clash' $CLASH_CONFIG_URL -O files/etc/nikki/subscriptions/subscription.yaml
