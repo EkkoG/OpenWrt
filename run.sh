@@ -69,6 +69,9 @@ if [ -z "$MIRROR" ]; then
     MIRROR="mirrors.pku.edu.cn"
 fi
 
+# Set the TARGET_VERSION that need to change the modules
+TARGET_VERSION=24.10
+
 echo "IMAGEBUILDER_IMAGE: $IMAGEBUILDER_IMAGE PROFILE: $PROFILE"
 
 if [[ $IMAGEBUILDER_IMAGE =~ "immortalwrt" ]]; then
@@ -86,6 +89,8 @@ services:
       - PROFILE=$PROFILE
       - USE_MIRROR=$USE_MIRROR
       - MIRROR=$MIRROR
+      - TARGET_VERSION=$TARGET_VERSION
+      - IMAGEBUILDER_IMAGE=$IMAGEBUILDER_IMAGE
     env_file:
       - ./.env
     volumes:
