@@ -23,6 +23,61 @@ LOG_DEBUG() {
 
 LOG "Default enabled modules: $default_modules"
 
+# Get TARGET_VERSION and IMAGEBUILDER_IMAGE from environment variables
+TARGET_VERSION="${TARGET_VERSION:-24.10}" # Default to 24.10 if not set
+IMAGEBUILDER_IMAGE="$IMAGEBUILDER_IMAGE"
+PACKAGES_FILE="./modules_in_container/base/packages" # Path inside container
+
+# Extract the version number
+VERSION=$(echo "$IMAGEBUILDER_IMAGE" | awk -F ':' '{print $NF}')
+
+# Function to compare versions (major.minor)
+is_version_greater_equal() {
+  local version1="$1"
+  local version2="$2"
+
+  local major1=$(echo "$version1" | cut -d'.' -f1)
+  local minor1=$(echo "$version1" | cut -d'.' -f2)
+  local major2=$(echo "$version2" | cut -d'.' -f1)
+  local minor2=$(echo "$version2" | cut -d'.' -f2)
+
+  if [ -z "$minor1" ]; then
+    minor1=0
+  fi
+  if [ -z "$minor2" ]; then
+    minor2=0
+  fi
+
+  if [ "$major1" -gt "$major2" ]; then
+    return 0
+  elif [ "$major1" -lt "$major2" ]; then
+    return 1
+  else
+    if [ "$minor1" -ge "$minor2" ]; then
+      return 0
+    else
+      return 1
+    fi
+  fi
+}
+
+# Check if the version is >= TARGET_VERSION
+if is_version_greater_equal "$VERSION" "$TARGET_VERSION"; then
+  echo "Version $VERSION is >= $TARGET_VERSION. Performing replacement in container '$PACKAGES_FILE'..."
+
+  # Check if the packages file exists inside the container
+  if [ -f "$PACKAGES_FILE" ]; then
+    sed -i 's/luci-i18n-opkg-zh-cn/luci-i18n-package-manager-zh-cn/g' "$PACKAGES_FILE"
+    echo "Replacement completed in container '$PACKAGES_FILE'."
+  else
+    echo "Error: Packages file not found in container '$PACKAGES_FILE'."
+  fi
+else
+  echo "Version $VERSION is < $TARGET_VERSION. No replacement needed in container."
+fi
+
+echo "Starting the rest of the build process..."
+
 final_modules=$default_modules
 for module in $MODULES; do
     # check if module fisrt char is "-"
