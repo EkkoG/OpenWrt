@@ -27,9 +27,15 @@ LOG "Default enabled modules: $default_modules"
 TARGET_VERSION="${TARGET_VERSION:-24.10}" # Default to 24.10 if not set
 IMAGEBUILDER_IMAGE="$IMAGEBUILDER_IMAGE"
 PACKAGES_FILE="./modules_in_container/base/packages" # Path inside container
+VERSION_REGEX="^[0-9]+\.[0-9]+(\.[0-9]+)?$" # Regex for major.minor or major.minor.patch
 
-# Extract the version number
-VERSION=$(echo "$IMAGEBUILDER_IMAGE" | awk -F ':' '{print $NF}')
+if [[ ! "$IMAGEBUILDER_IMAGE" =~ ":" ]] || ! [[ "$VERSION_TAG" =~ $VERSION_REGEX ]]; then
+    VERSION="23.05.4" # Default version if no colon or tag is not a version number
+    echo "Using default VERSION: $VERSION for IMAGEBUILDER_IMAGE: $IMAGEBUILDER_IMAGE"
+else
+    VERSION="$VERSION_TAG"
+    echo "Extracted VERSION: $VERSION from IMAGEBUILDER_IMAGE: $IMAGEBUILDER_IMAGE"
+fi
 
 # Function to compare versions (major.minor)
 is_version_greater_equal() {
