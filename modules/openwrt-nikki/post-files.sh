@@ -1,7 +1,7 @@
 
 PACKAGES_ARCH=$(cat .config | grep CONFIG_TARGET_ARCH_PACKAGES | awk -F '=' '{print $2}' | sed 's/"//g')
 
-feed="src/gz nikki https://nikkinikki.pages.dev/openwrt-$WRT_VERSION/$PACKAGES_ARCH/nikki"
+feed="src/gz nikki https://nikkinikki.pages.dev/openwrt-$OPENWRT_VERSION/$PACKAGES_ARCH/nikki"
 mkdir -p files/etc/opkg/
 echo "$feed" >> files/etc/opkg/customfeeds.conf
 # 添加软件源到第一行

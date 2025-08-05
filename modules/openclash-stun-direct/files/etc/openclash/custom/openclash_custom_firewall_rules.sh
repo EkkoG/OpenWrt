@@ -5,7 +5,7 @@
 # This script is called by /etc/init.d/openclash
 # Add your custom firewall rules here, they will be added after the end of the OpenClash iptables rules
 
-LOG_OUT "Tip: Start Add Custom Firewall Rules..."
+LOG_OUT "[INFO] Initializing custom firewall rules..."
 
 custom_white_list_nft() {
     nft 'insert rule inet fw4 openclash position 0 tcp dport 3478 counter return'

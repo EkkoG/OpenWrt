@@ -1,167 +1,167 @@
 #!/bin/bash -e
 
-WRT_VERSION=24.10
-IS_SNAPSHOT=0
+OPENWRT_VERSION=24.10
+IS_SNAPSHOT_BUILD=0
 
-# 判断是否是 24.10 以下版本
-# 如果 IMAGEBUILDER_IMAGE 变量存在，则解析版本号
+# Detect OpenWrt version from image builder tag
+# Parse version number from IMAGEBUILDER_IMAGE if provided
 if [ ! -z "$IMAGEBUILDER_IMAGE" ]; then
-    # 提取版本号，处理 -snapshot 和 -master 后缀
-    version_from_image=$(echo "$IMAGEBUILDER_IMAGE" | grep -oE '[0-9]+\.[0-9]+' | head -1)
-    if [ ! -z "$version_from_image" ]; then
-        WRT_VERSION=$version_from_image
+    # Extract version number, handling -snapshot and -master suffixes
+    extracted_version=$(echo "$IMAGEBUILDER_IMAGE" | grep -oE '[0-9]+\.[0-9]+' | head -1)
+    if [ ! -z "$extracted_version" ]; then
+        OPENWRT_VERSION=$extracted_version
     fi
 
     if [[ $IMAGEBUILDER_IMAGE =~ "-SNAPSHOT" ]]; then
-        IS_SNAPSHOT=1
+        IS_SNAPSHOT_BUILD=1
     fi
 fi
 
 
-default_modules="add-all-device-to-lan add-feed-key add-feed ib argon base opkg-mirror prefer-ipv6-settings statistics system tools"
+DEFAULT_MODULE_SET="add-all-device-to-lan add-feed-key add-feed ib argon base opkg-mirror prefer-ipv6-settings statistics system tools"
 
-if [ "$WRT_VERSION" == "24.10" ]; then
-    default_modules="$default_modules base24+"
+if [ "$OPENWRT_VERSION" == "24.10" ]; then
+    DEFAULT_MODULE_SET="$DEFAULT_MODULE_SET base24+"
 else
-    default_modules="$default_modules base23"
+    DEFAULT_MODULE_SET="$DEFAULT_MODULE_SET base23"
 fi
 
 
-LOG() {
-    # echo when $LOG_ENABLE set to 1
+log_info() {
+    # Print info messages when logging is enabled
     if [ "$LOG_ENABLE" == "1" ]; then
-        echo -e "\033[32m$1\033[0m"
+        echo -e "\033[32m[INFO]\033[0m $1"
     fi
 }
 
-LOG_ERR() {
+log_error() {
     if [ "$LOG_ENABLE" == "1" ]; then
-        echo -e "\033[31m$1\033[0m"
+        echo -e "\033[31m[ERROR]\033[0m $1"
     fi
 }
 
-LOG_DEBUG() {
+log_debug() {
     if [ "$LOG_ENABLE" == "1" ] && [ "$DEBUG" == "1" ]; then
-        echo -e "\033[33m$1\033[0m"
+        echo -e "\033[33m[DEBUG]\033[0m $1"
     fi
 }
 
-LOG "Detected WRT version: $WRT_VERSION"
-LOG "Default enabled modules: $default_modules"
+log_info "OpenWrt version detected: $OPENWRT_VERSION"
+log_info "Default module set: $DEFAULT_MODULE_SET"
 
-final_modules=$default_modules
+ACTIVE_MODULE_LIST=$DEFAULT_MODULE_SET
 for module in $MODULES; do
-    # check if module fisrt char is "-"
+    # Check if module starts with "-" (exclusion prefix)
     if [ "${module:0:1}" == "-" ]; then
-        # remove module from final_modules
-        temp="$(echo "$final_modules" | tr ' ' '\n')"
-        final_modules=""
-        for m in $temp; do
-            if [ "$m" != "${module:1}" ]; then
-                final_modules="$final_modules $m"
+        # Remove module from active list
+        module_list_array="$(echo "$ACTIVE_MODULE_LIST" | tr ' ' '\n')"
+        ACTIVE_MODULE_LIST=""
+        for active_module in $module_list_array; do
+            if [ "$active_module" != "${module:1}" ]; then
+                ACTIVE_MODULE_LIST="$ACTIVE_MODULE_LIST $active_module"
             fi
         done
     else
-        # add module to final_modules
-        final_modules="$final_modules $module"
+        # Add module to active list
+        ACTIVE_MODULE_LIST="$ACTIVE_MODULE_LIST $module"
     fi
 done
 
-final_modules="$(echo "$final_modules" | tr '\n' ' ')"
-LOG "Final enabled modules: $final_modules"
+ACTIVE_MODULE_LIST="$(echo "$ACTIVE_MODULE_LIST" | tr '\n' ' ')"
+log_info "Active modules: $ACTIVE_MODULE_LIST"
 
 cp -r modules_in_container modules
 cp -r user_modules_in_container user_modules
 
-all_packages=
-# system env by calling env
-system_env=""
+PACKAGE_COLLECTION=
+# Load system environment variables
+SYSTEM_ENVIRONMENT=""
 if [ $USE_SYTEM_ENV ]; then
-    system_env="$(cat .env)"
+    SYSTEM_ENVIRONMENT="$(cat .env)"
 fi
 
-deal() {
-    modules_dir=$1
+process_module_directory() {
+    module_directory=$1
 
-    for module in $final_modules; do
-        if [ ! -d "$modules_dir/$module" ]; then
+    for module_name in $ACTIVE_MODULE_LIST; do
+        if [ ! -d "$module_directory/$module_name" ]; then
             continue
         fi
-        LOG "Processing $module in $modules_dir"
+        log_info "Processing module: $module_name from $module_directory"
 
-        if [ -f "$modules_dir/$module/packages" ]; then
-            all_packages="$all_packages $(cat $modules_dir/$module/packages)"
+        if [ -f "$module_directory/$module_name/packages" ]; then
+            PACKAGE_COLLECTION="$PACKAGE_COLLECTION $(cat $module_directory/$module_name/packages)"
         fi
 
-        if [ -f "$modules_dir/$module/.env" ]; then
-            . $modules_dir/$module/.env
-            all_env="$(cat $modules_dir/$module/.env)"
-            # merge system env
-            all_env="$all_env"$'\n'"$system_env"
+        if [ -f "$module_directory/$module_name/.env" ]; then
+            . $module_directory/$module_name/.env
+            module_environment="$(cat $module_directory/$module_name/.env)"
+            # Merge with system environment
+            module_environment="$module_environment"$'\n'"$SYSTEM_ENVIRONMENT"
         else
-            all_env="$system_env"
+            module_environment="$SYSTEM_ENVIRONMENT"
         fi
 
-        # ensure uci-defaults dir exists
-        if [ -d "$modules_dir/$module/files/etc/uci-defaults" ]; then
-            for file in $(find "$modules_dir/$module/files/etc/uci-defaults" -type f); do
-                echo "$all_env" | while IFS= read -r env; do
-                    env_name="$(echo "$env" | cut -d '=' -f 1)"
-                    if [ ! -z "$env_name" ]; then
-                        env_value="${!env_name}"
-                        LOG_DEBUG "Replacing $env_name with $env_value in $file"
-                        sed -e "s|\$$env_name|$env_value|g" -i $file
+        # Process UCI defaults with environment variable substitution
+        if [ -d "$module_directory/$module_name/files/etc/uci-defaults" ]; then
+            for config_file in $(find "$module_directory/$module_name/files/etc/uci-defaults" -type f); do
+                echo "$module_environment" | while IFS= read -r env_line; do
+                    variable_name="$(echo "$env_line" | cut -d '=' -f 1)"
+                    if [ ! -z "$variable_name" ]; then
+                        variable_value="${!variable_name}"
+                        log_debug "Substituting $variable_name with $variable_value in $config_file"
+                        sed -e "s|\$$variable_name|$variable_value|g" -i $config_file
                     fi
                 done
             done
         fi
 
-        if [ -d "$modules_dir/$module/files" ]; then
+        if [ -d "$module_directory/$module_name/files" ]; then
             mkdir -p files
-            # cp -r $modules_dir/$module/files/** files/
+            # Copy module files to build directory
 
-            # copy files to files dir, exit when destination file exists
-            # ignore .DS_Store
-            for file in $(find "$modules_dir/$module/files" -type f | grep -v .DS_Store); do
-                dest_file="files/${file#$modules_dir/$module/files/}"
-                if [ -f "$dest_file" ]; then
-                    LOG_ERR "File $dest_file already exists"
+            # Copy files, ensuring no duplicates
+            # Exclude .DS_Store files
+            for source_file in $(find "$module_directory/$module_name/files" -type f | grep -v .DS_Store); do
+                target_file="files/${source_file#$module_directory/$module_name/files/}"
+                if [ -f "$target_file" ]; then
+                    log_error "Duplicate file detected: $target_file"
                     exit 1
                 fi
-                mkdir -p $(dirname $dest_file)
-                cp $file $dest_file
+                mkdir -p $(dirname $target_file)
+                cp $source_file $target_file
             done
         fi
 
-        if [ -f "$modules_dir/$module/post-files.sh" ]; then
-            LOG "Running post-files.sh for $module"
-            . $modules_dir/$module/post-files.sh
+        if [ -f "$module_directory/$module_name/post-files.sh" ]; then
+            log_info "Executing post-processing script for $module_name"
+            . $module_directory/$module_name/post-files.sh
         fi
     done
 }
 
-LOG "Ensure all modules exist"
-for module in $final_modules; do
-    if [ ! -d "modules/$module" ] && [ ! -d "user_modules/$module" ]; then
-        LOG_ERR "Module $module does not exist"
+log_info "Validating module availability"
+for module_name in $ACTIVE_MODULE_LIST; do
+    if [ ! -d "modules/$module_name" ] && [ ! -d "user_modules/$module_name" ]; then
+        log_error "Module not found: $module_name"
         exit 1
     fi
 done
 
 
-deal modules
-deal user_modules
+process_module_directory modules
+process_module_directory user_modules
 
-LOG "All packages will be installed: $all_packages"
+log_info "Package collection complete: $PACKAGE_COLLECTION"
 
-LOG ""
+log_info ""
 ls files -R
-LOG ""
+log_info ""
 
 make info
 cat ./repositories.conf
 if [ -z "$PROFILE" ]; then
-    make image PACKAGES="$all_packages" FILES="files" -S
+    make image PACKAGES="$PACKAGE_COLLECTION" FILES="files" -S
 else
-    make PROFILE="$PROFILE" image PACKAGES="$all_packages" FILES="files" -S
+    make PROFILE="$PROFILE" image PACKAGES="$PACKAGE_COLLECTION" FILES="files" -S
 fi
