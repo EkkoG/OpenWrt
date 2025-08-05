@@ -1,6 +1,7 @@
 #!/bin/bash -e
 
 WRT_VERSION=24.10
+IS_SNAPSHOT=0
 
 # 判断是否是 24.10 以下版本
 # 如果 IMAGEBUILDER_IMAGE 变量存在，则解析版本号
@@ -10,8 +11,11 @@ if [ ! -z "$IMAGEBUILDER_IMAGE" ]; then
     if [ ! -z "$version_from_image" ]; then
         WRT_VERSION=$version_from_image
     fi
-fi
 
+    if [[ $IMAGEBUILDER_IMAGE =~ "-SNAPSHOT" ]]; then
+        IS_SNAPSHOT=1
+    fi
+fi
 
 
 default_modules="add-all-device-to-lan add-feed-key add-feed ib argon base opkg-mirror prefer-ipv6-settings statistics system tools"
