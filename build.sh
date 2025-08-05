@@ -1,6 +1,27 @@
 #!/bin/bash -e
 
+WRT_VERSION=24.10
+
+# 判断是否是 24.10 以下版本
+# 如果 IMAGEBUILDER_IMAGE 变量存在，则解析版本号
+if [ ! -z "$IMAGEBUILDER_IMAGE" ]; then
+    # 提取版本号，处理 -snapshot 和 -master 后缀
+    version_from_image=$(echo "$IMAGEBUILDER_IMAGE" | grep -oE '[0-9]+\.[0-9]+' | head -1)
+    if [ ! -z "$version_from_image" ]; then
+        WRT_VERSION=$version_from_image
+    fi
+fi
+
+
+
 default_modules="add-all-device-to-lan add-feed-key add-feed ib argon base opkg-mirror prefer-ipv6-settings statistics system tools"
+
+if [ "$WRT_VERSION" == "24.10" ]; then
+    default_modules="$default_modules base24+"
+else
+    default_modules="$default_modules base23"
+fi
+
 
 LOG() {
     # echo when $LOG_ENABLE set to 1
@@ -21,6 +42,7 @@ LOG_DEBUG() {
     fi
 }
 
+LOG "Detected WRT version: $WRT_VERSION"
 LOG "Default enabled modules: $default_modules"
 
 final_modules=$default_modules

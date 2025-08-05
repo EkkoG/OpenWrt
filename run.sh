@@ -86,6 +86,7 @@ services:
       - PROFILE=$PROFILE
       - USE_MIRROR=$USE_MIRROR
       - MIRROR=$MIRROR
+      - IMAGEBUILDER_IMAGE=$IMAGEBUILDER_IMAGE
     env_file:
       - ./.env
     volumes:
