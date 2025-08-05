@@ -73,7 +73,7 @@ all_packages=
 # system env by calling env
 system_env=""
 if [ $USE_SYTEM_ENV ]; then
-    system_env="$(env)"
+    system_env="$(cat .env)"
 fi
 
 deal() {
