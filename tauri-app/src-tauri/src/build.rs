@@ -4,6 +4,7 @@ use std::sync::Mutex;
 use std::io::{BufRead, BufReader};
 use tauri::{command, AppHandle, Emitter};
 use std::thread;
+use crate::app_mode::get_current_mode;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct BuildConfig {
@@ -41,6 +42,10 @@ pub async fn start_build(
         return Err("Build already in progress".to_string());
     }
 
+    // 获取当前应用模式和基础路径
+    let mode = get_current_mode();
+    let base_path = mode.get_resource_base_path(&app)?;
+    
     // 为每个启用的模块写入 .env 文件
     let mut module_env_map: std::collections::HashMap<String, Vec<&crate::build::EnvVar>> = std::collections::HashMap::new();
     
@@ -59,18 +64,17 @@ pub async fn start_build(
     
     // 为每个模块写入 .env 文件
     for (module_name, env_vars) in module_env_map {
-        let env_file_path = format!("../../modules/{}/.env", module_name);
-        let path = std::path::Path::new(&env_file_path);
+        let env_file_path = base_path.join("modules").join(&module_name).join(".env");
         
         // 检查模块目录是否存在
-        if let Some(parent) = path.parent() {
+        if let Some(parent) = env_file_path.parent() {
             if parent.exists() {
                 let mut content = String::new();
                 for env_var in env_vars {
                     content.push_str(&format!("{}={}\n", env_var.key, env_var.value));
                 }
                 
-                if let Err(e) = std::fs::write(path, content) {
+                if let Err(e) = std::fs::write(&env_file_path, content) {
                     eprintln!("Failed to write .env file for module {}: {}", module_name, e);
                 } else {
                     println!("Written .env file for module: {}", module_name);
@@ -81,12 +85,12 @@ pub async fn start_build(
     
     // 写入全局环境变量到根目录的 .env 文件
     if !config.global_env_vars.trim().is_empty() {
-        let root_env_path = "../../.env";
+        let root_env_path = base_path.join(".env");
         
-        if let Err(e) = std::fs::write(root_env_path, &config.global_env_vars) {
+        if let Err(e) = std::fs::write(&root_env_path, &config.global_env_vars) {
             eprintln!("Failed to write global .env file: {}", e);
         } else {
-            println!("Written global .env file to project root");
+            println!("Written global .env file to: {}", root_env_path.display());
         }
     }
 
@@ -95,8 +99,10 @@ pub async fn start_build(
     
     // 构建命令
     let mut cmd = Command::new("bash");
-    cmd.current_dir("../..")  // 切换到项目根目录
-       .arg("./run.sh")
+    let run_script_path = mode.get_script_path(&app, "run.sh")?;
+    
+    cmd.current_dir(&base_path)  // 切换到资源基础目录
+       .arg(&run_script_path)
        .arg(format!("--image={}", &config.image));
     
     // 如果指定了 profile，添加 profile 参数

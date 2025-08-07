@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use std::fs;
-use std::path::Path;
-use tauri::command;
+use tauri::{command, AppHandle};
+use crate::app_mode::get_current_mode;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ModuleInfo {
@@ -24,11 +24,9 @@ pub struct EnvVariable {
 }
 
 #[command]
-pub async fn get_modules() -> Result<Vec<ModuleInfo>, String> {
-    // Get the parent directory of src-tauri (which is tauri-app)
-    // Then go up one more level to reach the project root
-    let modules_dir = "../../modules";
-    let modules_path = Path::new(modules_dir);
+pub async fn get_modules(app: AppHandle) -> Result<Vec<ModuleInfo>, String> {
+    let mode = get_current_mode();
+    let modules_path = mode.get_modules_path(&app)?;
     
     if !modules_path.exists() {
         return Err("Modules directory not found".to_string());
@@ -180,9 +178,10 @@ fn generate_description(module_name: &str) -> String {
 }
 
 #[command]
-pub async fn read_module_packages(module_name: String) -> Result<Vec<String>, String> {
-    let packages_path = format!("../../modules/{}/packages", module_name);
-    let path = Path::new(&packages_path);
+pub async fn read_module_packages(app: AppHandle, module_name: String) -> Result<Vec<String>, String> {
+    let mode = get_current_mode();
+    let modules_path = mode.get_modules_path(&app)?;
+    let path = modules_path.join(&module_name).join("packages");
     
     if !path.exists() {
         return Ok(Vec::new());
@@ -200,9 +199,10 @@ pub async fn read_module_packages(module_name: String) -> Result<Vec<String>, St
 }
 
 #[command]
-pub async fn save_module_env(module_name: String, env_vars: Vec<EnvVariable>) -> Result<(), String> {
-    let env_file_path = format!("../../modules/{}/.env", module_name);
-    let path = Path::new(&env_file_path);
+pub async fn save_module_env(app: AppHandle, module_name: String, env_vars: Vec<EnvVariable>) -> Result<(), String> {
+    let mode = get_current_mode();
+    let modules_path = mode.get_modules_path(&app)?;
+    let path = modules_path.join(&module_name).join(".env");
     
     let mut content = String::new();
     for var in env_vars {

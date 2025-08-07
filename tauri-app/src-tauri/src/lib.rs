@@ -1,10 +1,12 @@
 mod docker;
 mod modules;
 mod build;
+mod app_mode;
 
 use docker::{check_docker_environment, check_docker_running};
 use modules::{get_modules, read_module_packages, save_module_env};
 use build::{start_build, cancel_build, is_building};
+use app_mode::{get_app_mode_info, reinitialize_app_mode, initialize_app_mode};
 
 #[tauri::command]
 fn greet(name: &str) -> String {
@@ -30,8 +32,17 @@ pub fn run() {
             save_module_env,
             start_build,
             cancel_build,
-            is_building
+            is_building,
+            get_app_mode_info,
+            reinitialize_app_mode
         ])
+        .setup(|app| {
+            // 初始化应用模式
+            if let Err(e) = initialize_app_mode(app.handle()) {
+                eprintln!("Failed to initialize app mode: {}", e);
+            }
+            Ok(())
+        })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
