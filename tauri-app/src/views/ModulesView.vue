@@ -4,7 +4,7 @@ import { ref, computed, onMounted } from 'vue'
 
 const appStore = useAppStore()
 const searchQuery = ref('')
-const expandedModules = ref<string[]>([])
+// const expandedModules = ref<string[]>([]) // Reserved for future expansion control
 const isLoading = ref(false)
 
 const filteredModules = computed(() => {
@@ -26,18 +26,8 @@ const toggleModule = (moduleName: string) => {
   }
 }
 
-const toggleExpand = (moduleName: string) => {
-  const index = expandedModules.value.indexOf(moduleName)
-  if (index > -1) {
-    expandedModules.value.splice(index, 1)
-  } else {
-    expandedModules.value.push(moduleName)
-  }
-}
-
-const isExpanded = (moduleName: string) => {
-  return expandedModules.value.includes(moduleName)
-}
+// Removed unused toggleExpand and isExpanded functions
+// expandedModules is kept for potential future use
 
 const hasEnvVars = (module: any) => {
   return Object.keys(module.envVars || {}).length > 0
@@ -176,7 +166,7 @@ onMounted(() => {
                   <div v-if="hasEnvVars(module)">
                     <div class="text-subtitle-2 mb-2">环境变量配置</div>
                     <v-text-field
-                      v-for="(value, key) in module.envVars"
+                      v-for="(_, key) in module.envVars"
                       :key="key"
                       v-model="module.envVars[key]"
                       :label="key"

@@ -1,8 +1,10 @@
 mod docker;
 mod modules;
+mod build;
 
 use docker::{check_docker_environment, check_docker_running};
 use modules::{get_modules, read_module_packages, save_module_env};
+use build::{start_build, cancel_build, is_building};
 
 #[tauri::command]
 fn greet(name: &str) -> String {
@@ -25,7 +27,10 @@ pub fn run() {
             check_docker_running,
             get_modules,
             read_module_packages,
-            save_module_env
+            save_module_env,
+            start_build,
+            cancel_build,
+            is_building
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

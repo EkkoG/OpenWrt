@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { useAppStore } from '@/stores/app'
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, nextTick, watch } from 'vue'
 
 const appStore = useAppStore()
 const isLoadingTags = ref(false)
 const dockerTags = ref<string[]>([])
 const selectedRepository = ref('openwrt/imagebuilder')
+const logContainer = ref<HTMLElement | null>(null)
 const repositories = [
   { title: 'OpenWrt Official', value: 'openwrt/imagebuilder' },
   { title: 'ImmortalWrt Official', value: 'immortalwrt/imagebuilder' }
@@ -14,18 +15,16 @@ const repositories = [
 // 常用标签
 const popularTagsMap = {
   'openwrt/imagebuilder': [
-    'x86-64-23.05.2',
-    'x86-64-22.03.5',
-    'ramips-mt7621-23.05.2',
-    'ath79-generic-23.05.2',
-    'bcm27xx-bcm2711-23.05.2'
+    'rockchip-armv8-v24.10.2',
+    'rockchip-armv8-v23.05.5',
+    'x86-64-v24.10.2',
+    'x86-64-v23.05.5'
   ],
   'immortalwrt/imagebuilder': [
-    'x86-64-23.05.1',
-    'x86-64-21.02.7',
-    'ramips-mt7621-23.05.1',
-    'ath79-generic-23.05.1',
-    'bcm27xx-bcm2711-23.05.1'
+    'rockchip-armv8-openwrt-24.10.2',
+    'rockchip-armv8-openwrt-23.05.4',
+    'x86-64-openwrt-24.10.2',
+    'x86-64-openwrt-23.05.4'
   ]
 }
 
@@ -36,7 +35,11 @@ const popularTags = computed(() => {
 const buildCommand = computed(() => {
   const modules = appStore.enabledModules.map(m => m.name).join(' ')
   const image = appStore.selectedImage || appStore.customImageTag
-  return `ENABLE_MODULES="${modules}" ./run.sh ${image}`
+  let command = `ENABLE_MODULES="${modules}" ./run.sh --image=${image}`
+  if (appStore.selectedProfile) {
+    command += ` --profile=${appStore.selectedProfile}`
+  }
+  return command
 })
 
 const canStartBuild = computed(() => {
@@ -44,6 +47,14 @@ const canStartBuild = computed(() => {
     !appStore.isBuilding && 
     (appStore.selectedImage || appStore.customImageTag) &&
     appStore.outputDirectory
+})
+
+// 监听日志变化，自动滚动到底部显示最新日志
+watch(() => appStore.buildLogs.length, async () => {
+  await nextTick()
+  if (logContainer.value) {
+    logContainer.value.scrollTop = logContainer.value.scrollHeight
+  }
 })
 
 // 获取 Docker Hub 镜像标签
@@ -109,54 +120,71 @@ const startBuild = async () => {
   appStore.buildLogs = []
   
   try {
-    // 这里将调用后端执行构建脚本
-    appStore.buildLogs.push('[构建开始]')
-    appStore.buildLogs.push(`使用镜像: ${appStore.selectedImage || appStore.customImageTag}`)
-    appStore.buildLogs.push(`输出目录: ${appStore.outputDirectory}`)
-    appStore.buildLogs.push(`启用模块: ${appStore.enabledModules.map(m => m.name).join(', ')}`)
-    appStore.buildLogs.push('')
-    appStore.buildLogs.push('构建命令:')
-    appStore.buildLogs.push(buildCommand.value)
-    appStore.buildLogs.push('')
-    appStore.buildLogs.push('[构建进行中...]')
+    const { invoke } = await import('@tauri-apps/api/core')
+    const { listen } = await import('@tauri-apps/api/event')
     
-    // TODO: 实际调用构建脚本
-    // const result = await invoke('run_build', {
-    //   image: appStore.selectedImage || appStore.customImageTag,
-    //   modules: appStore.enabledModules,
-    //   outputDir: appStore.outputDirectory
-    // })
+    // 监听构建事件
+    const unlisten = await listen('build-event', (event: any) => {
+      const buildEvent = event.payload
+      
+      if (buildEvent.event_type === 'log') {
+        appStore.buildLogs.push(buildEvent.data)
+      } else if (buildEvent.event_type === 'progress') {
+        appStore.buildProgress = buildEvent.progress || 0
+        appStore.buildLogs.push(buildEvent.data)
+      } else if (buildEvent.event_type === 'complete') {
+        appStore.buildLogs.push(buildEvent.data)
+        appStore.lastBuildTime = new Date()
+        appStore.lastBuildStatus = 'success'
+        appStore.isBuilding = false
+        unlisten()
+        
+        // 自动打开输出目录
+        if (appStore.autoOpenOutput) {
+          // TODO: 实现自动打开目录
+        }
+      } else if (buildEvent.event_type === 'error') {
+        appStore.buildLogs.push(buildEvent.data)
+        appStore.lastBuildStatus = 'failed'
+        appStore.isBuilding = false
+        unlisten()
+      }
+    })
     
-    // 模拟构建进度
-    for (let i = 1; i <= 10; i++) {
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      appStore.buildProgress = i * 10
-      appStore.buildLogs.push(`[进度: ${i * 10}%]`)
-    }
+    // 准备环境变量
+    const envVars = appStore.enabledModules.flatMap(module => 
+      Object.entries(module.envVars).map(([key, value]) => ({
+        key,
+        value: value as string
+      }))
+    )
     
-    appStore.lastBuildTime = new Date()
-    appStore.lastBuildStatus = 'success'
-    appStore.buildLogs.push('')
-    appStore.buildLogs.push('[构建成功完成]')
-    
-    // 自动打开输出目录
-    if (appStore.autoOpenOutput) {
-      // TODO: 实现自动打开目录
-      // const { open } = await import('@tauri-apps/plugin-shell')
-      // await open(appStore.outputDirectory)
-    }
+    // 调用构建命令
+    await invoke('start_build', {
+      config: {
+        image: appStore.selectedImage || appStore.customImageTag,
+        profile: appStore.selectedProfile || null,
+        modules: appStore.enabledModules.map(m => m.name),
+        output_dir: appStore.outputDirectory,
+        env_vars: envVars
+      }
+    })
   } catch (error) {
     appStore.lastBuildStatus = 'failed'
     appStore.buildLogs.push(`[构建失败: ${error}]`)
-  } finally {
     appStore.isBuilding = false
-    appStore.buildProgress = 0
   }
 }
 
 // 取消构建
-const cancelBuild = () => {
-  appStore.cancelBuild()
+const cancelBuild = async () => {
+  try {
+    const { invoke } = await import('@tauri-apps/api/core')
+    await invoke('cancel_build')
+    appStore.cancelBuild()
+  } catch (error) {
+    console.error('Failed to cancel build:', error)
+  }
 }
 
 // 清除日志
@@ -261,13 +289,25 @@ onMounted(() => {
           </v-card-text>
         </v-card>
         
-        <!-- 输出配置 -->
+        <!-- 构建配置 -->
         <v-card class="mt-4">
           <v-card-title>
-            <v-icon class="mr-2">mdi-folder</v-icon>
-            输出配置
+            <v-icon class="mr-2">mdi-cog</v-icon>
+            构建配置
           </v-card-title>
           <v-card-text>
+            <v-text-field
+              v-model="appStore.selectedProfile"
+              label="Profile (可选)"
+              placeholder="例如: x86_64、rockchip_armv8 等"
+              hint="部分镜像需要指定 profile，留空则使用默认配置"
+              persistent-hint
+              variant="outlined"
+              density="compact"
+              clearable
+              class="mb-4"
+            />
+            
             <v-text-field
               v-model="appStore.outputDirectory"
               label="固件输出目录"
@@ -379,6 +419,7 @@ onMounted(() => {
             
             <!-- 日志内容 -->
             <v-sheet
+              ref="logContainer"
               color="grey-darken-4"
               rounded
               class="pa-3"

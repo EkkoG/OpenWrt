@@ -12,6 +12,7 @@ export const useAppStore = defineStore('app', () => {
   // 构建配置
   const selectedImage = ref('')
   const customImageTag = ref('')
+  const selectedProfile = ref('')  // 添加 profile 字段
   const outputDirectory = ref('')
   const buildScriptPath = ref('../run.sh')
   
@@ -157,6 +158,7 @@ export const useAppStore = defineStore('app', () => {
     dockerRunning,
     selectedImage,
     customImageTag,
+    selectedProfile,
     outputDirectory,
     buildScriptPath,
     modules,

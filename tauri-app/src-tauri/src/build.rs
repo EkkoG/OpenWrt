@@ -1,0 +1,210 @@
+use serde::{Deserialize, Serialize};
+use std::process::{Command, Stdio};
+use std::sync::Mutex;
+use std::io::{BufRead, BufReader};
+use tauri::{command, AppHandle, Emitter};
+use std::thread;
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct BuildConfig {
+    pub image: String,
+    pub profile: Option<String>,  // profile 是可选的
+    pub modules: Vec<String>,
+    pub output_dir: String,
+    pub env_vars: Vec<EnvVar>,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct EnvVar {
+    pub key: String,
+    pub value: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct BuildEvent {
+    pub event_type: String, // "log", "progress", "complete", "error"
+    pub data: String,
+    pub progress: Option<u32>,
+}
+
+static BUILD_PROCESS: Mutex<Option<u32>> = Mutex::new(None);
+
+#[command]
+pub async fn start_build(
+    app: AppHandle,
+    config: BuildConfig
+) -> Result<(), String> {
+    // 检查是否已有构建在运行
+    let mut process_lock = BUILD_PROCESS.lock().unwrap();
+    if process_lock.is_some() {
+        return Err("Build already in progress".to_string());
+    }
+
+    // 准备环境变量
+    let modules_str = config.modules.join(" ");
+    
+    // 构建命令
+    let mut cmd = Command::new("bash");
+    cmd.current_dir("../..")  // 切换到项目根目录
+       .arg("./run.sh")
+       .arg(format!("--image={}", &config.image));
+    
+    // 如果指定了 profile，添加 profile 参数
+    if let Some(profile) = &config.profile {
+        if !profile.is_empty() {
+            cmd.arg(format!("--profile={}", profile));
+        }
+    }
+    
+    cmd.env("ENABLE_MODULES", modules_str)
+       .env("OUTPUT_DIR", &config.output_dir)
+       .stdout(Stdio::piped())
+       .stderr(Stdio::piped());
+
+    // 添加自定义环境变量
+    for env_var in config.env_vars {
+        cmd.env(env_var.key, env_var.value);
+    }
+
+    // 启动进程
+    let mut child = cmd.spawn().map_err(|e| format!("Failed to start build: {}", e))?;
+    
+    // 保存进程 ID
+    let pid = child.id();
+    *process_lock = Some(pid);
+    drop(process_lock);
+
+    // 克隆 app handle 用于事件发送
+    let app_clone = app.clone();
+    
+    // 在新线程中处理输出
+    thread::spawn(move || {
+        // 发送开始事件
+        let _ = app_clone.emit("build-event", BuildEvent {
+            event_type: "log".to_string(),
+            data: "[构建开始]".to_string(),
+            progress: Some(0),
+        });
+
+        // 读取标准输出
+        if let Some(stdout) = child.stdout.take() {
+            let reader = BufReader::new(stdout);
+            for line in reader.lines() {
+                if let Ok(line) = line {
+                    // 发送日志事件
+                    let _ = app_clone.emit("build-event", BuildEvent {
+                        event_type: "log".to_string(),
+                        data: line.clone(),
+                        progress: None,
+                    });
+
+                    // 尝试解析进度
+                    if line.contains("Progress:") || line.contains("进度:") {
+                        if let Some(progress) = parse_progress(&line) {
+                            let _ = app_clone.emit("build-event", BuildEvent {
+                                event_type: "progress".to_string(),
+                                data: line,
+                                progress: Some(progress),
+                            });
+                        }
+                    }
+                }
+            }
+        }
+
+        // 读取标准错误
+        if let Some(stderr) = child.stderr.take() {
+            let reader = BufReader::new(stderr);
+            for line in reader.lines() {
+                if let Ok(line) = line {
+                    let _ = app_clone.emit("build-event", BuildEvent {
+                        event_type: "log".to_string(),
+                        data: format!("[ERROR] {}", line),
+                        progress: None,
+                    });
+                }
+            }
+        }
+
+        // 等待进程结束
+        match child.wait() {
+            Ok(status) => {
+                let mut process_lock = BUILD_PROCESS.lock().unwrap();
+                *process_lock = None;
+                
+                if status.success() {
+                    let _ = app_clone.emit("build-event", BuildEvent {
+                        event_type: "complete".to_string(),
+                        data: "[构建成功完成]".to_string(),
+                        progress: Some(100),
+                    });
+                } else {
+                    let _ = app_clone.emit("build-event", BuildEvent {
+                        event_type: "error".to_string(),
+                        data: format!("[构建失败] 退出码: {:?}", status.code()),
+                        progress: None,
+                    });
+                }
+            }
+            Err(e) => {
+                let mut process_lock = BUILD_PROCESS.lock().unwrap();
+                *process_lock = None;
+                
+                let _ = app_clone.emit("build-event", BuildEvent {
+                    event_type: "error".to_string(),
+                    data: format!("[构建失败] {}", e),
+                    progress: None,
+                });
+            }
+        }
+    });
+
+    Ok(())
+}
+
+#[command]
+pub async fn cancel_build() -> Result<(), String> {
+    let mut process_lock = BUILD_PROCESS.lock().unwrap();
+    
+    if let Some(pid) = process_lock.take() {
+        // 尝试终止进程
+        #[cfg(unix)]
+        {
+            let _ = Command::new("kill")
+                .arg("-TERM")
+                .arg(pid.to_string())
+                .spawn();
+        }
+        
+        #[cfg(windows)]
+        {
+            let _ = Command::new("taskkill")
+                .arg("/F")
+                .arg("/PID")
+                .arg(pid.to_string())
+                .spawn();
+        }
+        
+        Ok(())
+    } else {
+        Err("No build in progress".to_string())
+    }
+}
+
+#[command]
+pub async fn is_building() -> Result<bool, String> {
+    let process_lock = BUILD_PROCESS.lock().unwrap();
+    Ok(process_lock.is_some())
+}
+
+fn parse_progress(line: &str) -> Option<u32> {
+    // 尝试从日志行中提取进度百分比
+    // 例如: "Progress: 50%" 或 "进度: 50%"
+    if let Some(pos) = line.find('%') {
+        let start = line[..pos].rfind(char::is_numeric)?;
+        let num_str = &line[start..pos];
+        num_str.parse::<u32>().ok()
+    } else {
+        None
+    }
+}
