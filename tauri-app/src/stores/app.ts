@@ -99,9 +99,16 @@ export const useAppStore = defineStore('app', () => {
         description: string
       }>>('get_modules')
       
+      // DEFAULT_MODULE_SET from build.sh
+      const defaultModuleSet = new Set([
+        'add-all-device-to-lan', 'add-feed-key', 'add-feed', 'ib', 
+        'argon', 'base', 'opkg-mirror', 'prefer-ipv6-settings', 
+        'statistics', 'system', 'tools'
+      ])
+      
       modules.value = moduleList.map(m => ({
         name: m.name,
-        enabled: false,
+        enabled: defaultModuleSet.has(m.name),
         envVars: m.env_vars.reduce((acc, v) => {
           acc[v.name] = v.value
           return acc
