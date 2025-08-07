@@ -42,26 +42,33 @@ log_debug() {
 log_info "OpenWrt version detected: $OPENWRT_VERSION"
 log_info "Default module set: $DEFAULT_MODULE_SET"
 
-ACTIVE_MODULE_LIST=$DEFAULT_MODULE_SET
-for module in $MODULES; do
-    # Check if module starts with "-" (exclusion prefix)
-    if [ "${module:0:1}" == "-" ]; then
-        # Remove module from active list
-        module_list_array="$(echo "$ACTIVE_MODULE_LIST" | tr ' ' '\n')"
-        ACTIVE_MODULE_LIST=""
-        for active_module in $module_list_array; do
-            if [ "$active_module" != "${module:1}" ]; then
-                ACTIVE_MODULE_LIST="$ACTIVE_MODULE_LIST $active_module"
-            fi
-        done
-    else
-        # Add module to active list
-        ACTIVE_MODULE_LIST="$ACTIVE_MODULE_LIST $module"
-    fi
-done
-
-ACTIVE_MODULE_LIST="$(echo "$ACTIVE_MODULE_LIST" | tr '\n' ' ')"
-log_info "Active modules: $ACTIVE_MODULE_LIST"
+# Check if ENABLE_MODULES is defined, if so use it directly
+if [ ! -z "$ENABLE_MODULES" ]; then
+    ACTIVE_MODULE_LIST="$ENABLE_MODULES"
+    log_info "Using ENABLE_MODULES directly: $ACTIVE_MODULE_LIST"
+else
+    # Use legacy DEFAULT_MODULE_SET + MODULES logic
+    ACTIVE_MODULE_LIST=$DEFAULT_MODULE_SET
+    for module in $MODULES; do
+        # Check if module starts with "-" (exclusion prefix)
+        if [ "${module:0:1}" == "-" ]; then
+            # Remove module from active list
+            module_list_array="$(echo "$ACTIVE_MODULE_LIST" | tr ' ' '\n')"
+            ACTIVE_MODULE_LIST=""
+            for active_module in $module_list_array; do
+                if [ "$active_module" != "${module:1}" ]; then
+                    ACTIVE_MODULE_LIST="$ACTIVE_MODULE_LIST $active_module"
+                fi
+            done
+        else
+            # Add module to active list
+            ACTIVE_MODULE_LIST="$ACTIVE_MODULE_LIST $module"
+        fi
+    done
+    
+    ACTIVE_MODULE_LIST="$(echo "$ACTIVE_MODULE_LIST" | tr '\n' ' ')"
+    log_info "Active modules: $ACTIVE_MODULE_LIST"
+fi
 
 cp -r modules_in_container modules
 cp -r user_modules_in_container user_modules
