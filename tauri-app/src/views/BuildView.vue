@@ -91,23 +91,27 @@ const onRepositoryChange = () => {
 
 // 选择输出目录
 const selectOutputDirectory = async () => {
+  console.log('selectOutputDirectory called')
   try {
-    // TODO: 实现目录选择功能
-    // const { open } = await import('@tauri-apps/plugin-dialog')
-    // const selected = await open({
-    //   directory: true,
-    //   multiple: false,
-    //   title: '选择固件输出目录'
-    // })
+    const { open } = await import('@tauri-apps/plugin-dialog')
+    console.log('Dialog plugin imported successfully')
     
-    // if (selected && typeof selected === 'string') {
-    //   appStore.outputDirectory = selected
-    // }
+    const selected = await open({
+      directory: true,
+      multiple: false,
+      title: '选择固件输出目录'
+    })
     
-    // 临时使用默认目录
-    appStore.outputDirectory = '/tmp/openwrt-output'
+    console.log('Dialog result:', selected)
+    
+    if (selected && typeof selected === 'string') {
+      appStore.outputDirectory = selected
+      console.log('Directory set to:', selected)
+    }
   } catch (error) {
     console.error('Failed to select directory:', error)
+    // 失败时使用默认目录
+    appStore.outputDirectory = '/tmp/openwrt-output'
   }
 }
 
@@ -331,7 +335,6 @@ onMounted(() => {
               variant="outlined"
               density="compact"
               readonly
-              @click="selectOutputDirectory"
               append-inner-icon="mdi-folder-open"
               @click:append-inner="selectOutputDirectory"
             />
