@@ -40,6 +40,44 @@ pub async fn start_build(
         return Err("Build already in progress".to_string());
     }
 
+    // 为每个启用的模块写入 .env 文件
+    let mut module_env_map: std::collections::HashMap<String, Vec<&crate::build::EnvVar>> = std::collections::HashMap::new();
+    
+    // 按模块分组环境变量
+    for env_var in &config.env_vars {
+        // 尝试从 key 中提取模块名，假设格式类似 MODULE_NAME_VARIABLE
+        let module_name = if let Some(underscore_pos) = env_var.key.find('_') {
+            env_var.key[..underscore_pos].to_lowercase()
+        } else {
+            // 如果没有下划线，可能整个 key 就是模块相关的
+            continue;
+        };
+        
+        module_env_map.entry(module_name).or_insert_with(Vec::new).push(env_var);
+    }
+    
+    // 为每个模块写入 .env 文件
+    for (module_name, env_vars) in module_env_map {
+        let env_file_path = format!("../../modules/{}/.env", module_name);
+        let path = std::path::Path::new(&env_file_path);
+        
+        // 检查模块目录是否存在
+        if let Some(parent) = path.parent() {
+            if parent.exists() {
+                let mut content = String::new();
+                for env_var in env_vars {
+                    content.push_str(&format!("{}={}\n", env_var.key, env_var.value));
+                }
+                
+                if let Err(e) = std::fs::write(path, content) {
+                    eprintln!("Failed to write .env file for module {}: {}", module_name, e);
+                } else {
+                    println!("Written .env file for module: {}", module_name);
+                }
+            }
+        }
+    }
+
     // 准备环境变量
     let modules_str = config.modules.join(" ");
     
