@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "tauri-app",
+  "productName": "OpenWrt Builder GUI",
   "version": "0.1.0",
-  "identifier": "com.ciel.tauri-app",
+  "identifier": "com.openwrt.builder",
   "build": {
     "beforeDevCommand": "pnpm dev",
     "devUrl": "http://localhost:1420",
@@ -12,14 +12,24 @@
   "app": {
     "windows": [
       {
-        "title": "tauri-app",
-        "width": 800,
-        "height": 600
+        "title": "OpenWrt Builder GUI",
+        "width": 1200,
+        "height": 800,
+        "minWidth": 1000,
+        "minHeight": 600,
+        "center": true,
+        "resizable": true,
+        "fullscreen": false
       }
     ],
     "security": {
-      "csp": null
-    }
+      "csp": null,
+      "assetProtocol": {
+        "enable": true,
+        "scope": ["**"]
+      }
+    },
+    "withGlobalTauri": true
   },
   "bundle": {
     "active": true,
@@ -30,6 +40,24 @@
       "icons/128x128@2x.png",
       "icons/icon.icns",
       "icons/icon.ico"
-    ]
-  }
+    ],
+    "windows": {
+      "certificateThumbprint": null,
+      "digestAlgorithm": "sha256",
+      "timestampUrl": ""
+    },
+    "macOS": {
+      "entitlements": null,
+      "exceptionDomain": "",
+      "frameworks": [],
+      "providerShortName": null,
+      "signingIdentity": null
+    },
+    "linux": {
+      "deb": {
+        "depends": []
+      }
+    }
+  },
+  "plugins": {}
 }

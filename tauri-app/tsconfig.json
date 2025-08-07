@@ -13,6 +13,12 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "preserve",
+    
+    /* Path mapping */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
 
     /* Linting */
     "strict": true,

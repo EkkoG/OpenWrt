@@ -1,0 +1,156 @@
+import { defineStore } from 'pinia'
+import { ref, computed } from 'vue'
+
+export const useAppStore = defineStore('app', () => {
+  // Docker 环境状态
+  const dockerInstalled = ref(false)
+  const dockerVersion = ref('')
+  const dockerComposeInstalled = ref(false)
+  const dockerComposeVersion = ref('')
+  const dockerRunning = ref(false)
+
+  // 构建配置
+  const selectedImage = ref('')
+  const customImageTag = ref('')
+  const outputDirectory = ref('')
+  const buildScriptPath = ref('../run.sh')
+  
+  // 模块配置
+  const modules = ref<Array<{
+    name: string
+    enabled: boolean
+    envVars: Record<string, string>
+    description: string
+  }>>([])
+
+  // 构建状态
+  const isBuilding = ref(false)
+  const buildProgress = ref(0)
+  const buildLogs = ref<string[]>([])
+  const lastBuildTime = ref<Date | null>(null)
+  const lastBuildStatus = ref<'success' | 'failed' | 'cancelled' | null>(null)
+
+  // 应用设置
+  const autoOpenOutput = ref(true)
+  const checkForUpdates = ref(true)
+  const theme = ref<'light' | 'dark' | 'auto'>('light')
+  const language = ref('zh-CN')
+
+  // 计算属性
+  const dockerReady = computed(() => 
+    dockerInstalled.value && dockerRunning.value
+  )
+
+  const canStartBuild = computed(() => 
+    dockerReady.value && 
+    !isBuilding.value && 
+    (selectedImage.value || customImageTag.value) &&
+    outputDirectory.value
+  )
+
+  const enabledModules = computed(() => 
+    modules.value.filter(m => m.enabled)
+  )
+
+  // 方法
+  const checkDockerEnvironment = async () => {
+    try {
+      const { invoke } = await import('@tauri-apps/api/core')
+      const dockerInfo = await invoke<{
+        installed: boolean
+        running: boolean
+        version: string
+        compose_installed: boolean
+        compose_version: string
+      }>('check_docker_environment')
+      
+      dockerInstalled.value = dockerInfo.installed
+      dockerRunning.value = dockerInfo.running
+      dockerVersion.value = dockerInfo.version
+      dockerComposeInstalled.value = dockerInfo.compose_installed
+      dockerComposeVersion.value = dockerInfo.compose_version
+      
+      console.log('Docker environment check completed:', dockerInfo)
+    } catch (error) {
+      console.error('Failed to check Docker environment:', error)
+      dockerInstalled.value = false
+      dockerRunning.value = false
+    }
+  }
+
+  const loadModules = async () => {
+    // 将在 Task 5 中实现
+    console.log('Loading modules...')
+  }
+
+  const startBuild = async () => {
+    if (!canStartBuild.value) return
+    
+    isBuilding.value = true
+    buildProgress.value = 0
+    buildLogs.value = []
+    
+    // 将在后续任务中实现具体构建逻辑
+    console.log('Starting build...')
+  }
+
+  const cancelBuild = () => {
+    if (!isBuilding.value) return
+    
+    isBuilding.value = false
+    lastBuildStatus.value = 'cancelled'
+    buildLogs.value.push('[构建已取消]')
+  }
+
+  const clearBuildLogs = () => {
+    buildLogs.value = []
+  }
+
+  const updateSettings = (settings: Partial<{
+    autoOpenOutput: boolean
+    checkForUpdates: boolean
+    theme: 'light' | 'dark' | 'auto'
+    language: string
+  }>) => {
+    if (settings.autoOpenOutput !== undefined) autoOpenOutput.value = settings.autoOpenOutput
+    if (settings.checkForUpdates !== undefined) checkForUpdates.value = settings.checkForUpdates
+    if (settings.theme) theme.value = settings.theme
+    if (settings.language) language.value = settings.language
+  }
+
+  return {
+    // 状态
+    dockerInstalled,
+    dockerVersion,
+    dockerComposeInstalled,
+    dockerComposeVersion,
+    dockerRunning,
+    selectedImage,
+    customImageTag,
+    outputDirectory,
+    buildScriptPath,
+    modules,
+    isBuilding,
+    buildProgress,
+    buildLogs,
+    lastBuildTime,
+    lastBuildStatus,
+    autoOpenOutput,
+    checkForUpdates,
+    theme,
+    language,
+    
+    // 计算属性
+    dockerReady,
+    canStartBuild,
+    enabledModules,
+    
+    // 方法
+    checkDockerEnvironment,
+    loadModules,
+    startBuild,
+    cancelBuild,
+    clearBuildLogs,
+    updateSettings
+  }
+})

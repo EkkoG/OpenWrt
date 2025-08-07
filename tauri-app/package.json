@@ -1,8 +1,9 @@
 {
-  "name": "tauri-app",
+  "name": "openwrt-builder-gui",
   "private": true,
   "version": "0.1.0",
   "type": "module",
+  "description": "OpenWrt Firmware Builder GUI - A desktop application for building custom OpenWrt firmware",
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
@@ -10,15 +11,20 @@
     "tauri": "tauri"
   },
   "dependencies": {
-    "vue": "^3.5.13",
+    "@mdi/font": "^7.4.47",
     "@tauri-apps/api": "^2",
-    "@tauri-apps/plugin-opener": "^2"
+    "@tauri-apps/plugin-opener": "^2",
+    "pinia": "^3.0.3",
+    "vue": "^3.5.13",
+    "vue-router": "4",
+    "vuetify": "^3"
   },
   "devDependencies": {
+    "@tauri-apps/cli": "^2",
     "@vitejs/plugin-vue": "^5.2.1",
     "typescript": "~5.6.2",
     "vite": "^6.0.3",
-    "vue-tsc": "^2.1.10",
-    "@tauri-apps/cli": "^2"
+    "vite-plugin-vuetify": "^2.1.2",
+    "vue-tsc": "^2.1.10"
   }
 }
