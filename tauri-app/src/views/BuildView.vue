@@ -156,10 +156,6 @@ const startBuild = async () => {
         }
         unlisten()
         
-        // 自动打开输出目录
-        if (appStore.autoOpenOutput) {
-          // TODO: 实现自动打开目录
-        }
       } else if (buildEvent.event_type === 'error') {
         appStore.buildLogs.push(buildEvent.data)
         appStore.lastBuildStatus = 'failed'
@@ -212,6 +208,7 @@ const cancelBuild = async () => {
 const clearLogs = () => {
   appStore.clearBuildLogs()
 }
+
 
 onMounted(() => {
   fetchDockerTags()
@@ -339,11 +336,6 @@ onMounted(() => {
               @click:append-inner="selectOutputDirectory"
             />
             
-            <v-checkbox
-              v-model="appStore.autoOpenOutput"
-              label="构建完成后自动打开输出目录"
-              density="compact"
-            />
           </v-card-text>
         </v-card>
         
