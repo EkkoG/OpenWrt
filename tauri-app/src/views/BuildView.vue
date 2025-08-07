@@ -39,6 +39,9 @@ const buildCommand = computed(() => {
   if (appStore.selectedProfile) {
     command += ` --profile=${appStore.selectedProfile}`
   }
+  if (appStore.outputDirectory) {
+    command += ` --output="${appStore.outputDirectory}"`
+  }
   return command
 })
 

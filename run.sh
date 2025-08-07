@@ -13,6 +13,7 @@ function usage()
 {
     echo "--image: specify imagebuilder docker image, find it in https://hub.docker.com/r/openwrt/imagebuilder/tags or https://hub.docker.com/r/immortalwrt/imagebuilder/tags"
     echo "--profile: specify profile"
+    echo "--output: specify output directory for build results (default: ./bin)"
     echo "--with-pull: pull image before build"
     echo "--rm-first: remove container before build"
     echo "--use-mirror: use mirror"
@@ -43,6 +44,9 @@ while [ "$1" != "" ]; do
         --image)
             IMAGEBUILDER_IMAGE=$VALUE
             ;;
+        --output)
+            OUTPUT_DIR=$VALUE
+            ;;
         -h | --help)
             usage
             ;;
@@ -69,6 +73,10 @@ if [ -z "$MIRROR" ]; then
     MIRROR="mirrors.pku.edu.cn"
 fi
 
+if [ -z "$OUTPUT_DIR" ]; then
+    OUTPUT_DIR="./bin"
+fi
+
 echo "IMAGEBUILDER_IMAGE: $IMAGEBUILDER_IMAGE PROFILE: $PROFILE"
 
 if [[ $IMAGEBUILDER_IMAGE =~ "immortalwrt" ]]; then
@@ -90,7 +98,7 @@ services:
     env_file:
       - ./.env
     volumes:
-      - ./bin:$BUILD_DIR/bin
+      - $OUTPUT_DIR:$BUILD_DIR/bin
       - ./build.sh:$BUILD_DIR/build.sh
       - ./modules:$BUILD_DIR/modules_in_container
       - ./user_modules:$BUILD_DIR/user_modules_in_container
@@ -110,11 +118,11 @@ if [ ! -z $RM_FIRST ]; then
     compose rm -f
 fi
 
-mkdir -p bin
+mkdir -p "$OUTPUT_DIR"
 # macOS no need to change the owner
-# change the owner of bin to 1000:1000 when running on linux
+# change the owner of output directory to 1000:1000 when running on linux
 if [[ $(uname) =~ "Linux" ]]; then
-    sudo chown -R 1000:1000 bin
+    sudo chown -R 1000:1000 "$OUTPUT_DIR"
 fi
 
 compose up --exit-code-from imagebuilder --remove-orphans
@@ -126,5 +134,5 @@ if [ $build_status -ne 0 ]; then
     echo "build failed with exit code $build_status"
     exit 1
 else
-    ls -R bin
+    ls -R "$OUTPUT_DIR"
 fi
