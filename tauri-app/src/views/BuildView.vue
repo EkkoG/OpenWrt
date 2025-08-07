@@ -1,19 +1,434 @@
 <script setup lang="ts">
 import { useAppStore } from '@/stores/app'
+import { ref, computed, onMounted } from 'vue'
 
 const appStore = useAppStore()
+const isLoadingTags = ref(false)
+const dockerTags = ref<string[]>([])
+const selectedRepository = ref('openwrt/imagebuilder')
+const repositories = [
+  { title: 'OpenWrt Official', value: 'openwrt/imagebuilder' },
+  { title: 'ImmortalWrt Official', value: 'immortalwrt/imagebuilder' }
+]
+
+// 常用标签
+const popularTagsMap = {
+  'openwrt/imagebuilder': [
+    'x86-64-23.05.2',
+    'x86-64-22.03.5',
+    'ramips-mt7621-23.05.2',
+    'ath79-generic-23.05.2',
+    'bcm27xx-bcm2711-23.05.2'
+  ],
+  'immortalwrt/imagebuilder': [
+    'x86-64-23.05.1',
+    'x86-64-21.02.7',
+    'ramips-mt7621-23.05.1',
+    'ath79-generic-23.05.1',
+    'bcm27xx-bcm2711-23.05.1'
+  ]
+}
+
+const popularTags = computed(() => {
+  return popularTagsMap[selectedRepository.value as keyof typeof popularTagsMap] || []
+})
+
+const buildCommand = computed(() => {
+  const modules = appStore.enabledModules.map(m => m.name).join(' ')
+  const image = appStore.selectedImage || appStore.customImageTag
+  return `ENABLE_MODULES="${modules}" ./run.sh ${image}`
+})
+
+const canStartBuild = computed(() => {
+  return appStore.dockerReady && 
+    !appStore.isBuilding && 
+    (appStore.selectedImage || appStore.customImageTag) &&
+    appStore.outputDirectory
+})
+
+// 获取 Docker Hub 镜像标签
+const fetchDockerTags = async () => {
+  isLoadingTags.value = true
+  dockerTags.value = []
+  
+  try {
+    // 调用 Docker Hub API 获取标签
+    const response = await fetch(`https://hub.docker.com/v2/repositories/${selectedRepository.value}/tags?page_size=50&ordering=-last_updated`)
+    const data = await response.json()
+    
+    if (data.results) {
+      dockerTags.value = data.results
+        .filter((tag: any) => tag.name !== 'latest')
+        .map((tag: any) => `${selectedRepository.value}:${tag.name}`)
+        .slice(0, 30) // 限制显示前30个
+    }
+  } catch (error) {
+    console.error('Failed to fetch Docker tags:', error)
+    // 失败时使用预设标签
+    dockerTags.value = popularTags.value.map(tag => `${selectedRepository.value}:${tag}`)
+  } finally {
+    isLoadingTags.value = false
+  }
+}
+
+// 切换仓库
+const onRepositoryChange = () => {
+  appStore.selectedImage = ''
+  appStore.customImageTag = ''
+  fetchDockerTags()
+}
+
+// 选择输出目录
+const selectOutputDirectory = async () => {
+  try {
+    // TODO: 实现目录选择功能
+    // const { open } = await import('@tauri-apps/plugin-dialog')
+    // const selected = await open({
+    //   directory: true,
+    //   multiple: false,
+    //   title: '选择固件输出目录'
+    // })
+    
+    // if (selected && typeof selected === 'string') {
+    //   appStore.outputDirectory = selected
+    // }
+    
+    // 临时使用默认目录
+    appStore.outputDirectory = '/tmp/openwrt-output'
+  } catch (error) {
+    console.error('Failed to select directory:', error)
+  }
+}
+
+// 开始构建
+const startBuild = async () => {
+  if (!canStartBuild.value) return
+  
+  appStore.isBuilding = true
+  appStore.buildProgress = 0
+  appStore.buildLogs = []
+  
+  try {
+    // 这里将调用后端执行构建脚本
+    appStore.buildLogs.push('[构建开始]')
+    appStore.buildLogs.push(`使用镜像: ${appStore.selectedImage || appStore.customImageTag}`)
+    appStore.buildLogs.push(`输出目录: ${appStore.outputDirectory}`)
+    appStore.buildLogs.push(`启用模块: ${appStore.enabledModules.map(m => m.name).join(', ')}`)
+    appStore.buildLogs.push('')
+    appStore.buildLogs.push('构建命令:')
+    appStore.buildLogs.push(buildCommand.value)
+    appStore.buildLogs.push('')
+    appStore.buildLogs.push('[构建进行中...]')
+    
+    // TODO: 实际调用构建脚本
+    // const result = await invoke('run_build', {
+    //   image: appStore.selectedImage || appStore.customImageTag,
+    //   modules: appStore.enabledModules,
+    //   outputDir: appStore.outputDirectory
+    // })
+    
+    // 模拟构建进度
+    for (let i = 1; i <= 10; i++) {
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      appStore.buildProgress = i * 10
+      appStore.buildLogs.push(`[进度: ${i * 10}%]`)
+    }
+    
+    appStore.lastBuildTime = new Date()
+    appStore.lastBuildStatus = 'success'
+    appStore.buildLogs.push('')
+    appStore.buildLogs.push('[构建成功完成]')
+    
+    // 自动打开输出目录
+    if (appStore.autoOpenOutput) {
+      // TODO: 实现自动打开目录
+      // const { open } = await import('@tauri-apps/plugin-shell')
+      // await open(appStore.outputDirectory)
+    }
+  } catch (error) {
+    appStore.lastBuildStatus = 'failed'
+    appStore.buildLogs.push(`[构建失败: ${error}]`)
+  } finally {
+    appStore.isBuilding = false
+    appStore.buildProgress = 0
+  }
+}
+
+// 取消构建
+const cancelBuild = () => {
+  appStore.cancelBuild()
+}
+
+// 清除日志
+const clearLogs = () => {
+  appStore.clearBuildLogs()
+}
+
+onMounted(() => {
+  fetchDockerTags()
+})
 </script>
 
 <template>
   <v-container>
     <v-row>
-      <v-col cols="12">
+      <!-- 左侧配置区 -->
+      <v-col cols="12" md="6">
         <v-card>
-          <v-card-title>构建管理</v-card-title>
+          <v-card-title>
+            <v-icon class="mr-2">mdi-docker</v-icon>
+            镜像选择
+          </v-card-title>
           <v-card-text>
-            <div class="text-center pa-8 text-medium-emphasis">
-              构建管理功能将在后续任务中实现
+            <!-- 仓库选择 -->
+            <v-select
+              v-model="selectedRepository"
+              :items="repositories"
+              label="选择镜像仓库"
+              variant="outlined"
+              density="compact"
+              @update:model-value="onRepositoryChange"
+              class="mb-4"
+            />
+            
+            <!-- 预设镜像选择 -->
+            <v-radio-group
+              v-model="appStore.selectedImage"
+              @update:model-value="appStore.customImageTag = ''"
+            >
+              <template v-slot:label>
+                <div class="text-subtitle-2 mb-2">常用镜像标签</div>
+              </template>
+              <v-radio
+                v-for="tag in popularTags"
+                :key="tag"
+                :label="`${selectedRepository}:${tag}`"
+                :value="`${selectedRepository}:${tag}`"
+                density="compact"
+              />
+            </v-radio-group>
+            
+            <v-divider class="my-4" />
+            
+            <!-- 自定义镜像输入 -->
+            <v-text-field
+              v-model="appStore.customImageTag"
+              label="或输入自定义镜像标签"
+              :placeholder="`例如: ${selectedRepository}:x86-64-23.05.2`"
+              variant="outlined"
+              density="compact"
+              @update:model-value="appStore.selectedImage = ''"
+            />
+            
+            <!-- Docker Hub 标签列表 -->
+            <v-expansion-panels variant="accordion">
+              <v-expansion-panel>
+                <v-expansion-panel-title>
+                  <div class="d-flex align-center">
+                    <v-icon class="mr-2">mdi-tag-multiple</v-icon>
+                    更多可用标签
+                    <v-spacer />
+                    <v-btn
+                      icon="mdi-refresh"
+                      size="x-small"
+                      variant="text"
+                      @click.stop="fetchDockerTags"
+                      :loading="isLoadingTags"
+                    />
+                  </div>
+                </v-expansion-panel-title>
+                <v-expansion-panel-text>
+                  <v-progress-circular
+                    v-if="isLoadingTags"
+                    indeterminate
+                    size="24"
+                    width="2"
+                    class="ma-4"
+                  />
+                  <v-list v-else density="compact" max-height="300">
+                    <v-list-item
+                      v-for="tag in dockerTags"
+                      :key="tag"
+                      @click="appStore.selectedImage = tag; appStore.customImageTag = ''"
+                      :active="appStore.selectedImage === tag"
+                    >
+                      <v-list-item-title>{{ tag }}</v-list-item-title>
+                    </v-list-item>
+                  </v-list>
+                </v-expansion-panel-text>
+              </v-expansion-panel>
+            </v-expansion-panels>
+          </v-card-text>
+        </v-card>
+        
+        <!-- 输出配置 -->
+        <v-card class="mt-4">
+          <v-card-title>
+            <v-icon class="mr-2">mdi-folder</v-icon>
+            输出配置
+          </v-card-title>
+          <v-card-text>
+            <v-text-field
+              v-model="appStore.outputDirectory"
+              label="固件输出目录"
+              variant="outlined"
+              density="compact"
+              readonly
+              @click="selectOutputDirectory"
+              append-inner-icon="mdi-folder-open"
+              @click:append-inner="selectOutputDirectory"
+            />
+            
+            <v-checkbox
+              v-model="appStore.autoOpenOutput"
+              label="构建完成后自动打开输出目录"
+              density="compact"
+            />
+          </v-card-text>
+        </v-card>
+        
+        <!-- 构建按钮 -->
+        <v-card class="mt-4">
+          <v-card-text>
+            <v-btn
+              color="primary"
+              size="large"
+              block
+              @click="startBuild"
+              :disabled="!canStartBuild"
+              :loading="appStore.isBuilding"
+            >
+              <v-icon start>mdi-hammer</v-icon>
+              开始构建
+            </v-btn>
+            
+            <v-alert
+              v-if="!appStore.dockerReady"
+              type="warning"
+              variant="tonal"
+              class="mt-3"
+              density="compact"
+            >
+              请先确保 Docker 环境就绪
+            </v-alert>
+            
+            <v-alert
+              v-if="!appStore.selectedImage && !appStore.customImageTag"
+              type="info"
+              variant="tonal"
+              class="mt-3"
+              density="compact"
+            >
+              请选择或输入镜像标签
+            </v-alert>
+            
+            <v-alert
+              v-if="!appStore.outputDirectory"
+              type="info"
+              variant="tonal"
+              class="mt-3"
+              density="compact"
+            >
+              请选择固件输出目录
+            </v-alert>
+          </v-card-text>
+        </v-card>
+      </v-col>
+      
+      <!-- 右侧日志区 -->
+      <v-col cols="12" md="6">
+        <v-card style="height: 100%">
+          <v-card-title class="d-flex align-center">
+            <v-icon class="mr-2">mdi-console</v-icon>
+            构建日志
+            <v-spacer />
+            <v-btn
+              icon="mdi-delete"
+              size="small"
+              variant="text"
+              @click="clearLogs"
+              :disabled="appStore.isBuilding"
+            />
+          </v-card-title>
+          <v-card-text>
+            <!-- 构建进度 -->
+            <v-progress-linear
+              v-if="appStore.isBuilding"
+              :model-value="appStore.buildProgress"
+              color="primary"
+              height="20"
+              rounded
+              class="mb-4"
+            >
+              <template v-slot:default="{ value }">
+                <strong>{{ value }}%</strong>
+              </template>
+            </v-progress-linear>
+            
+            <!-- 构建命令预览 -->
+            <v-alert
+              v-if="!appStore.isBuilding && (appStore.selectedImage || appStore.customImageTag)"
+              type="info"
+              variant="tonal"
+              density="compact"
+              class="mb-4"
+            >
+              <div class="text-caption">构建命令预览:</div>
+              <code class="text-caption">{{ buildCommand }}</code>
+            </v-alert>
+            
+            <!-- 日志内容 -->
+            <v-sheet
+              color="grey-darken-4"
+              rounded
+              class="pa-3"
+              style="height: 500px; overflow-y: auto; font-family: monospace"
+            >
+              <div
+                v-if="appStore.buildLogs.length === 0"
+                class="text-center text-medium-emphasis"
+              >
+                暂无构建日志
+              </div>
+              <div
+                v-for="(log, index) in appStore.buildLogs"
+                :key="index"
+                class="text-caption"
+                style="white-space: pre-wrap"
+              >
+                {{ log }}
+              </div>
+            </v-sheet>
+            
+            <!-- 构建控制 -->
+            <div v-if="appStore.isBuilding" class="mt-4">
+              <v-btn
+                color="error"
+                block
+                @click="cancelBuild"
+              >
+                <v-icon start>mdi-stop</v-icon>
+                取消构建
+              </v-btn>
             </div>
+            
+            <!-- 上次构建状态 -->
+            <v-alert
+              v-if="appStore.lastBuildStatus && !appStore.isBuilding"
+              :type="appStore.lastBuildStatus === 'success' ? 'success' : 'error'"
+              variant="tonal"
+              class="mt-4"
+              density="compact"
+            >
+              <div class="d-flex align-center">
+                <div>
+                  上次构建{{ appStore.lastBuildStatus === 'success' ? '成功' : '失败' }}
+                  <span v-if="appStore.lastBuildTime" class="text-caption">
+                    ({{ new Date(appStore.lastBuildTime).toLocaleString() }})
+                  </span>
+                </div>
+              </div>
+            </v-alert>
           </v-card-text>
         </v-card>
       </v-col>

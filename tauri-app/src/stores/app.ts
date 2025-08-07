@@ -79,8 +79,38 @@ export const useAppStore = defineStore('app', () => {
   }
 
   const loadModules = async () => {
-    // 将在 Task 5 中实现
-    console.log('Loading modules...')
+    try {
+      const { invoke } = await import('@tauri-apps/api/core')
+      const moduleList = await invoke<Array<{
+        name: string
+        path: string
+        has_packages: boolean
+        has_env_example: boolean
+        has_readme: boolean
+        has_files: boolean
+        has_scripts: string[]
+        env_vars: Array<{
+          name: string
+          value: string
+          description: string
+        }>
+        description: string
+      }>>('get_modules')
+      
+      modules.value = moduleList.map(m => ({
+        name: m.name,
+        enabled: false,
+        envVars: m.env_vars.reduce((acc, v) => {
+          acc[v.name] = v.value
+          return acc
+        }, {} as Record<string, string>),
+        description: m.description
+      }))
+      
+      console.log('Modules loaded:', modules.value)
+    } catch (error) {
+      console.error('Failed to load modules:', error)
+    }
   }
 
   const startBuild = async () => {

@@ -1,6 +1,8 @@
 mod docker;
+mod modules;
 
 use docker::{check_docker_environment, check_docker_running};
+use modules::{get_modules, read_module_packages, save_module_env};
 
 #[tauri::command]
 fn greet(name: &str) -> String {
@@ -20,7 +22,10 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             greet,
             check_docker_environment,
-            check_docker_running
+            check_docker_running,
+            get_modules,
+            read_module_packages,
+            save_module_env
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

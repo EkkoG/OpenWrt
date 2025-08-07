@@ -1,7 +1,71 @@
 <script setup lang="ts">
 import { useAppStore } from '@/stores/app'
+import { ref, computed, onMounted } from 'vue'
 
 const appStore = useAppStore()
+const searchQuery = ref('')
+const expandedModules = ref<string[]>([])
+const isLoading = ref(false)
+
+const filteredModules = computed(() => {
+  if (!searchQuery.value) {
+    return appStore.modules
+  }
+  
+  const query = searchQuery.value.toLowerCase()
+  return appStore.modules.filter(m => 
+    m.name.toLowerCase().includes(query) ||
+    m.description.toLowerCase().includes(query)
+  )
+})
+
+const toggleModule = (moduleName: string) => {
+  const module = appStore.modules.find(m => m.name === moduleName)
+  if (module) {
+    module.enabled = !module.enabled
+  }
+}
+
+const toggleExpand = (moduleName: string) => {
+  const index = expandedModules.value.indexOf(moduleName)
+  if (index > -1) {
+    expandedModules.value.splice(index, 1)
+  } else {
+    expandedModules.value.push(moduleName)
+  }
+}
+
+const isExpanded = (moduleName: string) => {
+  return expandedModules.value.includes(moduleName)
+}
+
+const hasEnvVars = (module: any) => {
+  return Object.keys(module.envVars || {}).length > 0
+}
+
+const refreshModules = async () => {
+  isLoading.value = true
+  await appStore.loadModules()
+  isLoading.value = false
+}
+
+const selectAll = () => {
+  appStore.modules.forEach(m => {
+    m.enabled = true
+  })
+}
+
+const deselectAll = () => {
+  appStore.modules.forEach(m => {
+    m.enabled = false
+  })
+}
+
+onMounted(() => {
+  if (appStore.modules.length === 0) {
+    refreshModules()
+  }
+})
 </script>
 
 <template>
@@ -9,10 +73,143 @@ const appStore = useAppStore()
     <v-row>
       <v-col cols="12">
         <v-card>
-          <v-card-title>模块配置</v-card-title>
+          <v-card-title class="d-flex align-center">
+            <v-icon class="mr-2">mdi-package-variant</v-icon>
+            模块配置
+            <v-spacer />
+            <v-btn
+              color="primary"
+              variant="text"
+              size="small"
+              @click="selectAll"
+              :disabled="isLoading"
+            >
+              全选
+            </v-btn>
+            <v-btn
+              color="secondary"
+              variant="text"
+              size="small"
+              @click="deselectAll"
+              :disabled="isLoading"
+            >
+              全不选
+            </v-btn>
+            <v-btn
+              color="primary"
+              variant="tonal"
+              size="small"
+              @click="refreshModules"
+              :loading="isLoading"
+              prepend-icon="mdi-refresh"
+            >
+              刷新
+            </v-btn>
+          </v-card-title>
+          
           <v-card-text>
-            <div class="text-center pa-8 text-medium-emphasis">
-              模块配置功能将在后续任务中实现
+            <!-- 搜索栏 -->
+            <v-text-field
+              v-model="searchQuery"
+              label="搜索模块"
+              prepend-inner-icon="mdi-magnify"
+              variant="outlined"
+              density="compact"
+              clearable
+              class="mb-4"
+            />
+            
+            <!-- 模块统计 -->
+            <v-alert
+              type="info"
+              variant="tonal"
+              density="compact"
+              class="mb-4"
+            >
+              <div class="d-flex align-center">
+                <span>
+                  共 {{ appStore.modules.length }} 个模块，
+                  已启用 {{ appStore.enabledModules.length }} 个
+                </span>
+              </div>
+            </v-alert>
+            
+            <!-- 模块列表 -->
+            <v-expansion-panels
+              v-if="filteredModules.length > 0"
+              variant="accordion"
+              class="mb-4"
+            >
+              <v-expansion-panel
+                v-for="module in filteredModules"
+                :key="module.name"
+              >
+                <v-expansion-panel-title>
+                  <div class="d-flex align-center" style="width: 100%">
+                    <v-checkbox
+                      :model-value="module.enabled"
+                      @update:model-value="toggleModule(module.name)"
+                      @click.stop
+                      density="compact"
+                      hide-details
+                      class="flex-grow-0 mr-3"
+                    />
+                    <div class="flex-grow-1">
+                      <div class="font-weight-medium">{{ module.name }}</div>
+                      <div class="text-caption text-medium-emphasis">
+                        {{ module.description }}
+                      </div>
+                    </div>
+                    <v-chip
+                      v-if="hasEnvVars(module)"
+                      size="x-small"
+                      color="primary"
+                      variant="tonal"
+                      class="ml-2"
+                    >
+                      需配置
+                    </v-chip>
+                  </div>
+                </v-expansion-panel-title>
+                
+                <v-expansion-panel-text>
+                  <div v-if="hasEnvVars(module)">
+                    <div class="text-subtitle-2 mb-2">环境变量配置</div>
+                    <v-text-field
+                      v-for="(value, key) in module.envVars"
+                      :key="key"
+                      v-model="module.envVars[key]"
+                      :label="key"
+                      variant="outlined"
+                      density="compact"
+                      class="mb-2"
+                    />
+                  </div>
+                  <div v-else class="text-body-2 text-medium-emphasis">
+                    此模块无需额外配置
+                  </div>
+                </v-expansion-panel-text>
+              </v-expansion-panel>
+            </v-expansion-panels>
+            
+            <!-- 空状态 -->
+            <v-alert
+              v-else-if="!isLoading"
+              type="info"
+              variant="tonal"
+              class="text-center"
+            >
+              <v-icon size="48" class="mb-3">mdi-package-variant-closed</v-icon>
+              <div class="text-h6">没有找到模块</div>
+              <div class="text-caption">
+                {{ searchQuery ? '尝试修改搜索条件' : '点击刷新按钮加载模块' }}
+              </div>
+            </v-alert>
+            
+            <!-- 加载中 -->
+            <div v-if="isLoading" class="text-center pa-8">
+              <v-progress-circular indeterminate color="primary" />
+              <div class="text-caption mt-3">正在加载模块...</div>
             </div>
           </v-card-text>
         </v-card>
