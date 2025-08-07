@@ -5,7 +5,7 @@ import { ref, computed, onMounted, nextTick, watch } from 'vue'
 const appStore = useAppStore()
 const isLoadingTags = ref(false)
 const dockerTags = ref<string[]>([])
-const selectedRepository = ref('openwrt/imagebuilder')
+const selectedRepository = ref('immortalwrt/imagebuilder')
 const logContainer = ref<HTMLElement | null>(null)
 const repositories = [
   { title: 'OpenWrt Official', value: 'openwrt/imagebuilder' },
@@ -34,7 +34,8 @@ const popularTags = computed(() => {
 
 const buildCommand = computed(() => {
   const modules = appStore.enabledModules.map(m => m.name).join(' ')
-  const image = appStore.selectedImage || appStore.customImageTag
+  const tag = appStore.selectedImage || appStore.customImageTag
+  const image = tag ? `${selectedRepository.value}:${tag}` : ''
   let command = `ENABLE_MODULES="${modules}" ./run.sh --image=${image}`
   if (appStore.selectedProfile) {
     command += ` --profile=${appStore.selectedProfile}`
@@ -73,13 +74,13 @@ const fetchDockerTags = async () => {
     if (data.results) {
       dockerTags.value = data.results
         .filter((tag: any) => tag.name !== 'latest')
-        .map((tag: any) => `${selectedRepository.value}:${tag.name}`)
+        .map((tag: any) => tag.name)
         .slice(0, 30) // 限制显示前30个
     }
   } catch (error) {
     console.error('Failed to fetch Docker tags:', error)
     // 失败时使用预设标签
-    dockerTags.value = popularTags.value.map(tag => `${selectedRepository.value}:${tag}`)
+    dockerTags.value = popularTags.value
   } finally {
     isLoadingTags.value = false
   }
@@ -180,9 +181,12 @@ const startBuild = async () => {
     )
     
     // 调用构建命令
+    const tag = appStore.selectedImage || appStore.customImageTag
+    const fullImage = tag ? `${selectedRepository.value}:${tag}` : ''
+    
     await invoke('start_build', {
       config: {
-        image: appStore.selectedImage || appStore.customImageTag,
+        image: fullImage,
         profile: appStore.selectedProfile || null,
         modules: appStore.enabledModules.map(m => m.name),
         output_dir: appStore.outputDirectory,
@@ -251,8 +255,8 @@ onMounted(() => {
               <v-radio
                 v-for="tag in popularTags"
                 :key="tag"
-                :label="`${selectedRepository}:${tag}`"
-                :value="`${selectedRepository}:${tag}`"
+                :label="tag"
+                :value="tag"
                 density="compact"
               />
             </v-radio-group>
@@ -262,8 +266,8 @@ onMounted(() => {
             <!-- 自定义镜像输入 -->
             <v-text-field
               v-model="appStore.customImageTag"
-              label="或输入自定义镜像标签"
-              :placeholder="`例如: ${selectedRepository}:x86-64-23.05.2`"
+              label="或输入自定义标签"
+              placeholder="例如: x86-64-v23.05.2"
               variant="outlined"
               density="compact"
               @update:model-value="appStore.selectedImage = ''"
