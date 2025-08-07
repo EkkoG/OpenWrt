@@ -124,19 +124,32 @@ const startBuild = async () => {
     const { listen } = await import('@tauri-apps/api/event')
     
     // 监听构建事件
-    const unlisten = await listen('build-event', (event: any) => {
+    const unlisten = await listen('build-event', async (event: any) => {
       const buildEvent = event.payload
       
       if (buildEvent.event_type === 'log') {
         appStore.buildLogs.push(buildEvent.data)
+        // 自动滚动到底部
+        await nextTick()
+        if (logContainer.value) {
+          logContainer.value.scrollTop = logContainer.value.scrollHeight
+        }
       } else if (buildEvent.event_type === 'progress') {
         appStore.buildProgress = buildEvent.progress || 0
         appStore.buildLogs.push(buildEvent.data)
+        await nextTick()
+        if (logContainer.value) {
+          logContainer.value.scrollTop = logContainer.value.scrollHeight
+        }
       } else if (buildEvent.event_type === 'complete') {
         appStore.buildLogs.push(buildEvent.data)
         appStore.lastBuildTime = new Date()
         appStore.lastBuildStatus = 'success'
         appStore.isBuilding = false
+        await nextTick()
+        if (logContainer.value) {
+          logContainer.value.scrollTop = logContainer.value.scrollHeight
+        }
         unlisten()
         
         // 自动打开输出目录
@@ -147,6 +160,10 @@ const startBuild = async () => {
         appStore.buildLogs.push(buildEvent.data)
         appStore.lastBuildStatus = 'failed'
         appStore.isBuilding = false
+        await nextTick()
+        if (logContainer.value) {
+          logContainer.value.scrollTop = logContainer.value.scrollHeight
+        }
         unlisten()
       }
     })
@@ -418,16 +435,15 @@ onMounted(() => {
             </v-alert>
             
             <!-- 日志内容 -->
-            <v-sheet
+            <div
               ref="logContainer"
-              color="grey-darken-4"
-              rounded
-              class="pa-3"
-              style="height: 500px; overflow-y: auto; font-family: monospace"
+              class="log-container"
+              style="height: 500px; overflow-y: auto; background-color: #212121; border-radius: 4px; padding: 12px; font-family: monospace"
             >
               <div
                 v-if="appStore.buildLogs.length === 0"
                 class="text-center text-medium-emphasis"
+                style="color: #999"
               >
                 暂无构建日志
               </div>
@@ -435,11 +451,11 @@ onMounted(() => {
                 v-for="(log, index) in appStore.buildLogs"
                 :key="index"
                 class="text-caption"
-                style="white-space: pre-wrap"
+                style="white-space: pre-wrap; color: #e0e0e0"
               >
                 {{ log }}
               </div>
-            </v-sheet>
+            </div>
             
             <!-- 构建控制 -->
             <div v-if="appStore.isBuilding" class="mt-4">
