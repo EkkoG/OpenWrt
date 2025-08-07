@@ -6,3 +6,4 @@ transfer.sh
 user_modules
 docker-compose.yml
 _run.sh
+.claude/
