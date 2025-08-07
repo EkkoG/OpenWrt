@@ -190,7 +190,8 @@ const startBuild = async () => {
         profile: appStore.selectedProfile || null,
         modules: appStore.enabledModules.map(m => m.name),
         output_dir: appStore.outputDirectory,
-        env_vars: envVars
+        env_vars: envVars,
+        global_env_vars: appStore.globalEnvVars
       }
     })
   } catch (error) {
@@ -341,6 +342,18 @@ onMounted(() => {
               readonly
               append-inner-icon="mdi-folder-open"
               @click:append-inner="selectOutputDirectory"
+            />
+            
+            <v-textarea
+              v-model="appStore.globalEnvVars"
+              label="全局环境变量"
+              placeholder="KEY1=value1&#10;KEY2=value2&#10;KEY3=value3"
+              hint="每行一个环境变量，格式：KEY=VALUE"
+              persistent-hint
+              variant="outlined"
+              density="compact"
+              rows="3"
+              class="mt-4"
             />
             
           </v-card-text>

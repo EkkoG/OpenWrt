@@ -12,6 +12,7 @@ pub struct BuildConfig {
     pub modules: Vec<String>,
     pub output_dir: String,
     pub env_vars: Vec<EnvVar>,
+    pub global_env_vars: String,  // 全局环境变量字符串
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -75,6 +76,17 @@ pub async fn start_build(
                     println!("Written .env file for module: {}", module_name);
                 }
             }
+        }
+    }
+    
+    // 写入全局环境变量到根目录的 .env 文件
+    if !config.global_env_vars.trim().is_empty() {
+        let root_env_path = "../../.env";
+        
+        if let Err(e) = std::fs::write(root_env_path, &config.global_env_vars) {
+            eprintln!("Failed to write global .env file: {}", e);
+        } else {
+            println!("Written global .env file to project root");
         }
     }
 

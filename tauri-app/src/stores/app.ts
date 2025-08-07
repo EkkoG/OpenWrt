@@ -15,6 +15,7 @@ export const useAppStore = defineStore('app', () => {
   const selectedProfile = ref('')  // 添加 profile 字段
   const outputDirectory = ref('')
   const buildScriptPath = ref('../run.sh')
+  const globalEnvVars = ref('')  // 全局环境变量
   
   // 模块配置
   const modules = ref<Array<{
@@ -161,6 +162,7 @@ export const useAppStore = defineStore('app', () => {
     selectedProfile,
     outputDirectory,
     buildScriptPath,
+    globalEnvVars,
     modules,
     isBuilding,
     buildProgress,
