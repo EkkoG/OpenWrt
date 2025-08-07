@@ -53,13 +53,18 @@ else
         # Check if module starts with "-" (exclusion prefix)
         if [ "${module:0:1}" == "-" ]; then
             # Remove module from active list
-            module_list_array="$(echo "$ACTIVE_MODULE_LIST" | tr ' ' '\n')"
-            ACTIVE_MODULE_LIST=""
-            for active_module in $module_list_array; do
-                if [ "$active_module" != "${module:1}" ]; then
-                    ACTIVE_MODULE_LIST="$ACTIVE_MODULE_LIST $active_module"
+            module_to_remove="${module:1}"
+            new_list=""
+            for active_module in $ACTIVE_MODULE_LIST; do
+                if [ "$active_module" != "$module_to_remove" ]; then
+                    if [ -z "$new_list" ]; then
+                        new_list="$active_module"
+                    else
+                        new_list="$new_list $active_module"
+                    fi
                 fi
             done
+            ACTIVE_MODULE_LIST="$new_list"
         else
             # Add module to active list
             ACTIVE_MODULE_LIST="$ACTIVE_MODULE_LIST $module"
