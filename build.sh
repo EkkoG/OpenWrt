@@ -20,13 +20,6 @@ fi
 
 DEFAULT_MODULE_SET="add-all-device-to-lan add-feed-key add-feed ib argon base opkg-mirror prefer-ipv6-settings statistics system tools"
 
-if [ "$OPENWRT_VERSION" == "24.10" ]; then
-    DEFAULT_MODULE_SET="$DEFAULT_MODULE_SET base24+"
-else
-    DEFAULT_MODULE_SET="$DEFAULT_MODULE_SET base23"
-fi
-
-
 log_info() {
     # Print info messages when logging is enabled
     if [ "$LOG_ENABLE" == "1" ]; then
@@ -90,7 +83,10 @@ process_module_directory() {
         log_info "Processing module: $module_name from $module_directory"
 
         if [ -f "$module_directory/$module_name/packages" ]; then
-            PACKAGE_COLLECTION="$PACKAGE_COLLECTION $(cat $module_directory/$module_name/packages)"
+            res=$(. $module_directory/$module_name/packages 2>/dev/null || cat $module_directory/$module_name/packages)
+            if [ ! -z "$res" ]; then
+                PACKAGE_COLLECTION="$PACKAGE_COLLECTION $res"
+            fi
         fi
 
         if [ -f "$module_directory/$module_name/.env" ]; then
