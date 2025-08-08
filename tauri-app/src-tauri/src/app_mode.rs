@@ -49,7 +49,8 @@ impl AppMode {
                     .path()
                     .resource_dir()
                     .map_err(|e| format!("Failed to get resource directory: {}", e))?;
-                Ok(resource_dir)
+                // 打包后的资源在 _up_/_up_/ 目录下
+                Ok(resource_dir.join("_up_").join("_up_"))
             }
             AppMode::Portable => {
                 let resource_lock = RESOURCE_PATH.lock().unwrap();
