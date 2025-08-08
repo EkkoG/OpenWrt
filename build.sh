@@ -18,7 +18,10 @@ if [ ! -z "$IMAGEBUILDER_IMAGE" ]; then
 fi
 
 
-DEFAULT_MODULE_SET="add-all-device-to-lan add-feed-key add-feed ib argon base opkg-mirror prefer-ipv6-settings statistics system tools"
+DEFAULT_MODULE_SET="add-all-device-to-lan argon base opkg-mirror prefer-ipv6-settings statistics system tools"
+
+# 加载构建设置脚本
+source ./setup/build-setup.sh
 
 log_info() {
     # Print info messages when logging is enabled
@@ -41,6 +44,7 @@ log_debug() {
 
 log_info "OpenWrt version detected: $OPENWRT_VERSION"
 log_info "Default module set: $DEFAULT_MODULE_SET"
+log_info "MODULES: $MODULES"
 
 # Check if ENABLE_MODULES is defined, if so use it directly
 if [ ! -z "$ENABLE_MODULES" ]; then
@@ -84,6 +88,7 @@ SYSTEM_ENVIRONMENT=""
 if [ $USE_SYTEM_ENV ]; then
     SYSTEM_ENVIRONMENT="$(cat .env)"
 fi
+
 
 process_module_directory() {
     module_directory=$1
@@ -156,6 +161,9 @@ for module_name in $ACTIVE_MODULE_LIST; do
     fi
 done
 
+
+# 设置构建环境
+setup_build_environment
 
 process_module_directory modules
 process_module_directory user_modules

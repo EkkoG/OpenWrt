@@ -113,6 +113,7 @@ services:
     volumes:
       - $OUTPUT_DIR:$BUILD_DIR/bin
       - ./build.sh:$BUILD_DIR/build.sh
+      - ./setup:$BUILD_DIR/setup
       - ./modules:$BUILD_DIR/modules_in_container
       - ./user_modules:$BUILD_DIR/user_modules_in_container
       - ./.env:$BUILD_DIR/.env

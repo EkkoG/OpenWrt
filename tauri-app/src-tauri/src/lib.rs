@@ -7,7 +7,7 @@ mod config_manager;
 use docker::{check_docker_environment, check_docker_running};
 use modules::{get_modules, read_module_packages, save_module_env};
 use build::{start_build, cancel_build, is_building};
-use app_mode::{get_app_mode_info, reinitialize_app_mode, initialize_app_mode};
+use app_mode::{get_app_mode_info, reinitialize_app_mode, initialize_app_mode, verify_setup_directory};
 use config_manager::{ConfigManager, Configuration, BuildConfig};
 
 #[tauri::command]
@@ -105,6 +105,7 @@ pub fn run() {
             is_building,
             get_app_mode_info,
             reinitialize_app_mode,
+            verify_setup_directory,
             get_configurations,
             save_configuration,
             update_configuration,

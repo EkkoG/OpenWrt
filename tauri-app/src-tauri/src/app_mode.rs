@@ -24,8 +24,8 @@ static RESOURCE_PATH: Mutex<Option<PathBuf>> = Mutex::new(None);
 
 impl AppMode {
     pub fn detect_mode() -> Self {
-        // 检测是否在开发环境
-        if Path::new("../../modules").exists() {
+        // 检测是否在开发环境 - 需要同时检查modules和setup目录
+        if Path::new("../../modules").exists() && Path::new("../../setup").exists() {
             AppMode::Development
         } else {
             AppMode::Embedded
@@ -66,6 +66,11 @@ impl AppMode {
     pub fn get_modules_path(&self, app_handle: &AppHandle) -> Result<PathBuf, String> {
         let base_path = self.get_resource_base_path(app_handle)?;
         Ok(base_path.join("modules"))
+    }
+
+    pub fn get_setup_path(&self, app_handle: &AppHandle) -> Result<PathBuf, String> {
+        let base_path = self.get_resource_base_path(app_handle)?;
+        Ok(base_path.join("setup"))
     }
 
     pub fn initialize(&self, app_handle: &AppHandle) -> Result<(), String> {
@@ -119,6 +124,14 @@ impl AppMode {
         if run_script_src.exists() {
             fs::copy(&run_script_src, extract_dir.join("run.sh"))
                 .map_err(|e| format!("Failed to copy run.sh: {}", e))?;
+        }
+
+        // 提取setup目录
+        let setup_src = source_base_path.join("setup");
+        let setup_dst = extract_dir.join("setup");
+        
+        if setup_src.exists() {
+            self.copy_dir_recursive(&setup_src, &setup_dst)?;
         }
 
         // 提取模块目录
@@ -221,4 +234,40 @@ pub async fn reinitialize_app_mode(app: AppHandle) -> Result<AppModeInfo, String
         working_directory: working_directory.to_string_lossy().to_string(),
         description: mode.get_description(),
     })
+}
+
+#[command]
+pub async fn verify_setup_directory(app: AppHandle) -> Result<String, String> {
+    let mode = get_current_mode();
+    let setup_path = mode.get_setup_path(&app)?;
+    
+    if !setup_path.exists() {
+        return Ok(format!("Setup directory not found at: {}", setup_path.display()));
+    }
+    
+    // 检查build-setup.sh是否存在
+    let build_setup_script = setup_path.join("build-setup.sh");
+    let build_setup_exists = build_setup_script.exists();
+    
+    // 检查keys目录是否存在
+    let keys_dir = setup_path.join("keys");
+    let keys_exists = keys_dir.exists();
+    let keys_count = if keys_exists {
+        fs::read_dir(&keys_dir)
+            .map_err(|e| format!("Failed to read keys directory: {}", e))?
+            .count()
+    } else {
+        0
+    };
+    
+    Ok(format!(
+        "Setup directory: {} (exists: {})\nBuild script: {} (exists: {})\nKeys directory: {} (exists: {}, files: {})",
+        setup_path.display(),
+        setup_path.exists(),
+        build_setup_script.display(),
+        build_setup_exists,
+        keys_dir.display(),
+        keys_exists,
+        keys_count
+    ))
 }
