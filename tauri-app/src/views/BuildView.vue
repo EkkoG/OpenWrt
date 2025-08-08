@@ -38,12 +38,13 @@ const buildCommand = computed(() => {
   const modules = appStore.enabledModules.map(m => m.name).join(' ')
   const tag = appStore.selectedImage || appStore.customImageTag
   const image = tag ? `${selectedRepository.value}:${tag}` : ''
-  let command = `ENABLE_MODULES="${modules}" ./run.sh --image=${image}`
+  let command = `ENABLE_MODULES="${modules}"`
+  if (appStore.outputDirectory) {
+    command += ` OUTPUT_DIR="${appStore.outputDirectory}"`
+  }
+  command += ` ./run.sh --image=${image}`
   if (appStore.selectedProfile) {
     command += ` --profile=${appStore.selectedProfile}`
-  }
-  if (appStore.outputDirectory) {
-    command += ` --output="${appStore.outputDirectory}"`
   }
   return command
 })
