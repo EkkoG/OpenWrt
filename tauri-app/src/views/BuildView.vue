@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useAppStore } from '@/stores/app'
 import { ref, computed, onMounted, nextTick, watch } from 'vue'
+import ConfigQuickSelector from '@/components/ConfigQuickSelector.vue'
 
 const appStore = useAppStore()
 const isLoadingTags = ref(false)
@@ -225,6 +226,9 @@ onMounted(() => {
 
 <template>
   <v-container>
+    <!-- 配置快速选择器 -->
+    <ConfigQuickSelector />
+    
     <v-row>
       <!-- 左侧配置区 -->
       <v-col cols="12" md="6">

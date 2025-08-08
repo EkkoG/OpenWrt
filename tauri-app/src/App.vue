@@ -48,6 +48,13 @@ onMounted(async () => {
           to="/build"
           rounded="xl"
         />
+        <v-list-item
+          prepend-icon="mdi-folder-cog"
+          title="配置"
+          value="config"
+          to="/config"
+          rounded="xl"
+        />
       </v-list>
 
       <template v-slot:append>

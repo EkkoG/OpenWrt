@@ -35,6 +35,14 @@ const routes: RouteRecordRaw[] = [
     }
   },
   {
+    path: '/config',
+    name: 'Config',
+    component: () => import('@/views/ConfigView.vue'),
+    meta: {
+      title: '配置管理'
+    }
+  },
+  {
     path: '/settings',
     name: 'Settings',
     component: () => import('@/views/SettingsView.vue'),

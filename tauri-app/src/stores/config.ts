@@ -1,0 +1,273 @@
+import { defineStore } from 'pinia'
+import { ref, computed } from 'vue'
+import { invoke } from '@tauri-apps/api/core'
+
+export interface ModuleConfig {
+  name: string
+  enabled: boolean
+  envVars: Record<string, string>
+  description: string
+}
+
+export interface BuildConfig {
+  selectedImage: string
+  customImageTag: string
+  selectedProfile: string
+  outputDirectory: string
+  globalEnvVars: string
+  modules: ModuleConfig[]
+}
+
+export interface Configuration {
+  id: string
+  name: string
+  description: string
+  config: BuildConfig
+  createdAt: Date
+  updatedAt: Date
+  isActive: boolean
+}
+
+export const useConfigStore = defineStore('config', () => {
+  const configurations = ref<Configuration[]>([])
+  const activeConfigId = ref<string | null>(null)
+  const isLoading = ref(false)
+  const error = ref<string | null>(null)
+
+  const activeConfig = computed(() => 
+    configurations.value.find(c => c.id === activeConfigId.value)
+  )
+
+  const sortedConfigurations = computed(() =>
+    [...configurations.value].sort((a, b) => 
+      b.updatedAt.getTime() - a.updatedAt.getTime()
+    )
+  )
+
+  async function loadConfigurations() {
+    isLoading.value = true
+    error.value = null
+    try {
+      const configs = await invoke<Configuration[]>('get_configurations')
+      configurations.value = configs.map(c => ({
+        ...c,
+        createdAt: new Date(c.createdAt),
+        updatedAt: new Date(c.updatedAt)
+      }))
+      
+      const active = configurations.value.find(c => c.isActive)
+      if (active) {
+        activeConfigId.value = active.id
+      }
+    } catch (e) {
+      error.value = `加载配置失败: ${e}`
+      console.error('Failed to load configurations:', e)
+    } finally {
+      isLoading.value = false
+    }
+  }
+
+  async function saveConfiguration(name: string, description: string, config: BuildConfig) {
+    isLoading.value = true
+    error.value = null
+    try {
+      const newConfig = await invoke<Configuration>('save_configuration', {
+        name,
+        description,
+        config
+      })
+      
+      configurations.value.push({
+        ...newConfig,
+        createdAt: new Date(newConfig.createdAt),
+        updatedAt: new Date(newConfig.updatedAt)
+      })
+      
+      return newConfig
+    } catch (e) {
+      error.value = `保存配置失败: ${e}`
+      console.error('Failed to save configuration:', e)
+      throw e
+    } finally {
+      isLoading.value = false
+    }
+  }
+
+  async function updateConfiguration(id: string, updates: Partial<Configuration>) {
+    isLoading.value = true
+    error.value = null
+    try {
+      const updated = await invoke<Configuration>('update_configuration', {
+        id,
+        updates
+      })
+      
+      const index = configurations.value.findIndex(c => c.id === id)
+      if (index !== -1) {
+        configurations.value[index] = {
+          ...updated,
+          createdAt: new Date(updated.createdAt),
+          updatedAt: new Date(updated.updatedAt)
+        }
+      }
+      
+      return updated
+    } catch (e) {
+      error.value = `更新配置失败: ${e}`
+      console.error('Failed to update configuration:', e)
+      throw e
+    } finally {
+      isLoading.value = false
+    }
+  }
+
+  async function deleteConfiguration(id: string) {
+    isLoading.value = true
+    error.value = null
+    try {
+      await invoke('delete_configuration', { id })
+      
+      configurations.value = configurations.value.filter(c => c.id !== id)
+      
+      if (activeConfigId.value === id) {
+        activeConfigId.value = null
+      }
+    } catch (e) {
+      error.value = `删除配置失败: ${e}`
+      console.error('Failed to delete configuration:', e)
+      throw e
+    } finally {
+      isLoading.value = false
+    }
+  }
+
+  async function switchConfiguration(id: string) {
+    isLoading.value = true
+    error.value = null
+    try {
+      await invoke('switch_configuration', { id })
+      
+      configurations.value.forEach(c => {
+        c.isActive = c.id === id
+      })
+      
+      activeConfigId.value = id
+    } catch (e) {
+      error.value = `切换配置失败: ${e}`
+      console.error('Failed to switch configuration:', e)
+      throw e
+    } finally {
+      isLoading.value = false
+    }
+  }
+
+  async function duplicateConfiguration(id: string, newName: string) {
+    isLoading.value = true
+    error.value = null
+    try {
+      const original = configurations.value.find(c => c.id === id)
+      if (!original) throw new Error('配置不存在')
+      
+      const duplicated = await invoke<Configuration>('duplicate_configuration', {
+        id,
+        newName
+      })
+      
+      configurations.value.push({
+        ...duplicated,
+        createdAt: new Date(duplicated.createdAt),
+        updatedAt: new Date(duplicated.updatedAt)
+      })
+      
+      return duplicated
+    } catch (e) {
+      error.value = `复制配置失败: ${e}`
+      console.error('Failed to duplicate configuration:', e)
+      throw e
+    } finally {
+      isLoading.value = false
+    }
+  }
+
+  async function exportConfiguration(id: string, path: string) {
+    isLoading.value = true
+    error.value = null
+    try {
+      await invoke('export_configuration', { id, path })
+    } catch (e) {
+      error.value = `导出配置失败: ${e}`
+      console.error('Failed to export configuration:', e)
+      throw e
+    } finally {
+      isLoading.value = false
+    }
+  }
+
+  async function importConfiguration(path: string) {
+    isLoading.value = true
+    error.value = null
+    try {
+      const imported = await invoke<Configuration>('import_configuration', { path })
+      
+      configurations.value.push({
+        ...imported,
+        createdAt: new Date(imported.createdAt),
+        updatedAt: new Date(imported.updatedAt)
+      })
+      
+      return imported
+    } catch (e) {
+      error.value = `导入配置失败: ${e}`
+      console.error('Failed to import configuration:', e)
+      throw e
+    } finally {
+      isLoading.value = false
+    }
+  }
+
+  function getCurrentBuildConfig(): BuildConfig | null {
+    if (!activeConfig.value) return null
+    return activeConfig.value.config
+  }
+
+  function applyConfigToStore(config: BuildConfig, appStore: any) {
+    appStore.selectedImage = config.selectedImage
+    appStore.customImageTag = config.customImageTag
+    appStore.selectedProfile = config.selectedProfile
+    appStore.outputDirectory = config.outputDirectory
+    appStore.globalEnvVars = config.globalEnvVars
+    appStore.modules = config.modules
+  }
+
+  function extractConfigFromStore(appStore: any): BuildConfig {
+    return {
+      selectedImage: appStore.selectedImage,
+      customImageTag: appStore.customImageTag,
+      selectedProfile: appStore.selectedProfile,
+      outputDirectory: appStore.outputDirectory,
+      globalEnvVars: appStore.globalEnvVars,
+      modules: appStore.modules
+    }
+  }
+
+  return {
+    configurations,
+    activeConfigId,
+    activeConfig,
+    sortedConfigurations,
+    isLoading,
+    error,
+    
+    loadConfigurations,
+    saveConfiguration,
+    updateConfiguration,
+    deleteConfiguration,
+    switchConfiguration,
+    duplicateConfiguration,
+    exportConfiguration,
+    importConfiguration,
+    getCurrentBuildConfig,
+    applyConfigToStore,
+    extractConfigFromStore
+  }
+})
