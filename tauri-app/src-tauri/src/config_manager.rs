@@ -17,6 +17,15 @@ pub struct ModuleConfig {
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
+pub struct AdvancedBuildOptions {
+    pub with_pull: bool,
+    pub rm_first: bool,
+    pub use_mirror: bool,
+    pub mirror_url: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(rename_all = "camelCase")]
 pub struct BuildConfig {
     pub selected_image: String,
     pub custom_image_tag: String,
@@ -24,6 +33,7 @@ pub struct BuildConfig {
     pub output_directory: String,
     pub global_env_vars: String,
     pub modules: Vec<ModuleConfig>,
+    pub advanced_options: Option<AdvancedBuildOptions>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]

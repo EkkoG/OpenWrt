@@ -7,6 +7,15 @@ use std::thread;
 use crate::app_mode::get_current_mode;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct AdvancedOptions {
+    pub with_pull: bool,
+    pub rm_first: bool,
+    pub use_mirror: bool,
+    pub mirror_url: String,
+    pub custom_args: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct BuildConfig {
     pub image: String,
     pub profile: Option<String>,  // profile 是可选的
@@ -14,6 +23,7 @@ pub struct BuildConfig {
     pub output_dir: String,
     pub env_vars: Vec<EnvVar>,
     pub global_env_vars: String,  // 全局环境变量字符串
+    pub advanced_options: Option<AdvancedOptions>,  // 高级选项
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -138,6 +148,34 @@ pub async fn start_build(
     if let Some(profile) = &config.profile {
         if !profile.is_empty() {
             cmd.arg(format!("--profile={}", profile));
+        }
+    }
+    
+    // 添加高级选项参数
+    if let Some(advanced) = &config.advanced_options {
+        if advanced.with_pull {
+            cmd.arg("--with-pull");
+        }
+        
+        if advanced.rm_first {
+            cmd.arg("--rm-first");
+        }
+        
+        if advanced.use_mirror {
+            if !advanced.mirror_url.is_empty() {
+                cmd.arg(format!("--use-mirror"));
+                cmd.arg(format!("--mirror={}", advanced.mirror_url));
+            } else {
+                cmd.arg("--use-mirror");
+            }
+        }
+        
+        // 处理自定义参数
+        if !advanced.custom_args.is_empty() {
+            let custom_args: Vec<&str> = advanced.custom_args.split_whitespace().collect();
+            for arg in custom_args {
+                cmd.arg(arg);
+            }
         }
     }
     

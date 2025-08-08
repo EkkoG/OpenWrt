@@ -2,6 +2,7 @@
 import { useAppStore } from '@/stores/app'
 import { ref, computed, onMounted, nextTick, watch } from 'vue'
 import ConfigQuickSelector from '@/components/ConfigQuickSelector.vue'
+import AdvancedBuildOptions from '@/components/AdvancedBuildOptions.vue'
 
 const appStore = useAppStore()
 const isLoadingTags = ref(false)
@@ -9,6 +10,9 @@ const dockerTags = ref<string[]>([])
 const selectedRepository = ref('immortalwrt/imagebuilder')
 const logContainer = ref<HTMLElement | null>(null)
 const copyNotification = ref({ show: false, message: '', color: 'success' })
+
+// 高级选项状态
+const showAdvancedOptions = ref(false)
 const repositories = [
   { title: 'OpenWrt Official', value: 'openwrt/imagebuilder' },
   { title: 'ImmortalWrt Official', value: 'immortalwrt/imagebuilder' }
@@ -46,6 +50,21 @@ const buildCommand = computed(() => {
   if (appStore.selectedProfile) {
     command += ` --profile=${appStore.selectedProfile}`
   }
+  
+  // 添加高级选项到显示命令
+  if (appStore.advancedOptions.withPull) {
+    command += ` --with-pull`
+  }
+  if (appStore.advancedOptions.rmFirst) {
+    command += ` --rm-first`
+  }
+  if (appStore.advancedOptions.useMirror) {
+    command += ` --use-mirror`
+    if (appStore.advancedOptions.mirrorUrl) {
+      command += ` --mirror=${appStore.advancedOptions.mirrorUrl}`
+    }
+  }
+  
   return command
 })
 
@@ -194,7 +213,14 @@ const startBuild = async () => {
         modules: appStore.enabledModules.map(m => m.name),
         output_dir: appStore.outputDirectory,
         env_vars: envVars,
-        global_env_vars: appStore.globalEnvVars
+        global_env_vars: appStore.globalEnvVars,
+        advanced_options: {
+          with_pull: appStore.advancedOptions.withPull,
+          rm_first: appStore.advancedOptions.rmFirst,
+          use_mirror: appStore.advancedOptions.useMirror,
+          mirror_url: appStore.advancedOptions.mirrorUrl,
+          custom_args: ''
+        }
       }
     })
   } catch (error) {
@@ -218,6 +244,11 @@ const cancelBuild = async () => {
 // 清除日志
 const clearLogs = () => {
   appStore.clearBuildLogs()
+}
+
+// 切换高级选项显示
+const toggleAdvancedOptions = () => {
+  showAdvancedOptions.value = !showAdvancedOptions.value
 }
 
 // 复制日志
@@ -383,9 +414,19 @@ onMounted(() => {
         
         <!-- 构建配置 -->
         <v-card class="mt-4">
-          <v-card-title>
+          <v-card-title class="d-flex align-center">
             <v-icon class="mr-2">mdi-cog</v-icon>
             构建配置
+            <v-spacer />
+            <v-btn
+              variant="text"
+              size="small"
+              @click="toggleAdvancedOptions"
+              :color="showAdvancedOptions ? 'primary' : 'default'"
+            >
+              <v-icon>{{ showAdvancedOptions ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+              高级选项
+            </v-btn>
           </v-card-title>
           <v-card-text>
             <v-text-field
@@ -422,6 +463,14 @@ onMounted(() => {
               rows="3"
               class="mt-4"
             />
+
+            <!-- 高级选项 -->
+            <v-expand-transition>
+              <div v-if="showAdvancedOptions" class="mt-4">
+                <v-divider class="mb-4" />
+                <AdvancedBuildOptions v-model="appStore.advancedOptions" />
+              </div>
+            </v-expand-transition>
             
           </v-card-text>
         </v-card>

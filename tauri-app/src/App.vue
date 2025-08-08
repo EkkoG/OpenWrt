@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useAppStore } from '@/stores/app'
+import { useConfigStore } from '@/stores/config'
 
 const appStore = useAppStore()
+const configStore = useConfigStore()
 const appModeInfo = ref<any>(null)
 const isDebugMode = ref(false)
 
@@ -16,6 +18,11 @@ onMounted(async () => {
   await appStore.checkDockerEnvironment()
   // 加载模块信息
   await appStore.loadModules()
+  // 加载保存的配置
+  await configStore.loadConfigurations()
+  if (configStore.activeConfig) {
+    configStore.applyConfigToStore(configStore.activeConfig.config, appStore)
+  }
   
   // 在调试模式下获取应用模式信息
   if (isDebugMode.value) {

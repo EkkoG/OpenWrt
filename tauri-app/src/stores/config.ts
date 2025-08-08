@@ -9,6 +9,13 @@ export interface ModuleConfig {
   description: string
 }
 
+export interface AdvancedBuildOptions {
+  withPull: boolean
+  rmFirst: boolean
+  useMirror: boolean
+  mirrorUrl: string
+}
+
 export interface BuildConfig {
   selectedImage: string
   customImageTag: string
@@ -16,6 +23,7 @@ export interface BuildConfig {
   outputDirectory: string
   globalEnvVars: string
   modules: ModuleConfig[]
+  advancedOptions?: AdvancedBuildOptions
 }
 
 export interface Configuration {
@@ -237,6 +245,11 @@ export const useConfigStore = defineStore('config', () => {
     appStore.outputDirectory = config.outputDirectory
     appStore.globalEnvVars = config.globalEnvVars
     appStore.modules = config.modules
+    
+    // 恢复高级选项
+    if (config.advancedOptions) {
+      appStore.advancedOptions = { ...config.advancedOptions }
+    }
   }
 
   function extractConfigFromStore(appStore: any): BuildConfig {
@@ -246,7 +259,8 @@ export const useConfigStore = defineStore('config', () => {
       selectedProfile: appStore.selectedProfile,
       outputDirectory: appStore.outputDirectory,
       globalEnvVars: appStore.globalEnvVars,
-      modules: appStore.modules
+      modules: appStore.modules,
+      advancedOptions: appStore.advancedOptions ? { ...appStore.advancedOptions } : undefined
     }
   }
 

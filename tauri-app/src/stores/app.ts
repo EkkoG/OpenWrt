@@ -16,6 +16,14 @@ export const useAppStore = defineStore('app', () => {
   const outputDirectory = ref('')
   const globalEnvVars = ref('')  // 全局环境变量
   
+  // 高级构建选项
+  const advancedOptions = ref({
+    withPull: false,
+    rmFirst: false,
+    useMirror: false,
+    mirrorUrl: ''
+  })
+  
   // 模块配置
   const modules = ref<Array<{
     name: string
@@ -122,6 +130,70 @@ export const useAppStore = defineStore('app', () => {
     }
   }
 
+  const loadActiveConfiguration = async () => {
+    try {
+      const { invoke } = await import('@tauri-apps/api/core')
+      const configurations = await invoke<Array<{
+        id: string
+        name: string
+        description: string
+        config: {
+          selectedImage: string
+          customImageTag: string
+          selectedProfile: string
+          outputDirectory: string
+          globalEnvVars: string
+          modules: Array<{
+            name: string
+            enabled: boolean
+            envVars: Record<string, string>
+            description: string
+          }>
+          advancedOptions?: {
+            withPull: boolean
+            rmFirst: boolean
+            useMirror: boolean
+            mirrorUrl: string
+          }
+        }
+        createdAt: string
+        updatedAt: string
+        isActive: boolean
+      }>>('get_configurations')
+      
+      // 找到当前活跃的配置
+      const activeConfig = configurations.find(c => c.isActive)
+      if (activeConfig) {
+        // 恢复构建设置
+        selectedImage.value = activeConfig.config.selectedImage
+        customImageTag.value = activeConfig.config.customImageTag
+        selectedProfile.value = activeConfig.config.selectedProfile
+        outputDirectory.value = activeConfig.config.outputDirectory
+        globalEnvVars.value = activeConfig.config.globalEnvVars
+        
+        // 恢复高级选项
+        if (activeConfig.config.advancedOptions) {
+          advancedOptions.value = { ...activeConfig.config.advancedOptions }
+        }
+        
+        // 恢复模块状态
+        activeConfig.config.modules.forEach(savedModule => {
+          const currentModule = modules.value.find(m => m.name === savedModule.name)
+          if (currentModule) {
+            currentModule.enabled = savedModule.enabled
+            currentModule.envVars = { ...currentModule.envVars, ...savedModule.envVars }
+          }
+        })
+        
+        console.log('Active configuration loaded:', activeConfig.name)
+      } else {
+        console.log('No active configuration found, using defaults')
+      }
+    } catch (error) {
+      console.error('Failed to load active configuration:', error)
+    }
+  }
+
   const startBuild = async () => {
     if (!canStartBuild.value) return
     
@@ -167,6 +239,7 @@ export const useAppStore = defineStore('app', () => {
     selectedProfile,
     outputDirectory,
     globalEnvVars,
+    advancedOptions,
     modules,
     isBuilding,
     buildProgress,
@@ -185,6 +258,7 @@ export const useAppStore = defineStore('app', () => {
     // 方法
     checkDockerEnvironment,
     loadModules,
+    loadActiveConfiguration,
     startBuild,
     cancelBuild,
     clearBuildLogs,
