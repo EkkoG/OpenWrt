@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 
 export const useAppStore = defineStore('app', () => {
   // Docker 环境状态
@@ -217,6 +217,37 @@ export const useAppStore = defineStore('app', () => {
     buildLogs.value = []
   }
 
+  const loadSettings = () => {
+    try {
+      const savedTheme = localStorage.getItem('app-theme')
+      if (savedTheme && ['light', 'dark', 'auto'].includes(savedTheme)) {
+        theme.value = savedTheme as 'light' | 'dark' | 'auto'
+      }
+      
+      const savedLanguage = localStorage.getItem('app-language')
+      if (savedLanguage) {
+        language.value = savedLanguage
+      }
+      
+      const savedCheckUpdates = localStorage.getItem('app-check-updates')
+      if (savedCheckUpdates) {
+        checkForUpdates.value = savedCheckUpdates === 'true'
+      }
+    } catch (error) {
+      console.error('Failed to load settings:', error)
+    }
+  }
+
+  const saveSettings = () => {
+    try {
+      localStorage.setItem('app-theme', theme.value)
+      localStorage.setItem('app-language', language.value)
+      localStorage.setItem('app-check-updates', checkForUpdates.value.toString())
+    } catch (error) {
+      console.error('Failed to save settings:', error)
+    }
+  }
+
   const updateSettings = (settings: Partial<{
     checkForUpdates: boolean
     theme: 'light' | 'dark' | 'auto'
@@ -225,7 +256,13 @@ export const useAppStore = defineStore('app', () => {
     if (settings.checkForUpdates !== undefined) checkForUpdates.value = settings.checkForUpdates
     if (settings.theme) theme.value = settings.theme
     if (settings.language) language.value = settings.language
+    saveSettings()
   }
+
+  // 自动保存设置变化
+  watch([theme, language, checkForUpdates], () => {
+    saveSettings()
+  })
 
   return {
     // 状态
@@ -262,6 +299,8 @@ export const useAppStore = defineStore('app', () => {
     startBuild,
     cancelBuild,
     clearBuildLogs,
+    loadSettings,
+    saveSettings,
     updateSettings
   }
 })

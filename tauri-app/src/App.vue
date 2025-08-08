@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch, computed } from 'vue'
+import { useTheme } from 'vuetify'
 import { useAppStore } from '@/stores/app'
 import { useConfigStore } from '@/stores/config'
 
+const theme = useTheme()
 const appStore = useAppStore()
 const configStore = useConfigStore()
 const appModeInfo = ref<any>(null)
@@ -13,7 +15,65 @@ if (import.meta.env.DEV) {
   isDebugMode.value = true
 }
 
+// 监听主题变化
+watch(() => appStore.theme, (newTheme) => {
+  if (newTheme === 'auto') {
+    // 自动主题：根据系统主题设置
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+    theme.global.name.value = prefersDark ? 'dark' : 'light'
+  } else {
+    theme.global.name.value = newTheme
+  }
+}, { immediate: true })
+
+// 监听系统主题变化（当设置为自动时）
+const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+mediaQuery.addEventListener('change', (e) => {
+  if (appStore.theme === 'auto') {
+    theme.global.name.value = e.matches ? 'dark' : 'light'
+  }
+})
+
+// 主题切换逻辑
+const toggleTheme = () => {
+  const themeOrder: ('light' | 'dark' | 'auto')[] = ['light', 'dark', 'auto']
+  const currentIndex = themeOrder.indexOf(appStore.theme)
+  const nextIndex = (currentIndex + 1) % themeOrder.length
+  appStore.theme = themeOrder[nextIndex]
+}
+
+// 获取主题图标
+const getThemeIcon = computed(() => {
+  switch (appStore.theme) {
+    case 'light':
+      return 'mdi-white-balance-sunny'
+    case 'dark':
+      return 'mdi-moon-waning-crescent'
+    case 'auto':
+      return 'mdi-theme-light-dark'
+    default:
+      return 'mdi-theme-light-dark'
+  }
+})
+
+// 获取主题提示文本
+const getThemeTooltip = computed(() => {
+  switch (appStore.theme) {
+    case 'light':
+      return '浅色模式'
+    case 'dark':
+      return '深色模式'
+    case 'auto':
+      return '跟随系统'
+    default:
+      return '主题切换'
+  }
+})
+
 onMounted(async () => {
+  // 加载保存的设置（包括主题）
+  appStore.loadSettings()
+  
   // 启动时检查 Docker 环境
   await appStore.checkDockerEnvironment()
   // 加载模块信息
@@ -141,10 +201,15 @@ onMounted(async () => {
       </v-chip>
 
       <v-btn
-        icon="mdi-theme-light-dark"
-        @click="appStore.theme = appStore.theme === 'light' ? 'dark' : 'light'"
+        icon
+        @click="toggleTheme"
         class="ml-2"
-      />
+      >
+        <v-icon>{{ getThemeIcon }}</v-icon>
+        <v-tooltip activator="parent" location="bottom">
+          {{ getThemeTooltip }}
+        </v-tooltip>
+      </v-btn>
     </v-app-bar>
 
     <v-main>
