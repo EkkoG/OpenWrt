@@ -14,7 +14,6 @@ export const useAppStore = defineStore('app', () => {
   const customImageTag = ref('')
   const selectedProfile = ref('')  // 添加 profile 字段
   const outputDirectory = ref('')
-  const buildScriptPath = ref('../run.sh')
   const globalEnvVars = ref('')  // 全局环境变量
   
   // 模块配置
@@ -33,7 +32,6 @@ export const useAppStore = defineStore('app', () => {
   const lastBuildStatus = ref<'success' | 'failed' | 'cancelled' | null>(null)
 
   // 应用设置
-  const autoOpenOutput = ref(true)
   const checkForUpdates = ref(true)
   const theme = ref<'light' | 'dark' | 'auto'>('light')
   const language = ref('zh-CN')
@@ -146,12 +144,10 @@ export const useAppStore = defineStore('app', () => {
   }
 
   const updateSettings = (settings: Partial<{
-    autoOpenOutput: boolean
     checkForUpdates: boolean
     theme: 'light' | 'dark' | 'auto'
     language: string
   }>) => {
-    if (settings.autoOpenOutput !== undefined) autoOpenOutput.value = settings.autoOpenOutput
     if (settings.checkForUpdates !== undefined) checkForUpdates.value = settings.checkForUpdates
     if (settings.theme) theme.value = settings.theme
     if (settings.language) language.value = settings.language
@@ -168,7 +164,6 @@ export const useAppStore = defineStore('app', () => {
     customImageTag,
     selectedProfile,
     outputDirectory,
-    buildScriptPath,
     globalEnvVars,
     modules,
     isBuilding,
@@ -176,7 +171,6 @@ export const useAppStore = defineStore('app', () => {
     buildLogs,
     lastBuildTime,
     lastBuildStatus,
-    autoOpenOutput,
     checkForUpdates,
     theme,
     language,

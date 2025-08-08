@@ -19,7 +19,6 @@ const languages = [
 const saveSettings = () => {
   // 保存设置到 store
   appStore.updateSettings({
-    autoOpenOutput: appStore.autoOpenOutput,
     checkForUpdates: appStore.checkForUpdates,
     theme: appStore.theme,
     language: appStore.language
@@ -34,7 +33,6 @@ const saveSettings = () => {
 
 const resetSettings = () => {
   appStore.updateSettings({
-    autoOpenOutput: true,
     checkForUpdates: true,
     theme: 'light',
     language: 'zh-CN'
@@ -58,26 +56,6 @@ const checkForUpdates = async () => {
           </v-card-title>
           
           <v-card-text>
-            <!-- 构建设置 -->
-            <div class="text-h6 mb-4">构建设置</div>
-            <v-checkbox
-              v-model="appStore.autoOpenOutput"
-              label="构建完成后自动打开输出目录"
-              density="compact"
-              class="mb-4"
-            />
-            
-            <v-text-field
-              v-model="appStore.buildScriptPath"
-              label="构建脚本路径"
-              variant="outlined"
-              density="compact"
-              placeholder="../run.sh"
-              class="mb-4"
-            />
-            
-            <v-divider class="my-6" />
-            
             <!-- 界面设置 -->
             <div class="text-h6 mb-4">界面设置</div>
             
