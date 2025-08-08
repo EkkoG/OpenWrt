@@ -22,6 +22,7 @@ export const useAppStore = defineStore('app', () => {
     enabled: boolean
     envVars: Record<string, string>
     description: string
+    hasReadme: boolean
   }>>([])
 
   // 构建状态
@@ -111,7 +112,8 @@ export const useAppStore = defineStore('app', () => {
           acc[v.name] = v.value
           return acc
         }, {} as Record<string, string>),
-        description: m.description
+        description: m.description,
+        hasReadme: m.has_readme
       }))
       
       console.log('Modules loaded:', modules.value)

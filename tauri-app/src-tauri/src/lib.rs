@@ -5,7 +5,7 @@ mod app_mode;
 mod config_manager;
 
 use docker::{check_docker_environment, check_docker_running};
-use modules::{get_modules, read_module_packages, save_module_env};
+use modules::{get_modules, read_module_packages, get_module_readme, save_module_env};
 use build::{start_build, cancel_build, is_building};
 use app_mode::{get_app_mode_info, reinitialize_app_mode, initialize_app_mode, verify_setup_directory};
 use config_manager::{ConfigManager, Configuration, BuildConfig};
@@ -99,6 +99,7 @@ pub fn run() {
             check_docker_running,
             get_modules,
             read_module_packages,
+            get_module_readme,
             save_module_env,
             start_build,
             cancel_build,

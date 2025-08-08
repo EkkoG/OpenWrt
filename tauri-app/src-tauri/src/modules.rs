@@ -88,14 +88,7 @@ pub async fn get_modules(app: AppHandle) -> Result<Vec<ModuleInfo>, String> {
             let mut description = String::new();
             if has_readme {
                 if let Ok(content) = fs::read_to_string(&readme_path) {
-                    // Get first non-empty line that's not a heading
-                    for line in content.lines() {
-                        let line = line.trim();
-                        if !line.is_empty() && !line.starts_with('#') {
-                            description = line.to_string();
-                            break;
-                        }
-                    }
+                    description = extract_description_from_readme(&content);
                 }
             }
             
@@ -140,6 +133,34 @@ pub async fn get_modules(app: AppHandle) -> Result<Vec<ModuleInfo>, String> {
     modules.sort_by(|a, b| a.name.cmp(&b.name));
     
     Ok(modules)
+}
+
+fn extract_description_from_readme(content: &str) -> String {
+    let lines: Vec<&str> = content.lines().collect();
+    
+    // 查找第一个 ## 功能 或 ## 功能说明 或 ## 描述 部分
+    for (i, line) in lines.iter().enumerate() {
+        let line = line.trim();
+        if line.starts_with("## 功能") || line.starts_with("## 描述") || line.starts_with("## 说明") {
+            // 获取下一行作为描述
+            if i + 1 < lines.len() {
+                let desc = lines[i + 1].trim();
+                if !desc.is_empty() && !desc.starts_with('#') {
+                    return desc.to_string();
+                }
+            }
+        }
+    }
+    
+    // 如果没找到功能部分，查找第一行非标题内容
+    for line in lines {
+        let line = line.trim();
+        if !line.is_empty() && !line.starts_with('#') && !line.starts_with("```") {
+            return line.to_string();
+        }
+    }
+    
+    String::new()
 }
 
 fn generate_description(module_name: &str) -> String {
@@ -196,6 +217,20 @@ pub async fn read_module_packages(app: AppHandle, module_name: String) -> Result
         .collect();
     
     Ok(packages)
+}
+
+#[command]
+pub async fn get_module_readme(app: AppHandle, module_name: String) -> Result<String, String> {
+    let mode = get_current_mode();
+    let modules_path = mode.get_modules_path(&app)?;
+    let readme_path = modules_path.join(&module_name).join("README.md");
+    
+    if !readme_path.exists() {
+        return Err(format!("README.md not found for module: {}", module_name));
+    }
+    
+    fs::read_to_string(&readme_path)
+        .map_err(|e| format!("Failed to read README.md for module {}: {}", module_name, e))
 }
 
 #[command]

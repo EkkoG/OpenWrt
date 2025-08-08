@@ -1,11 +1,16 @@
 <script setup lang="ts">
 import { useAppStore } from '@/stores/app'
 import { ref, computed, onMounted } from 'vue'
+import ModuleDetailDialog from '@/components/ModuleDetailDialog.vue'
 
 const appStore = useAppStore()
 const searchQuery = ref('')
 // const expandedModules = ref<string[]>([]) // Reserved for future expansion control
 const isLoading = ref(false)
+
+// 详细介绍对话框状态
+const detailDialog = ref(false)
+const selectedModule = ref({ name: '', description: '' })
 
 const filteredModules = computed(() => {
   if (!searchQuery.value) {
@@ -31,6 +36,14 @@ const toggleModule = (moduleName: string) => {
 
 const hasEnvVars = (module: any) => {
   return Object.keys(module.envVars || {}).length > 0
+}
+
+const showModuleDetail = (module: any) => {
+  selectedModule.value = {
+    name: module.name,
+    description: module.description
+  }
+  detailDialog.value = true
 }
 
 const refreshModules = async () => {
@@ -159,6 +172,17 @@ onMounted(() => {
                     >
                       需配置
                     </v-chip>
+                    <v-btn
+                      v-if="module.hasReadme"
+                      size="x-small"
+                      variant="text"
+                      color="info"
+                      class="ml-2"
+                      @click.stop="showModuleDetail(module)"
+                    >
+                      <v-icon>mdi-information-outline</v-icon>
+                      <v-tooltip activator="parent" location="top">查看详细介绍</v-tooltip>
+                    </v-btn>
                   </div>
                 </v-expansion-panel-title>
                 
@@ -205,5 +229,12 @@ onMounted(() => {
         </v-card>
       </v-col>
     </v-row>
+
+    <!-- 模块详细介绍对话框 -->
+    <ModuleDetailDialog
+      v-model="detailDialog"
+      :module-name="selectedModule.name"
+      :module-description="selectedModule.description"
+    />
   </v-container>
 </template>
