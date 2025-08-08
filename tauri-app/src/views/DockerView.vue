@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useAppStore } from '@/stores/app'
 import { onMounted, ref } from 'vue'
+import { openUrl } from '@tauri-apps/plugin-opener'
 
 const appStore = useAppStore()
 const isChecking = ref(false)
@@ -9,6 +10,10 @@ const checkDocker = async () => {
   isChecking.value = true
   await appStore.checkDockerEnvironment()
   isChecking.value = false
+}
+
+const openDockerWebsite = async () => {
+  await openUrl('https://www.docker.com/get-started')
 }
 
 onMounted(() => {
@@ -94,11 +99,18 @@ onMounted(() => {
                       class="mt-3"
                     >
                       <div class="font-weight-medium mb-1">Docker 未安装</div>
-                      <div class="text-caption">
-                        请访问 
-                        <a href="https://www.docker.com/get-started" target="_blank">Docker 官网</a>
-                        下载并安装 Docker Desktop
+                      <div class="text-caption mb-2">
+                        请下载并安装 Docker Desktop
                       </div>
+                      <v-btn
+                        size="small"
+                        color="primary"
+                        variant="tonal"
+                        @click="openDockerWebsite"
+                        prepend-icon="mdi-open-in-new"
+                      >
+                        访问 Docker 官网
+                      </v-btn>
                     </v-alert>
 
                     <v-alert 
