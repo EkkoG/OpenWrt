@@ -138,6 +138,11 @@ if [[ $(uname) =~ "Linux" ]]; then
     sudo chown -R 1000:1000 "$OUTPUT_DIR"
 fi
 
+if [ ! -f .env ]; then
+    echo "WARNING: .env file not found, using default values"
+    echo "" > .env
+fi
+
 compose up --exit-code-from imagebuilder --remove-orphans
 build_status=$?
 compose rm -f
