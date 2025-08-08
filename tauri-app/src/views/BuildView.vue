@@ -8,6 +8,7 @@ const isLoadingTags = ref(false)
 const dockerTags = ref<string[]>([])
 const selectedRepository = ref('immortalwrt/imagebuilder')
 const logContainer = ref<HTMLElement | null>(null)
+const copyNotification = ref({ show: false, message: '', color: 'success' })
 const repositories = [
   { title: 'OpenWrt Official', value: 'openwrt/imagebuilder' },
   { title: 'ImmortalWrt Official', value: 'immortalwrt/imagebuilder' }
@@ -218,6 +219,66 @@ const clearLogs = () => {
   appStore.clearBuildLogs()
 }
 
+// 复制日志
+const copyLogs = async () => {
+  console.log('开始复制日志...')
+  console.log('日志数量:', appStore.buildLogs.length)
+  
+  if (appStore.buildLogs.length === 0) {
+    copyNotification.value = {
+      show: true,
+      message: '没有可复制的日志',
+      color: 'warning'
+    }
+    return
+  }
+  
+  try {
+    // 根据 Tauri v2 文档的正确导入方式
+    const { writeText } = await import('@tauri-apps/plugin-clipboard-manager')
+    const logText = appStore.buildLogs.join('\n')
+    console.log('准备复制的文本长度:', logText.length)
+    
+    await writeText(logText)
+    console.log('Tauri 剪贴板复制成功')
+    
+    copyNotification.value = {
+      show: true,
+      message: `已复制 ${appStore.buildLogs.length} 行日志到剪贴板`,
+      color: 'success'
+    }
+  } catch (error) {
+    console.error('Tauri 剪贴板复制失败:', error)
+    console.log('尝试降级到浏览器剪贴板...')
+    
+    // 降级方案：使用浏览器的 navigator.clipboard
+    try {
+      const logText = appStore.buildLogs.join('\n')
+      
+      if (!navigator.clipboard) {
+        console.error('浏览器不支持 navigator.clipboard')
+        throw new Error('浏览器不支持剪贴板 API')
+      }
+      
+      await navigator.clipboard.writeText(logText)
+      console.log('浏览器剪贴板复制成功')
+      
+      copyNotification.value = {
+        show: true,
+        message: `已复制 ${appStore.buildLogs.length} 行日志到剪贴板`,
+        color: 'success'
+      }
+    } catch (fallbackError) {
+      console.error('浏览器剪贴板复制也失败:', fallbackError)
+      copyNotification.value = {
+        show: true,
+        message: '复制日志失败，请手动选择复制',
+        color: 'error'
+      }
+    }
+  }
+}
+
 
 onMounted(() => {
   fetchDockerTags()
@@ -419,12 +480,24 @@ onMounted(() => {
             构建日志
             <v-spacer />
             <v-btn
-              icon="mdi-delete"
+              size="small"
+              variant="text"
+              @click="copyLogs"
+              :disabled="appStore.buildLogs.length === 0"
+              class="mr-2"
+            >
+              <v-icon>mdi-content-copy</v-icon>
+              <v-tooltip activator="parent" location="bottom">复制所有日志</v-tooltip>
+            </v-btn>
+            <v-btn
               size="small"
               variant="text"
               @click="clearLogs"
               :disabled="appStore.isBuilding"
-            />
+            >
+              <v-icon>mdi-delete</v-icon>
+              <v-tooltip activator="parent" location="bottom">清空日志</v-tooltip>
+            </v-btn>
           </v-card-title>
           <v-card-text>
             <!-- 构建进度 -->
@@ -509,5 +582,23 @@ onMounted(() => {
         </v-card>
       </v-col>
     </v-row>
+    
+    <!-- 复制通知 -->
+    <v-snackbar
+      v-model="copyNotification.show"
+      :color="copyNotification.color"
+      timeout="3000"
+      location="bottom"
+    >
+      {{ copyNotification.message }}
+      <template v-slot:actions>
+        <v-btn
+          variant="text"
+          @click="copyNotification.show = false"
+        >
+          关闭
+        </v-btn>
+      </template>
+    </v-snackbar>
   </v-container>
 </template>
