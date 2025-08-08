@@ -406,6 +406,7 @@ onMounted(() => {
               density="compact"
               readonly
               append-inner-icon="mdi-folder-open"
+              @click="selectOutputDirectory"
               @click:append-inner="selectOutputDirectory"
             />
             
