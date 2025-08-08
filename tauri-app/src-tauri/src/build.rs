@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use std::process::{Command, Stdio};
 use std::sync::Mutex;
 use std::io::{BufRead, BufReader};
-use tauri::{command, AppHandle, Emitter};
+use tauri::{command, AppHandle, Emitter, Manager};
 use std::thread;
 use crate::app_mode::get_current_mode;
 
@@ -46,6 +46,27 @@ pub async fn start_build(
     let mode = get_current_mode();
     let base_path = mode.get_resource_base_path(&app)?;
     
+    // 确定实际的工作目录
+    // 在 Embedded 或 Portable 模式下，使用提取后的目录作为工作目录
+    let working_dir = match mode {
+        crate::app_mode::AppMode::Development => base_path.clone(),
+        crate::app_mode::AppMode::Embedded | crate::app_mode::AppMode::Portable => {
+            // 使用 app_data_dir 中的提取目录
+            let app_data_dir = app.path()
+                .app_data_dir()
+                .map_err(|e| format!("Failed to get app data directory: {}", e))?;
+            let extract_dir = app_data_dir.join("openwrt-builder");
+            
+            // 确保目录存在
+            if !extract_dir.exists() {
+                // 如果不存在，触发资源提取
+                mode.initialize(&app)?;
+            }
+            
+            extract_dir
+        }
+    };
+    
     // 为每个启用的模块写入 .env 文件
     let mut module_env_map: std::collections::HashMap<String, Vec<&crate::build::EnvVar>> = std::collections::HashMap::new();
     
@@ -64,7 +85,7 @@ pub async fn start_build(
     
     // 为每个模块写入 .env 文件
     for (module_name, env_vars) in module_env_map {
-        let env_file_path = base_path.join("modules").join(&module_name).join(".env");
+        let env_file_path = working_dir.join("modules").join(&module_name).join(".env");
         
         // 检查模块目录是否存在
         if let Some(parent) = env_file_path.parent() {
@@ -85,7 +106,7 @@ pub async fn start_build(
     
     // 写入全局环境变量到根目录的 .env 文件
     if !config.global_env_vars.trim().is_empty() {
-        let root_env_path = base_path.join(".env");
+        let root_env_path = working_dir.join(".env");
         
         if let Err(e) = std::fs::write(&root_env_path, &config.global_env_vars) {
             eprintln!("Failed to write global .env file: {}", e);
@@ -99,9 +120,9 @@ pub async fn start_build(
     
     // 构建命令
     let mut cmd = Command::new("bash");
-    let run_script_path = mode.get_script_path(&app, "run.sh")?;
+    let run_script_path = working_dir.join("run.sh");  // 使用工作目录中的 run.sh
     
-    cmd.current_dir(&base_path)  // 切换到资源基础目录
+    cmd.current_dir(&working_dir)  // 切换到工作目录
        .arg(&run_script_path)
        .arg(format!("--image={}", &config.image));
     
