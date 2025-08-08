@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use std::process::Command;
+use std::path::Path;
 use tauri::command;
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -9,6 +10,42 @@ pub struct DockerInfo {
     pub version: String,
     pub compose_installed: bool,
     pub compose_version: String,
+}
+
+// 查找 Docker 可执行文件路径
+fn find_docker_command() -> String {
+    let docker_paths = vec![
+        "/usr/local/bin/docker",           // Intel Mac Homebrew
+        "/opt/homebrew/bin/docker",        // Apple Silicon Homebrew  
+        "/Applications/Docker.app/Contents/Resources/bin/docker", // Docker Desktop
+        "/usr/bin/docker",                  // 系统路径
+    ];
+    
+    for path in docker_paths {
+        if Path::new(path).exists() {
+            return path.to_string();
+        }
+    }
+    
+    // 如果都找不到，返回 docker，让系统报错
+    "docker".to_string()
+}
+
+// 查找 Docker Compose 可执行文件路径
+fn find_docker_compose_command() -> String {
+    let compose_paths = vec![
+        "/usr/local/bin/docker-compose",
+        "/opt/homebrew/bin/docker-compose",
+        "/Applications/Docker.app/Contents/Resources/bin/docker-compose",
+    ];
+    
+    for path in compose_paths {
+        if Path::new(path).exists() {
+            return path.to_string();
+        }
+    }
+    
+    "docker-compose".to_string()
 }
 
 #[command]
@@ -22,7 +59,8 @@ pub async fn check_docker_environment() -> Result<DockerInfo, String> {
     };
 
     // Check Docker installation and version
-    match Command::new("docker").arg("version").arg("--format").arg("{{.Server.Version}}").output() {
+    let docker_cmd = find_docker_command();
+    match Command::new(&docker_cmd).arg("version").arg("--format").arg("{{.Server.Version}}").output() {
         Ok(output) => {
             if output.status.success() {
                 info.installed = true;
@@ -34,7 +72,7 @@ pub async fn check_docker_environment() -> Result<DockerInfo, String> {
                 info.running = false;
                 
                 // Try to get client version
-                if let Ok(client_output) = Command::new("docker").arg("version").arg("--format").arg("{{.Client.Version}}").output() {
+                if let Ok(client_output) = Command::new(&docker_cmd).arg("version").arg("--format").arg("{{.Client.Version}}").output() {
                     if client_output.status.success() {
                         info.version = String::from_utf8_lossy(&client_output.stdout).trim().to_string();
                     }
@@ -48,7 +86,7 @@ pub async fn check_docker_environment() -> Result<DockerInfo, String> {
     }
 
     // Check Docker Compose (new version: docker compose)
-    match Command::new("docker").arg("compose").arg("version").output() {
+    match Command::new(&docker_cmd).arg("compose").arg("version").output() {
         Ok(output) => {
             if output.status.success() {
                 info.compose_installed = true;
@@ -64,7 +102,8 @@ pub async fn check_docker_environment() -> Result<DockerInfo, String> {
 
     // If new compose is not found, check legacy docker-compose
     if !info.compose_installed {
-        match Command::new("docker-compose").arg("version").output() {
+        let compose_cmd = find_docker_compose_command();
+        match Command::new(&compose_cmd).arg("version").output() {
             Ok(output) => {
                 if output.status.success() {
                     info.compose_installed = true;
@@ -88,7 +127,8 @@ pub async fn check_docker_environment() -> Result<DockerInfo, String> {
 
 #[command]
 pub async fn check_docker_running() -> Result<bool, String> {
-    match Command::new("docker").arg("info").output() {
+    let docker_cmd = find_docker_command();
+    match Command::new(&docker_cmd).arg("info").output() {
         Ok(output) => Ok(output.status.success()),
         Err(_) => Ok(false),
     }

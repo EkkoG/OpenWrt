@@ -1,5 +1,18 @@
 #!/bin/bash -e
 
+# 设置 Docker 路径（macOS）
+export PATH="/usr/local/bin:/opt/homebrew/bin:/Applications/Docker.app/Contents/Resources/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
+
+# 验证 Docker 是否可用
+if ! command -v docker &> /dev/null; then
+    echo "错误: 未找到 Docker，请确保 Docker Desktop 已安装并运行"
+    echo "尝试查找的路径："
+    echo "  - /usr/local/bin/docker (Intel Mac Homebrew)"
+    echo "  - /opt/homebrew/bin/docker (Apple Silicon Homebrew)"
+    echo "  - /Applications/Docker.app/Contents/Resources/bin/docker (Docker Desktop)"
+    exit 1
+fi
+
 function compose() {
     # if docker-compose is not installed, use it
     if ! command -v docker-compose &> /dev/null; then
