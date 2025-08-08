@@ -44,8 +44,8 @@ const router = useRouter()
 
             <v-row class="mt-4">
               <v-col cols="12" md="3" sm="6">
-                <v-card variant="tonal" color="primary">
-                  <v-card-text class="text-center pa-6">
+                <v-card variant="tonal" color="primary" height="200">
+                  <v-card-text class="text-center pa-6 d-flex flex-column justify-center align-center" style="height: 100%">
                     <v-icon size="48" class="mb-3">mdi-docker</v-icon>
                     <div class="text-h6 font-weight-medium">Docker 状态</div>
                     <v-chip
@@ -61,20 +61,25 @@ const router = useRouter()
               </v-col>
 
               <v-col cols="12" md="3" sm="6">
-                <v-card variant="tonal" color="secondary">
-                  <v-card-text class="text-center pa-6">
+                <v-card variant="tonal" color="secondary" height="200">
+                  <v-card-text class="text-center pa-6 d-flex flex-column justify-center align-center" style="height: 100%">
                     <v-icon size="48" class="mb-3">mdi-package-variant</v-icon>
                     <div class="text-h6 font-weight-medium">已启用模块</div>
-                    <div class="text-h4 font-weight-bold mt-2">
-                      {{ appStore.enabledModules.length }}
-                    </div>
+                    <v-chip
+                      color="primary"
+                      variant="flat"
+                      size="small"
+                      class="mt-2"
+                    >
+                      {{ appStore.enabledModules.length }} 个
+                    </v-chip>
                   </v-card-text>
                 </v-card>
               </v-col>
 
               <v-col cols="12" md="3" sm="6">
-                <v-card variant="tonal" color="info">
-                  <v-card-text class="text-center pa-6">
+                <v-card variant="tonal" color="info" height="200">
+                  <v-card-text class="text-center pa-6 d-flex flex-column justify-center align-center" style="height: 100%">
                     <v-icon size="48" class="mb-3">mdi-hammer</v-icon>
                     <div class="text-h6 font-weight-medium">构建状态</div>
                     <v-chip
@@ -90,20 +95,18 @@ const router = useRouter()
               </v-col>
 
               <v-col cols="12" md="3" sm="6">
-                <v-card variant="tonal" color="success">
-                  <v-card-text class="text-center pa-6">
+                <v-card variant="tonal" color="success" height="200">
+                  <v-card-text class="text-center pa-6 d-flex flex-column justify-center align-center" style="height: 100%">
                     <v-icon size="48" class="mb-3">mdi-check-circle</v-icon>
                     <div class="text-h6 font-weight-medium">上次构建</div>
                     <v-chip
-                      v-if="appStore.lastBuildStatus"
-                      :color="appStore.lastBuildStatus === 'success' ? 'success' : 'error'"
+                      :color="appStore.lastBuildStatus ? (appStore.lastBuildStatus === 'success' ? 'success' : 'error') : 'default'"
                       variant="flat"
                       size="small"
                       class="mt-2"
                     >
-                      {{ appStore.lastBuildStatus === 'success' ? '成功' : '失败' }}
+                      {{ appStore.lastBuildStatus ? (appStore.lastBuildStatus === 'success' ? '成功' : '失败') : '暂无' }}
                     </v-chip>
-                    <div v-else class="text-caption mt-2">暂无记录</div>
                   </v-card-text>
                 </v-card>
               </v-col>
