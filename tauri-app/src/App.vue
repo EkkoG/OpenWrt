@@ -1,14 +1,32 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useAppStore } from '@/stores/app'
 
 const appStore = useAppStore()
+const appModeInfo = ref<any>(null)
+const isDebugMode = ref(false)
+
+// 检测是否是调试模式（开发环境）
+if (import.meta.env.DEV) {
+  isDebugMode.value = true
+}
 
 onMounted(async () => {
   // 启动时检查 Docker 环境
   await appStore.checkDockerEnvironment()
   // 加载模块信息
   await appStore.loadModules()
+  
+  // 在调试模式下获取应用模式信息
+  if (isDebugMode.value) {
+    try {
+      const { invoke } = await import('@tauri-apps/api/core')
+      appModeInfo.value = await invoke('get_app_mode_info')
+      console.log('App Mode Info:', appModeInfo.value)
+    } catch (error) {
+      console.error('Failed to get app mode info:', error)
+    }
+  }
 })
 </script>
 
@@ -79,6 +97,24 @@ onMounted(async () => {
       </v-app-bar-title>
 
       <v-spacer />
+
+      <!-- Debug 模式显示应用模式信息 -->
+      <v-chip
+        v-if="isDebugMode && appModeInfo"
+        color="info"
+        variant="tonal"
+        prepend-icon="mdi-bug"
+        class="mr-2"
+      >
+        {{ appModeInfo.mode }}
+        <v-tooltip activator="parent" location="bottom" max-width="400">
+          <div class="text-caption">
+            <strong>{{ appModeInfo.description }}</strong><br>
+            资源路径: {{ appModeInfo.resource_path }}<br>
+            工作目录: {{ appModeInfo.working_directory }}
+          </div>
+        </v-tooltip>
+      </v-chip>
 
       <v-chip
         v-if="appStore.dockerReady"

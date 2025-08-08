@@ -49,7 +49,11 @@ pub async fn start_build(
     // 确定实际的工作目录
     // 在 Embedded 或 Portable 模式下，使用提取后的目录作为工作目录
     let working_dir = match mode {
-        crate::app_mode::AppMode::Development => base_path.clone(),
+        crate::app_mode::AppMode::Development => {
+            // 将相对路径转换为绝对路径
+            std::fs::canonicalize(&base_path)
+                .map_err(|e| format!("Failed to canonicalize development path {}: {}", base_path.display(), e))?
+        },
         crate::app_mode::AppMode::Embedded | crate::app_mode::AppMode::Portable => {
             // 使用 app_data_dir 中的提取目录
             let app_data_dir = app.path()
@@ -121,6 +125,10 @@ pub async fn start_build(
     // 构建命令
     let mut cmd = Command::new("bash");
     let run_script_path = working_dir.join("run.sh");  // 使用工作目录中的 run.sh
+    
+    println!("Working directory: {}", working_dir.display());
+    println!("Run script path: {}", run_script_path.display());
+    println!("Run script exists: {}", run_script_path.exists());
     
     cmd.current_dir(&working_dir)  // 切换到工作目录
        .arg(&run_script_path)
