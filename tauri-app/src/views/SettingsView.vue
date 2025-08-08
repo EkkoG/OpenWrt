@@ -11,17 +11,11 @@ const themes = [
   { title: '跟随系统', value: 'auto', icon: 'mdi-theme-light-dark' }
 ]
 
-const languages = [
-  { title: '简体中文', value: 'zh-CN' },
-  { title: 'English', value: 'en' }
-]
-
 const saveSettings = () => {
   // 保存设置到 store
   appStore.updateSettings({
     checkForUpdates: appStore.checkForUpdates,
-    theme: appStore.theme,
-    language: appStore.language
+    theme: appStore.theme
   })
   
   // 显示保存成功提示
@@ -34,8 +28,7 @@ const saveSettings = () => {
 const resetSettings = () => {
   appStore.updateSettings({
     checkForUpdates: true,
-    theme: 'light',
-    language: 'zh-CN'
+    theme: 'light'
   })
 }
 
@@ -75,15 +68,6 @@ const checkForUpdates = async () => {
                 </v-list-item>
               </template>
             </v-select>
-            
-            <v-select
-              v-model="appStore.language"
-              :items="languages"
-              label="语言"
-              variant="outlined"
-              density="compact"
-              class="mb-4"
-            />
             
             <v-divider class="my-6" />
             

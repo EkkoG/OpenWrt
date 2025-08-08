@@ -43,7 +43,6 @@ export const useAppStore = defineStore('app', () => {
   // 应用设置
   const checkForUpdates = ref(true)
   const theme = ref<'light' | 'dark' | 'auto'>('light')
-  const language = ref('zh-CN')
 
   // 计算属性
   const dockerReady = computed(() => 
@@ -224,11 +223,6 @@ export const useAppStore = defineStore('app', () => {
         theme.value = savedTheme as 'light' | 'dark' | 'auto'
       }
       
-      const savedLanguage = localStorage.getItem('app-language')
-      if (savedLanguage) {
-        language.value = savedLanguage
-      }
-      
       const savedCheckUpdates = localStorage.getItem('app-check-updates')
       if (savedCheckUpdates) {
         checkForUpdates.value = savedCheckUpdates === 'true'
@@ -241,7 +235,6 @@ export const useAppStore = defineStore('app', () => {
   const saveSettings = () => {
     try {
       localStorage.setItem('app-theme', theme.value)
-      localStorage.setItem('app-language', language.value)
       localStorage.setItem('app-check-updates', checkForUpdates.value.toString())
     } catch (error) {
       console.error('Failed to save settings:', error)
@@ -251,16 +244,14 @@ export const useAppStore = defineStore('app', () => {
   const updateSettings = (settings: Partial<{
     checkForUpdates: boolean
     theme: 'light' | 'dark' | 'auto'
-    language: string
   }>) => {
     if (settings.checkForUpdates !== undefined) checkForUpdates.value = settings.checkForUpdates
     if (settings.theme) theme.value = settings.theme
-    if (settings.language) language.value = settings.language
     saveSettings()
   }
 
   // 自动保存设置变化
-  watch([theme, language, checkForUpdates], () => {
+  watch([theme, checkForUpdates], () => {
     saveSettings()
   })
 
@@ -285,7 +276,6 @@ export const useAppStore = defineStore('app', () => {
     lastBuildStatus,
     checkForUpdates,
     theme,
-    language,
     
     // 计算属性
     dockerReady,
