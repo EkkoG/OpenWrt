@@ -208,9 +208,4 @@ impl ConfigManager {
         
         Ok(configuration)
     }
-
-    pub fn get_active_configuration(&self) -> Result<Option<Configuration>> {
-        let configurations = self.get_configurations()?;
-        Ok(configurations.into_iter().find(|c| c.is_active))
-    }
 }
