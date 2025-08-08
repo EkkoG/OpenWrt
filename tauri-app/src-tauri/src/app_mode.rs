@@ -68,11 +68,6 @@ impl AppMode {
         Ok(base_path.join("modules"))
     }
 
-    pub fn get_script_path(&self, app_handle: &AppHandle, script_name: &str) -> Result<PathBuf, String> {
-        let base_path = self.get_resource_base_path(app_handle)?;
-        Ok(base_path.join(script_name))
-    }
-
     pub fn initialize(&self, app_handle: &AppHandle) -> Result<(), String> {
         match self {
             AppMode::Development => {
@@ -99,33 +94,35 @@ impl AppMode {
 
         let extract_dir = app_data_dir.join("openwrt-builder");
         
-        // 检查是否已经提取过
-        if extract_dir.join("modules").exists() && extract_dir.join("build.sh").exists() {
-            // 已经提取过，切换到便携模式
-            let mut resource_lock = RESOURCE_PATH.lock().unwrap();
-            *resource_lock = Some(extract_dir);
-            
-            let mut mode_lock = CURRENT_MODE.lock().unwrap();
-            *mode_lock = Some(AppMode::Portable);
-            
-            return Ok(());
+        // 强制重建：先删除现有目录
+        if extract_dir.exists() {
+            fs::remove_dir_all(&extract_dir)
+                .map_err(|e| format!("Failed to remove existing directory: {}", e))?;
         }
 
         // 需要提取资源
         fs::create_dir_all(&extract_dir)
             .map_err(|e| format!("Failed to create extract directory: {}", e))?;
 
-        // 提取脚本文件
-        let resource_dir = app_handle
-            .path()
-            .resource_dir()
-            .map_err(|e| format!("Failed to get resource directory: {}", e))?;
+        // 使用 get_resource_base_path 获取正确的源路径
+        let source_base_path = self.get_resource_base_path(app_handle)?;
 
-        self.copy_resource_file(&resource_dir, &extract_dir, "build.sh")?;
-        self.copy_resource_file(&resource_dir, &extract_dir, "run.sh")?;
+        // 复制脚本文件
+        let build_script_src = source_base_path.join("build.sh");
+        let run_script_src = source_base_path.join("run.sh");
+        
+        if build_script_src.exists() {
+            fs::copy(&build_script_src, extract_dir.join("build.sh"))
+                .map_err(|e| format!("Failed to copy build.sh: {}", e))?;
+        }
+        
+        if run_script_src.exists() {
+            fs::copy(&run_script_src, extract_dir.join("run.sh"))
+                .map_err(|e| format!("Failed to copy run.sh: {}", e))?;
+        }
 
         // 提取模块目录
-        let modules_src = resource_dir.join("modules");
+        let modules_src = source_base_path.join("modules");
         let modules_dst = extract_dir.join("modules");
         
         if modules_src.exists() {
@@ -147,17 +144,6 @@ impl AppMode {
         Ok(())
     }
 
-    fn copy_resource_file(&self, src_dir: &Path, dst_dir: &Path, filename: &str) -> Result<(), String> {
-        let src = src_dir.join(filename);
-        let dst = dst_dir.join(filename);
-        
-        if src.exists() {
-            fs::copy(&src, &dst)
-                .map_err(|e| format!("Failed to copy {}: {}", filename, e))?;
-        }
-        
-        Ok(())
-    }
 
     fn copy_dir_recursive(&self, src: &Path, dst: &Path) -> Result<(), String> {
         if !src.exists() {
