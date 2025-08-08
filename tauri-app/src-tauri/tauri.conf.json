@@ -14,9 +14,9 @@
       {
         "title": "OpenWrt Builder GUI",
         "width": 1200,
-        "height": 800,
+        "height": 1200,
         "minWidth": 1000,
-        "minHeight": 600,
+        "minHeight": 800,
         "center": true,
         "resizable": true,
         "fullscreen": false
