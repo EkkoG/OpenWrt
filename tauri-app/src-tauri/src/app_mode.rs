@@ -25,7 +25,7 @@ static RESOURCE_PATH: Mutex<Option<PathBuf>> = Mutex::new(None);
 impl AppMode {
     pub fn detect_mode() -> Self {
         // 检测是否在开发环境 - 需要同时检查modules和setup目录
-        if Path::new("../../modules").exists() && Path::new("../../setup").exists() {
+        if Path::new("../modules").exists() && Path::new("../setup").exists() {
             AppMode::Development
         } else {
             AppMode::Embedded
@@ -42,7 +42,7 @@ impl AppMode {
 
     pub fn get_resource_base_path(&self, app_handle: &AppHandle) -> Result<PathBuf, String> {
         match self {
-            AppMode::Development => Ok(PathBuf::from("../..")),
+            AppMode::Development => Ok(PathBuf::from("..")),
             AppMode::Embedded => {
                 // 获取应用资源目录
                 let resource_dir = app_handle
