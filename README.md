@@ -6,7 +6,7 @@
 
 *支持图形界面和命令行，让固件构建变得简单高效*
 
-[![Release](https://img.shields.io/github/v/release/EkkoG/OpenWrt?style=flat-square)](https://github.com/EkkoG/OpenWrt/releases)
+[![Release](https://img.shields.io/github/v/release/EkkoG/OpenWrt?include_prereleases&style=flat-square&label=alpha)](https://github.com/EkkoG/OpenWrt/releases/tag/alpha)
 [![License](https://img.shields.io/github/license/EkkoG/OpenWrt?style=flat-square)](LICENSE)
 [![Stars](https://img.shields.io/github/stars/EkkoG/OpenWrt?style=flat-square)](https://github.com/EkkoG/OpenWrt/stargazers)
 
@@ -103,7 +103,8 @@
 
 #### 📦 下载安装包
 
-从 [**Releases**](https://github.com/EkkoG/OpenWrt/releases) 获取最新版本
+从 [**Alpha 版本**](https://github.com/EkkoG/OpenWrt/releases/tag/alpha) 获取最新测试版本  
+*注意：这是预发布版本，可能包含未知问题*
 
 | 平台 | 下载链接 | 说明 |
 |------|---------|------|
