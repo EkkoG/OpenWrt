@@ -47,7 +47,7 @@ const loadModuleReadme = async () => {
     const content = await invoke<string>('get_module_readme', { moduleName: props.moduleName })
     
     readmeContent.value = content
-    renderedHtml.value = marked(content)
+    renderedHtml.value = await marked(content)
   } catch (err: any) {
     console.error('Failed to load module README:', err)
     error.value = err.toString()
