@@ -40,6 +40,5 @@ jobs:
           echo "CONFIG_TARGET_KERNEL_PARTSIZE=16" > .env
           echo "CONFIG_TARGET_ROOTFS_PARTSIZE=256" >> .env
           echo "MODULES=openclash openclash-as-default" >> .env
-          ./run.sh --image=openwrt/imagebuilder:x86-64-23.05.5
-          ./run.sh --image=openwrt/imagebuilder:x86-64-22.03.3  
-          ./run.sh --image=openwrt/imagebuilder:x86-64-21.02.7
+          ./run.sh --image=immortalwrt/imagebuilder:x86-64-24.10.2
+          ./run.sh --image=immortalwrt/imagebuilder:x86-64-23.05.4
