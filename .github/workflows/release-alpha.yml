@@ -50,6 +50,9 @@ jobs:
         uses: swatinem/rust-cache@v2
         with:
           workspaces: './tauri-app/src-tauri -> target'
+          key: ${{ matrix.target }}
+          cache-targets: true
+          cache-all-crates: true
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
