@@ -113,13 +113,6 @@ onMounted(async () => {
           rounded="xl"
         />
         <v-list-item
-          prepend-icon="mdi-docker"
-          title="Docker"
-          value="docker"
-          to="/docker"
-          rounded="xl"
-        />
-        <v-list-item
           prepend-icon="mdi-package-variant"
           title="模块"
           value="modules"
@@ -184,20 +177,29 @@ onMounted(async () => {
       </v-chip>
 
       <v-chip
-        v-if="appStore.dockerReady"
-        color="success"
+        :color="appStore.dockerReady ? 'success' : 'error'"
         variant="tonal"
-        prepend-icon="mdi-check-circle"
+        :prepend-icon="appStore.dockerReady ? 'mdi-check-circle' : 'mdi-alert-circle'"
+        class="mr-2"
       >
-        Docker 就绪
-      </v-chip>
-      <v-chip
-        v-else
-        color="error"
-        variant="tonal"
-        prepend-icon="mdi-alert-circle"
-      >
-        Docker 未就绪
+        Docker
+        <v-tooltip activator="parent" location="bottom" max-width="350">
+          <div class="text-caption">
+            <div><strong>状态:</strong> {{ appStore.dockerReady ? '就绪' : '未就绪' }}</div>
+            <div><strong>安装状态:</strong> {{ appStore.dockerInstalled ? '已安装' : '未安装' }}</div>
+            <div><strong>运行状态:</strong> {{ appStore.dockerRunning ? '运行中' : '未运行' }}</div>
+            <div v-if="appStore.dockerInstalled"><strong>版本:</strong> {{ appStore.dockerVersion }}</div>
+            <div v-if="appStore.dockerComposeInstalled"><strong>Compose:</strong> {{ appStore.dockerComposeVersion }}</div>
+            <div v-if="!appStore.dockerInstalled" class="text-error">
+              <strong>问题:</strong> Docker 未安装<br>
+              <small>请访问 https://docker.com 下载安装 Docker Desktop</small>
+            </div>
+            <div v-if="appStore.dockerInstalled && !appStore.dockerRunning" class="text-error">
+              <strong>问题:</strong> Docker 未运行<br>
+              <small>请启动 Docker Desktop 应用程序</small>
+            </div>
+          </div>
+        </v-tooltip>
       </v-chip>
 
       <v-btn
