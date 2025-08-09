@@ -29,6 +29,7 @@ pub struct AdvancedBuildOptions {
 pub struct BuildConfig {
     pub selected_image: String,
     pub custom_image_tag: String,
+    pub selected_repository: String,
     pub selected_profile: String,
     pub output_directory: String,
     pub global_env_vars: String,

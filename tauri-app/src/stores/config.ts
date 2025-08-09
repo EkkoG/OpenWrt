@@ -19,6 +19,7 @@ export interface AdvancedBuildOptions {
 export interface BuildConfig {
   selectedImage: string
   customImageTag: string
+  selectedRepository: string
   selectedProfile: string
   outputDirectory: string
   globalEnvVars: string
@@ -241,6 +242,7 @@ export const useConfigStore = defineStore('config', () => {
   function applyConfigToStore(config: BuildConfig, appStore: any) {
     appStore.selectedImage = config.selectedImage
     appStore.customImageTag = config.customImageTag
+    appStore.selectedRepository = config.selectedRepository || 'immortalwrt/imagebuilder'
     appStore.selectedProfile = config.selectedProfile
     appStore.outputDirectory = config.outputDirectory
     appStore.globalEnvVars = config.globalEnvVars
@@ -256,6 +258,7 @@ export const useConfigStore = defineStore('config', () => {
     return {
       selectedImage: appStore.selectedImage,
       customImageTag: appStore.customImageTag,
+      selectedRepository: appStore.selectedRepository || 'immortalwrt/imagebuilder',
       selectedProfile: appStore.selectedProfile,
       outputDirectory: appStore.outputDirectory,
       globalEnvVars: appStore.globalEnvVars,

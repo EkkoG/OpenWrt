@@ -9,6 +9,7 @@ const appStore = useAppStore()
 
 const showDeleteDialog = ref(false)
 const showDuplicateDialog = ref(false)
+const showPreviewDialog = ref(false)
 const selectedConfig = ref<any>(null)
 const duplicateName = ref('')
 const searchQuery = ref('')
@@ -123,6 +124,37 @@ const openDuplicateDialog = (config: any) => {
   duplicateName.value = `${config.name} (副本)`
   showDuplicateDialog.value = true
 }
+
+const openPreviewDialog = (config: any) => {
+  selectedConfig.value = config
+  showPreviewDialog.value = true
+}
+
+// 生成配置的 JSON 预览
+const generateConfigPreview = (config: any) => {
+  if (!config) return ''
+  
+  // 直接返回格式化的 JSON
+  return JSON.stringify(config, null, 2)
+}
+
+// 复制配置预览文本
+const copyPreviewText = async () => {
+  if (!selectedConfig.value) return
+  
+  const previewText = generateConfigPreview(selectedConfig.value)
+  
+  try {
+    const { writeText } = await import('@tauri-apps/plugin-clipboard-manager')
+    await writeText(previewText)
+  } catch (error) {
+    try {
+      await navigator.clipboard.writeText(previewText)
+    } catch (fallbackError) {
+      console.error('Failed to copy preview text:', fallbackError)
+    }
+  }
+}
 </script>
 
 <template>
@@ -206,6 +238,15 @@ const openDuplicateDialog = (config: any) => {
                 <v-list density="compact">
                   <v-list-item>
                     <template v-slot:prepend>
+                      <v-icon size="small">mdi-source-repository</v-icon>
+                    </template>
+                    <v-list-item-title>
+                      {{ config.config.selectedRepository || 'immortalwrt/imagebuilder' }}
+                    </v-list-item-title>
+                  </v-list-item>
+                  
+                  <v-list-item>
+                    <template v-slot:prepend>
                       <v-icon size="small">mdi-docker</v-icon>
                     </template>
                     <v-list-item-title>
@@ -241,6 +282,13 @@ const openDuplicateDialog = (config: any) => {
                   @click="loadConfiguration(config)"
                 >
                   加载
+                </v-btn>
+                
+                <v-btn
+                  variant="text"
+                  @click="openPreviewDialog(config)"
+                >
+                  预览
                 </v-btn>
                 
                 <v-btn
@@ -317,5 +365,47 @@ const openDuplicateDialog = (config: any) => {
         </v-card-actions>
       </v-card>
     </v-dialog>
+    
+    <!-- 配置预览对话框 -->
+    <v-dialog v-model="showPreviewDialog" max-width="900" scrollable>
+      <v-card>
+        <v-card-title class="d-flex align-center">
+          <v-icon class="mr-2">mdi-code-json</v-icon>
+          配置 JSON - {{ selectedConfig?.name }}
+          <v-spacer />
+          <v-btn
+            variant="text"
+            @click="copyPreviewText"
+            prepend-icon="mdi-content-copy"
+          >
+            复制 JSON
+          </v-btn>
+        </v-card-title>
+        
+        <v-card-text style="height: 600px;">
+          <pre class="config-preview-text">{{ selectedConfig ? generateConfigPreview(selectedConfig) : '' }}</pre>
+        </v-card-text>
+        
+        <v-card-actions>
+          <v-spacer />
+          <v-btn @click="showPreviewDialog = false">关闭</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
+
+<style scoped>
+.config-preview-text {
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--v-theme-on-surface);
+  background-color: var(--v-theme-surface-variant);
+  padding: 16px;
+  border-radius: 8px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+</style>

@@ -7,7 +7,6 @@ import AdvancedBuildOptions from '@/components/AdvancedBuildOptions.vue'
 const appStore = useAppStore()
 const isLoadingTags = ref(false)
 const dockerTags = ref<string[]>([])
-const selectedRepository = ref('immortalwrt/imagebuilder')
 const logContainer = ref<HTMLElement | null>(null)
 const copyNotification = ref({ show: false, message: '', color: 'success' })
 
@@ -35,13 +34,13 @@ const popularTagsMap = {
 }
 
 const popularTags = computed(() => {
-  return popularTagsMap[selectedRepository.value as keyof typeof popularTagsMap] || []
+  return popularTagsMap[appStore.selectedRepository as keyof typeof popularTagsMap] || []
 })
 
 const buildCommand = computed(() => {
   const modules = appStore.enabledModules.map(m => m.name).join(' ')
   const tag = appStore.selectedImage || appStore.customImageTag
-  const image = tag ? `${selectedRepository.value}:${tag}` : ''
+  const image = tag ? `${appStore.selectedRepository}:${tag}` : ''
   let command = `ENABLE_MODULES="${modules}"`
   if (appStore.outputDirectory) {
     command += ` OUTPUT_DIR="${appStore.outputDirectory}"`
@@ -90,7 +89,7 @@ const fetchDockerTags = async () => {
   
   try {
     // 调用 Docker Hub API 获取标签
-    const response = await fetch(`https://hub.docker.com/v2/repositories/${selectedRepository.value}/tags?page_size=50&ordering=-last_updated`)
+    const response = await fetch(`https://hub.docker.com/v2/repositories/${appStore.selectedRepository}/tags?page_size=50&ordering=-last_updated`)
     const data = await response.json()
     
     if (data.results) {
@@ -204,7 +203,7 @@ const startBuild = async () => {
     
     // 调用构建命令
     const tag = appStore.selectedImage || appStore.customImageTag
-    const fullImage = tag ? `${selectedRepository.value}:${tag}` : ''
+    const fullImage = tag ? `${appStore.selectedRepository}:${tag}` : ''
     
     await invoke('start_build', {
       config: {
@@ -333,7 +332,7 @@ onMounted(() => {
           <v-card-text>
             <!-- 仓库选择 -->
             <v-select
-              v-model="selectedRepository"
+              v-model="appStore.selectedRepository"
               :items="repositories"
               label="选择镜像仓库"
               variant="outlined"

@@ -12,6 +12,7 @@ export const useAppStore = defineStore('app', () => {
   // 构建配置
   const selectedImage = ref('')
   const customImageTag = ref('')
+  const selectedRepository = ref('immortalwrt/imagebuilder')  // 镜像仓库
   const selectedProfile = ref('')  // 添加 profile 字段
   const outputDirectory = ref('')
   const globalEnvVars = ref('')  // 全局环境变量
@@ -139,6 +140,7 @@ export const useAppStore = defineStore('app', () => {
         config: {
           selectedImage: string
           customImageTag: string
+          selectedRepository: string
           selectedProfile: string
           outputDirectory: string
           globalEnvVars: string
@@ -166,6 +168,7 @@ export const useAppStore = defineStore('app', () => {
         // 恢复构建设置
         selectedImage.value = activeConfig.config.selectedImage
         customImageTag.value = activeConfig.config.customImageTag
+        selectedRepository.value = activeConfig.config.selectedRepository || 'immortalwrt/imagebuilder'
         selectedProfile.value = activeConfig.config.selectedProfile
         outputDirectory.value = activeConfig.config.outputDirectory
         globalEnvVars.value = activeConfig.config.globalEnvVars
@@ -264,6 +267,7 @@ export const useAppStore = defineStore('app', () => {
     dockerRunning,
     selectedImage,
     customImageTag,
+    selectedRepository,
     selectedProfile,
     outputDirectory,
     globalEnvVars,
