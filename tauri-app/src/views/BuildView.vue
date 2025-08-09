@@ -3,6 +3,7 @@ import { useAppStore } from '@/stores/app'
 import { ref, computed, nextTick, watch } from 'vue'
 import ConfigQuickSelector from '@/components/ConfigQuickSelector.vue'
 import AdvancedBuildOptions from '@/components/AdvancedBuildOptions.vue'
+import ModulesView from '@/views/ModulesView.vue'
 
 const appStore = useAppStore()
 const logContainer = ref<HTMLElement | null>(null)
@@ -285,7 +286,6 @@ const copyLogs = async () => {
   }
 }
 
-
 </script>
 
 <template>
@@ -294,8 +294,8 @@ const copyLogs = async () => {
     <ConfigQuickSelector />
     
     <v-row>
-      <!-- 左侧配置区 -->
-      <v-col cols="12" md="6">
+      <!-- 配置区 -->
+      <v-col cols="12">
         <v-card>
           <v-card-title>
             <v-icon class="mr-2">mdi-docker</v-icon>
@@ -408,6 +408,11 @@ const copyLogs = async () => {
           </v-card-text>
         </v-card>
         
+        <!-- 模块配置 -->
+        <div class="mt-4">
+          <ModulesView />
+        </div>
+        
         <!-- 构建按钮 -->
         <v-card class="mt-4">
           <v-card-text>
@@ -454,11 +459,9 @@ const copyLogs = async () => {
             </v-alert>
           </v-card-text>
         </v-card>
-      </v-col>
-      
-      <!-- 右侧日志区 -->
-      <v-col cols="12" md="6">
-        <v-card style="height: 100%">
+        
+        <!-- 构建日志 -->
+        <v-card class="mt-4">
           <v-card-title class="d-flex align-center">
             <v-icon class="mr-2">mdi-console</v-icon>
             构建日志

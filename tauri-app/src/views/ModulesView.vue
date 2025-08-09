@@ -97,82 +97,79 @@ onMounted(() => {
 </script>
 
 <template>
-  <v-container>
-    <v-row>
-      <v-col cols="12">
-        <v-card>
-          <v-card-title class="d-flex align-center">
-            <v-icon class="mr-2">mdi-package-variant</v-icon>
-            模块配置
-            <v-spacer />
-            <v-btn
-              color="primary"
-              variant="text"
-              size="small"
-              @click="selectAll"
-              :disabled="isLoading"
-            >
-              全选
-            </v-btn>
-            <v-btn
-              color="secondary"
-              variant="text"
-              size="small"
-              @click="deselectAll"
-              :disabled="isLoading"
-            >
-              全不选
-            </v-btn>
-            <v-btn
-              color="info"
-              variant="outlined"
-              size="small"
-              @click="selectUserModulesDirectory"
-              :disabled="isLoading"
-              prepend-icon="mdi-folder-open"
-              class="ml-4"
-            >
-              选择用户模块目录
-            </v-btn>
-            <v-btn
-              color="primary"
-              variant="tonal"
-              size="small"
-              @click="refreshModules"
-              :loading="isLoading"
-              prepend-icon="mdi-refresh"
-              class="ml-4"
-            >
-              刷新
-            </v-btn>
-          </v-card-title>
-          
-          <v-card-text>
-            <!-- 搜索栏 -->
-            <v-text-field
-              v-model="searchQuery"
-              label="搜索模块"
-              prepend-inner-icon="mdi-magnify"
-              variant="outlined"
-              density="compact"
-              clearable
-              class="mb-4"
-            />
-            
-            <!-- 模块统计 -->
-            <v-alert
-              type="info"
-              variant="tonal"
-              density="compact"
-              class="mb-4"
-            >
-              <div class="d-flex align-center">
-                <span>
-                  共 {{ appStore.modules.length }} 个模块，
-                  已启用 {{ appStore.enabledModules.length }} 个
-                </span>
-              </div>
-            </v-alert>
+  <v-card>
+    <v-card-title class="d-flex align-center">
+      <v-icon class="mr-2">mdi-package-variant</v-icon>
+      模块配置
+      <v-spacer />
+      <v-btn
+        color="primary"
+        variant="text"
+        size="small"
+        @click="selectAll"
+        :disabled="isLoading"
+      >
+        全选
+      </v-btn>
+      <v-btn
+        color="secondary"
+        variant="text"
+        size="small"
+        @click="deselectAll"
+        :disabled="isLoading"
+      >
+        全不选
+      </v-btn>
+      <v-btn
+        color="info"
+        variant="outlined"
+        size="small"
+        @click="selectUserModulesDirectory"
+        :disabled="isLoading"
+        prepend-icon="mdi-folder-open"
+        class="ml-4"
+      >
+        选择用户模块目录
+      </v-btn>
+      <v-btn
+        color="primary"
+        variant="tonal"
+        size="small"
+        @click="refreshModules"
+        :loading="isLoading"
+        prepend-icon="mdi-refresh"
+        class="ml-4"
+      >
+        刷新
+      </v-btn>
+    </v-card-title>
+    
+    <v-card-text>
+      <!-- 搜索栏 -->
+      <v-text-field
+        v-model="searchQuery"
+        label="搜索模块"
+        prepend-inner-icon="mdi-magnify"
+        variant="outlined"
+        density="compact"
+        clearable
+        class="mb-4"
+      />
+      
+      <!-- 模块统计 -->
+      <v-alert
+        type="info"
+        variant="tonal"
+        density="compact"
+        class="mb-4"
+      >
+        <div class="d-flex align-center">
+          <span>
+            共 {{ appStore.modules.length }} 个模块，
+            已启用 {{ appStore.enabledModules.length }} 个
+          </span>
+        </div>
+      </v-alert>
             
             <!-- 模块列表 -->
             <v-expansion-panels
@@ -284,8 +281,6 @@ onMounted(() => {
             </div>
           </v-card-text>
         </v-card>
-      </v-col>
-    </v-row>
 
     <!-- 模块详细介绍对话框 -->
     <ModuleDetailDialog
@@ -293,5 +288,4 @@ onMounted(() => {
       :module-name="selectedModule.name"
       :module-description="selectedModule.description"
     />
-  </v-container>
 </template>
