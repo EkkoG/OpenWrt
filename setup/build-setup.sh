@@ -49,7 +49,17 @@ apply_config_vars() {
     for config in $(printenv | grep '^CONFIG_'); do
         config_name=$(echo $config | awk -F '=' '{print $1}')
         config_value=$(echo $config | awk -F '=' '{print $2}')
-        sed -i "/$config_name/ c\\$config_name=$config_value" .config
+        
+        # 检查配置项是否已存在于 .config 文件中
+        if grep -q "^$config_name" .config; then
+            # 如果存在，替换现有配置
+            sed -i "s/^$config_name=.*/$config_name=$config_value/" .config
+            log_info "Updated existing config: $config_name=$config_value"
+        else
+            # 如果不存在，添加新配置
+            echo "$config_name=$config_value" >> .config
+            log_info "Added new config: $config_name=$config_value"
+        fi
     done
 }
 

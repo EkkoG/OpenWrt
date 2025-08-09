@@ -25,6 +25,7 @@ export interface BuildConfig {
   modules: ModuleConfig[]
   advancedOptions?: AdvancedBuildOptions
   customModulesPath?: string
+  rootfsPartSize?: number | null
 }
 
 export interface Configuration {
@@ -258,6 +259,9 @@ export const useConfigStore = defineStore('config', () => {
     // 恢复自定义模块路径（现在是配置级别的设置）
     appStore.customModulesPath = config.customModulesPath || null
     
+    // 恢复 RootFS 分区大小配置
+    appStore.rootfsPartSize = config.rootfsPartSize === undefined ? null : config.rootfsPartSize
+    
     // 恢复高级选项
     if (config.advancedOptions) {
       appStore.advancedOptions = { ...config.advancedOptions }
@@ -265,6 +269,11 @@ export const useConfigStore = defineStore('config', () => {
   }
 
   function extractConfigFromStore(appStore: any): BuildConfig {
+    // 确保 rootfsPartSize 是数字或 null
+    const rootfsPartSize = appStore.rootfsPartSize === null || appStore.rootfsPartSize === undefined || appStore.rootfsPartSize === '' 
+      ? null 
+      : Number(appStore.rootfsPartSize)
+    
     return {
       selectedImage: appStore.selectedImage,
       customImageTag: appStore.customImageTag,
@@ -273,6 +282,7 @@ export const useConfigStore = defineStore('config', () => {
       outputDirectory: appStore.outputDirectory,
       globalEnvVars: appStore.globalEnvVars,
       customModulesPath: appStore.customModulesPath || undefined,
+      rootfsPartSize: rootfsPartSize,
       modules: appStore.modules.map((module: any) => ({
         name: module.name,
         enabled: module.enabled,

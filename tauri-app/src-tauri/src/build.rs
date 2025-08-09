@@ -25,6 +25,7 @@ pub struct BuildConfig {
     pub global_env_vars: String,  // 全局环境变量字符串
     pub advanced_options: Option<AdvancedOptions>,  // 高级选项
     pub user_modules_path: Option<String>,  // 自定义模块路径
+    pub rootfs_part_size: Option<u32>,  // RootFS 分区大小 (MB)，None 表示由 ImageBuilder 决定
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -190,6 +191,11 @@ pub async fn start_build(
        .env("OUTPUT_DIR", &config.output_dir)
        .stdout(Stdio::piped())
        .stderr(Stdio::piped());
+    
+    // 添加 RootFS 分区大小配置
+    if let Some(rootfs_size) = config.rootfs_part_size {
+        cmd.env("CONFIG_TARGET_ROOTFS_PARTSIZE", rootfs_size.to_string());
+    }
 
     // 添加自定义环境变量
     for env_var in config.env_vars {

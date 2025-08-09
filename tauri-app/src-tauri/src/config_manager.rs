@@ -35,6 +35,8 @@ pub struct BuildConfig {
     pub modules: Vec<ModuleConfig>,
     pub advanced_options: Option<AdvancedBuildOptions>,
     pub custom_modules_path: Option<String>,
+    #[serde(default)]
+    pub rootfs_part_size: Option<u32>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]

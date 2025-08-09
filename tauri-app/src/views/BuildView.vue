@@ -189,6 +189,7 @@ const startBuild = async () => {
         env_vars: envVars,
         global_env_vars: appStore.globalEnvVars,
         user_modules_path: appStore.customModulesPath,
+        rootfs_part_size: appStore.rootfsPartSize,
         advanced_options: {
           with_pull: appStore.advancedOptions.withPull,
           rm_first: appStore.advancedOptions.rmFirst,
@@ -403,6 +404,21 @@ const copyLogs = async () => {
               append-inner-icon="mdi-folder-open"
               @click="selectOutputDirectory"
               @click:append-inner="selectOutputDirectory"
+            />
+            
+            <v-text-field
+              :model-value="appStore.rootfsPartSize"
+              @update:model-value="(val: string) => appStore.rootfsPartSize = val === '' ? null : Number(val)"
+              label="RootFS 分区大小 (MB)"
+              type="number"
+              :min="64"
+              :max="2048"
+              hint="设置根文件系统分区大小，单位：MB，留空由 ImageBuilder 自动决定"
+              persistent-hint
+              variant="outlined"
+              density="compact"
+              clearable
+              class="mt-4"
             />
             
             <v-textarea

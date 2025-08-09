@@ -18,6 +18,9 @@ export const useAppStore = defineStore('app', () => {
   const globalEnvVars = ref('')  // 全局环境变量
   const customModulesPath = ref<string | null>(null)  // 自定义模块路径
   
+  // ImageBuilder 配置选项
+  const rootfsPartSize = ref<number | null>(null)  // CONFIG_TARGET_ROOTFS_PARTSIZE，留空由 ImageBuilder 决定
+  
   // 高级构建选项
   const advancedOptions = ref({
     withPull: false,
@@ -148,6 +151,7 @@ export const useAppStore = defineStore('app', () => {
           selectedProfile: string
           outputDirectory: string
           globalEnvVars: string
+          rootfsPartSize: number | null
           modules: Array<{
             name: string
             enabled: boolean
@@ -175,6 +179,7 @@ export const useAppStore = defineStore('app', () => {
         selectedProfile.value = activeConfig.config.selectedProfile
         outputDirectory.value = activeConfig.config.outputDirectory
         globalEnvVars.value = activeConfig.config.globalEnvVars
+        rootfsPartSize.value = activeConfig.config.rootfsPartSize || null
         
         // 恢复高级选项
         if (activeConfig.config.advancedOptions) {
@@ -274,6 +279,7 @@ export const useAppStore = defineStore('app', () => {
     outputDirectory,
     globalEnvVars,
     customModulesPath,
+    rootfsPartSize,
     advancedOptions,
     modules,
     isBuilding,
