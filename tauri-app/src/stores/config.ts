@@ -331,6 +331,7 @@ export const useConfigStore = defineStore('config', () => {
     appStore.outputDirectory = ''
     appStore.globalEnvVars = ''
     appStore.customModulesPath = null
+    appStore.rootfsPartSize = null  // 重置为默认值（由 ImageBuilder 决定）
     
     // 重置高级选项
     appStore.advancedOptions = {
