@@ -22,7 +22,16 @@ onMounted(async () => {
 })
 
 const handleConfigChange = async (configId: string | null) => {
-  if (!configId) return
+  if (!configId) {
+    // 当清空选择时，取消激活配置并重置状态
+    selectedConfigId.value = null
+    try {
+      await configStore.deactivateConfiguration(appStore)
+    } catch (error) {
+      console.error('Failed to deactivate configuration:', error)
+    }
+    return
+  }
   
   const config = configStore.configurations.find(c => c.id === configId)
   if (!config) return

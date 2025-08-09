@@ -43,8 +43,17 @@ const loadConfiguration = async (config: any) => {
 const deleteConfiguration = async () => {
   if (!selectedConfig.value) return
   
+  // 检查是否删除的是激活的配置
+  const isActiveConfig = selectedConfig.value.isActive
+  
   try {
     await configStore.deleteConfiguration(selectedConfig.value.id)
+    
+    // 如果删除的是激活配置，重置应用状态
+    if (isActiveConfig) {
+      configStore.resetToDefaultState(appStore)
+    }
+    
     showDeleteDialog.value = false
     selectedConfig.value = null
   } catch (error) {

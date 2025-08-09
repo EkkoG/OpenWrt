@@ -204,6 +204,29 @@ impl ConfigManager {
         Ok(())
     }
 
+    pub fn deactivate_configuration(&self) -> Result<()> {
+        // 获取所有配置文件
+        for entry in fs::read_dir(&self.config_dir)? {
+            let entry = entry?;
+            let path = entry.path();
+            
+            if path.extension().and_then(|s| s.to_str()) == Some("json") {
+                let content = fs::read_to_string(&path)?;
+                let mut configuration: Configuration = serde_json::from_str(&content)?;
+                
+                if configuration.is_active {
+                    configuration.is_active = false;
+                    configuration.updated_at = chrono::Utc::now();
+                    
+                    let updated_content = serde_json::to_string_pretty(&configuration)?;
+                    fs::write(&path, updated_content)?;
+                }
+            }
+        }
+        
+        Ok(())
+    }
+
     pub fn import_configuration(&self, import_path: String) -> Result<Configuration> {
         let content = fs::read_to_string(&import_path)?;
         let mut configuration: Configuration = serde_json::from_str(&content)?;

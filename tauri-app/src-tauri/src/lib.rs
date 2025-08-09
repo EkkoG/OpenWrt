@@ -83,6 +83,14 @@ async fn import_configuration(
     manager.import_configuration(path).map_err(|e| e.to_string())
 }
 
+#[tauri::command]
+async fn deactivate_configuration(
+    app_handle: tauri::AppHandle,
+) -> Result<(), String> {
+    let manager = ConfigManager::new(&app_handle).map_err(|e| e.to_string())?;
+    manager.deactivate_configuration().map_err(|e| e.to_string())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -114,7 +122,8 @@ pub fn run() {
             switch_configuration,
             duplicate_configuration,
             export_configuration,
-            import_configuration
+            import_configuration,
+            deactivate_configuration
         ])
         .setup(|app| {
             // 初始化应用模式

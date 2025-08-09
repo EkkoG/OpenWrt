@@ -267,6 +267,59 @@ export const useConfigStore = defineStore('config', () => {
     }
   }
 
+  // 取消激活当前配置并重置状态
+  async function deactivateConfiguration(appStore: any) {
+    isLoading.value = true
+    error.value = null
+    try {
+      // 后端取消激活
+      await invoke('deactivate_configuration')
+      
+      // 更新本地状态
+      configurations.value.forEach(config => {
+        config.isActive = false
+      })
+      activeConfigId.value = null
+      
+      // 重置应用状态到默认值
+      resetToDefaultState(appStore)
+      
+    } catch (e) {
+      error.value = `取消激活配置失败: ${e}`
+      console.error('Failed to deactivate configuration:', e)
+      throw e
+    } finally {
+      isLoading.value = false
+    }
+  }
+
+  // 重置应用状态到默认值
+  function resetToDefaultState(appStore: any) {
+    appStore.selectedImage = ''
+    appStore.customImageTag = ''
+    appStore.selectedRepository = 'immortalwrt/imagebuilder'
+    appStore.selectedProfile = ''
+    appStore.outputDirectory = ''
+    appStore.globalEnvVars = ''
+    
+    // 重置高级选项
+    appStore.advancedOptions = {
+      withPull: false,
+      rmFirst: false,
+      useMirror: false,
+      mirrorUrl: ''
+    }
+    
+    // 重置所有模块为禁用状态
+    appStore.modules.forEach((module: any) => {
+      module.enabled = false
+      // 重置环境变量到默认值
+      Object.keys(module.envVars || {}).forEach(key => {
+        module.envVars[key] = ''
+      })
+    })
+  }
+
   return {
     configurations,
     activeConfigId,
@@ -284,6 +337,8 @@ export const useConfigStore = defineStore('config', () => {
     exportConfiguration,
     importConfiguration,
     getCurrentBuildConfig,
+    deactivateConfiguration,
+    resetToDefaultState,
     applyConfigToStore,
     extractConfigFromStore
   }
