@@ -4,19 +4,7 @@ import type { RouteRecordRaw } from 'vue-router'
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    name: 'Home',
-    component: () => import('@/views/HomeView.vue'),
-    meta: {
-      title: '主页'
-    }
-  },
-  {
-    path: '/modules',
-    name: 'Modules',
-    component: () => import('@/views/ModulesView.vue'),
-    meta: {
-      title: '模块配置'
-    }
+    redirect: '/build'
   },
   {
     path: '/build',

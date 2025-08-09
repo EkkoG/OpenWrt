@@ -114,20 +114,6 @@ onMounted(async () => {
       <v-list nav>
         <v-list-item
           prepend-icon="mdi-home"
-          title="主页"
-          value="home"
-          to="/"
-          rounded="xl"
-        />
-        <v-list-item
-          prepend-icon="mdi-package-variant"
-          title="模块"
-          value="modules"
-          to="/modules"
-          rounded="xl"
-        />
-        <v-list-item
-          prepend-icon="mdi-hammer"
           title="构建"
           value="build"
           to="/build"
