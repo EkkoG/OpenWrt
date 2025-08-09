@@ -299,6 +299,17 @@ const copyLogs = async () => {
 
 <template>
   <v-container>
+    <!-- 欢迎语 -->
+    <v-card class="mb-4" variant="tonal" color="primary">
+      <v-card-text class="text-center py-6">
+        <v-icon size="48" class="mb-3 text-primary">mdi-router-wireless</v-icon>
+        <h2 class="text-h4 font-weight-bold mb-2 text-primary">欢迎使用 OpenWrt Builder</h2>
+        <p class="text-body-1 text-medium-emphasis mb-0">
+          轻松构建定制化的 OpenWrt 固件，选择所需模块，一键开始构建
+        </p>
+      </v-card-text>
+    </v-card>
+
     <!-- 配置快速选择器 -->
     <ConfigQuickSelector />
     
