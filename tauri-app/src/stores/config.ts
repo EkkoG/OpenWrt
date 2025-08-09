@@ -6,7 +6,6 @@ export interface ModuleConfig {
   name: string
   enabled: boolean
   envVars: Record<string, string>
-  description: string
 }
 
 export interface AdvancedBuildOptions {
@@ -247,7 +246,14 @@ export const useConfigStore = defineStore('config', () => {
     appStore.selectedProfile = config.selectedProfile
     appStore.outputDirectory = config.outputDirectory
     appStore.globalEnvVars = config.globalEnvVars
-    appStore.modules = config.modules
+    // 恢复模块状态，保持原有的 description 和其他字段
+    config.modules.forEach(configModule => {
+      const currentModule = appStore.modules.find((m: any) => m.name === configModule.name)
+      if (currentModule) {
+        currentModule.enabled = configModule.enabled
+        currentModule.envVars = { ...configModule.envVars }
+      }
+    })
     
     // 恢复用户模块路径（现在是配置级别的设置）
     appStore.userModulesPath = config.userModulesPath || null
@@ -267,7 +273,12 @@ export const useConfigStore = defineStore('config', () => {
       outputDirectory: appStore.outputDirectory,
       globalEnvVars: appStore.globalEnvVars,
       userModulesPath: appStore.userModulesPath || undefined,
-      modules: appStore.modules,
+      modules: appStore.modules.map((module: any) => ({
+        name: module.name,
+        enabled: module.enabled,
+        envVars: module.envVars
+        // 不保存 description 字段
+      })),
       advancedOptions: appStore.advancedOptions ? { ...appStore.advancedOptions } : undefined
     }
   }

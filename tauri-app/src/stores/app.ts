@@ -153,7 +153,6 @@ export const useAppStore = defineStore('app', () => {
             name: string
             enabled: boolean
             envVars: Record<string, string>
-            description: string
           }>
           advancedOptions?: {
             withPull: boolean

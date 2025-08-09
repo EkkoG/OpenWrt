@@ -12,7 +12,6 @@ pub struct ModuleConfig {
     pub name: String,
     pub enabled: bool,
     pub env_vars: std::collections::HashMap<String, String>,
-    pub description: String,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
