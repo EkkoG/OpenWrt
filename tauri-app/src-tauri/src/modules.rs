@@ -236,38 +236,7 @@ fn extract_description_from_readme(content: &str) -> String {
 }
 
 fn generate_description(module_name: &str) -> String {
-    match module_name {
-        "add-all-device-to-lan" => "将所有设备添加到 LAN 网络".to_string(),
-        "add-feed-base" => "添加基础软件源".to_string(),
-        "add-feed-key" => "添加软件源密钥".to_string(),
-        "add-feed" => "添加自定义软件源".to_string(),
-        "argon" => "Argon 主题配置".to_string(),
-        "base" => "基础软件包".to_string(),
-        "base23" => "OpenWrt 23.x 基础软件包".to_string(),
-        "base24+" => "OpenWrt 24.x+ 基础软件包".to_string(),
-        "daed" => "DAE 代理工具".to_string(),
-        "daed-as-default" => "设置 DAE 为默认代理".to_string(),
-        "ib" => "ImageBuilder 配置".to_string(),
-        "lan" => "LAN 网络配置".to_string(),
-        "nikki-as-default" => "设置 Mihomo 为默认代理".to_string(),
-        "nikki-ekko-prefer" => "Mihomo 偏好设置".to_string(),
-        "openclash" => "OpenClash 代理工具".to_string(),
-        "openclash-as-default" => "设置 OpenClash 为默认代理".to_string(),
-        "openclash-stun-direct" => "OpenClash STUN 直连配置".to_string(),
-        "openwrt-nikki" => "OpenWrt Mihomo 集成".to_string(),
-        "opkg-mirror" => "OPKG 镜像源配置".to_string(),
-        "passwall" => "PassWall 代理工具".to_string(),
-        "pppoe" => "PPPoE 拨号配置".to_string(),
-        "prefer-ipv6-settings" => "IPv6 优先设置".to_string(),
-        "python" => "Python 运行环境".to_string(),
-        "reject-netflix-ipv6" => "拒绝 Netflix IPv6 连接".to_string(),
-        "root-password" => "Root 密码设置".to_string(),
-        "ssh-permission" => "SSH 权限配置".to_string(),
-        "statistics" => "统计和监控工具".to_string(),
-        "system" => "系统基础配置".to_string(),
-        "tools" => "实用工具集".to_string(),
-        _ => format!("{} 模块配置", module_name),
-    }
+    format!("{} 模块", module_name)
 }
 
 #[command]
