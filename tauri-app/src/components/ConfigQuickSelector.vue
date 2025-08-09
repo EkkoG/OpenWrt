@@ -190,7 +190,6 @@ const saveQuickConfig = async () => {
         class="mt-3"
       >
         <div class="d-flex align-center">
-          <v-icon size="small" class="mr-2">mdi-information</v-icon>
           当前配置: {{ configStore.activeConfig.name }}
           <v-spacer />
           <small class="text-caption">
