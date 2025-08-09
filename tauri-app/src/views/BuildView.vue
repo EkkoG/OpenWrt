@@ -50,6 +50,11 @@ const buildCommand = computed(() => {
     command += ` --profile=${appStore.selectedProfile}`
   }
   
+  // 添加用户模块路径
+  if (appStore.userModulesPath) {
+    command += ` --user-modules=${appStore.userModulesPath}`
+  }
+  
   // 添加高级选项到显示命令
   if (appStore.advancedOptions.withPull) {
     command += ` --with-pull`
@@ -213,6 +218,7 @@ const startBuild = async () => {
         output_dir: appStore.outputDirectory,
         env_vars: envVars,
         global_env_vars: appStore.globalEnvVars,
+        user_modules_path: appStore.userModulesPath,
         advanced_options: {
           with_pull: appStore.advancedOptions.withPull,
           rm_first: appStore.advancedOptions.rmFirst,

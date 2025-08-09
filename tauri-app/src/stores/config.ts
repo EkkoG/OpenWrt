@@ -25,6 +25,7 @@ export interface BuildConfig {
   globalEnvVars: string
   modules: ModuleConfig[]
   advancedOptions?: AdvancedBuildOptions
+  userModulesPath?: string
 }
 
 export interface Configuration {
@@ -248,6 +249,9 @@ export const useConfigStore = defineStore('config', () => {
     appStore.globalEnvVars = config.globalEnvVars
     appStore.modules = config.modules
     
+    // 恢复用户模块路径（现在是配置级别的设置）
+    appStore.userModulesPath = config.userModulesPath || null
+    
     // 恢复高级选项
     if (config.advancedOptions) {
       appStore.advancedOptions = { ...config.advancedOptions }
@@ -262,6 +266,7 @@ export const useConfigStore = defineStore('config', () => {
       selectedProfile: appStore.selectedProfile,
       outputDirectory: appStore.outputDirectory,
       globalEnvVars: appStore.globalEnvVars,
+      userModulesPath: appStore.userModulesPath || undefined,
       modules: appStore.modules,
       advancedOptions: appStore.advancedOptions ? { ...appStore.advancedOptions } : undefined
     }
@@ -281,8 +286,11 @@ export const useConfigStore = defineStore('config', () => {
       })
       activeConfigId.value = null
       
-      // 重置应用状态到默认值
+      // 重置应用状态到默认值（包括用户模块路径）
       resetToDefaultState(appStore)
+      
+      // 重新加载模块（使用默认状态）
+      await appStore.loadModules()
       
     } catch (e) {
       error.value = `取消激活配置失败: ${e}`
@@ -301,6 +309,7 @@ export const useConfigStore = defineStore('config', () => {
     appStore.selectedProfile = ''
     appStore.outputDirectory = ''
     appStore.globalEnvVars = ''
+    appStore.userModulesPath = null
     
     // 重置高级选项
     appStore.advancedOptions = {

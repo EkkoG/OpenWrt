@@ -2,6 +2,7 @@
 import { useAppStore } from '@/stores/app'
 import { ref, computed, onMounted } from 'vue'
 import ModuleDetailDialog from '@/components/ModuleDetailDialog.vue'
+// import { invoke } from '@tauri-apps/api/core'  // 使用动态导入
 
 const appStore = useAppStore()
 const searchQuery = ref('')
@@ -64,6 +65,30 @@ const deselectAll = () => {
   })
 }
 
+const selectUserModulesDirectory = async () => {
+  try {
+    const { invoke } = await import('@tauri-apps/api/core')
+    const selectedPath = await invoke('select_user_modules_directory')
+    if (selectedPath) {
+      // 验证路径
+      const isValid = await invoke('validate_user_modules_path', { path: selectedPath })
+      
+      if (isValid) {
+        // 直接更新 appStore 中的值
+        appStore.userModulesPath = selectedPath
+        
+        // 重新加载模块
+        await refreshModules()
+        console.log('用户模块目录已更新:', selectedPath)
+      } else {
+        console.error('选择的路径无效')
+      }
+    }
+  } catch (error) {
+    console.error('选择用户模块目录失败:', error)
+  }
+}
+
 onMounted(() => {
   if (appStore.modules.length === 0) {
     refreshModules()
@@ -99,12 +124,24 @@ onMounted(() => {
               全不选
             </v-btn>
             <v-btn
+              color="info"
+              variant="outlined"
+              size="small"
+              @click="selectUserModulesDirectory"
+              :disabled="isLoading"
+              prepend-icon="mdi-folder-open"
+              class="ml-4"
+            >
+              选择用户模块目录
+            </v-btn>
+            <v-btn
               color="primary"
               variant="tonal"
               size="small"
               @click="refreshModules"
               :loading="isLoading"
               prepend-icon="mdi-refresh"
+              class="ml-4"
             >
               刷新
             </v-btn>
@@ -158,7 +195,27 @@ onMounted(() => {
                       class="flex-grow-0 mr-3"
                     />
                     <div class="flex-grow-1">
-                      <div class="font-weight-medium">{{ module.name }}</div>
+                      <div class="font-weight-medium d-flex align-center">
+                        {{ module.name }}
+                        <v-chip
+                          v-if="module.source === 'user'"
+                          size="x-small"
+                          color="success"
+                          variant="tonal"
+                          class="ml-2"
+                        >
+                          用户
+                        </v-chip>
+                        <v-chip
+                          v-if="module.source === 'built'"
+                          size="x-small"
+                          color="info"
+                          variant="tonal"
+                          class="ml-2"
+                        >
+                          内置
+                        </v-chip>
+                      </div>
                       <div class="text-caption text-medium-emphasis">
                         {{ module.description }}
                       </div>

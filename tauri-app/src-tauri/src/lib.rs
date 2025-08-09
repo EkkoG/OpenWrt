@@ -3,12 +3,14 @@ mod modules;
 mod build;
 mod app_mode;
 mod config_manager;
+mod settings;
 
 use docker::{check_docker_environment, check_docker_running};
-use modules::{get_modules, read_module_packages, get_module_readme, save_module_env};
+use modules::{get_modules, read_module_packages, get_module_readme, save_module_env, select_user_modules_directory, validate_user_modules_path, update_user_modules_path, get_current_user_modules_path};
 use build::{start_build, cancel_build, is_building};
 use app_mode::{get_app_mode_info, reinitialize_app_mode, initialize_app_mode, verify_setup_directory};
 use config_manager::{ConfigManager, Configuration, BuildConfig};
+use settings::{get_app_settings, update_app_settings};
 
 #[tauri::command]
 fn greet(name: &str) -> String {
@@ -109,6 +111,10 @@ pub fn run() {
             read_module_packages,
             get_module_readme,
             save_module_env,
+            select_user_modules_directory,
+            validate_user_modules_path,
+            update_user_modules_path,
+            get_current_user_modules_path,
             start_build,
             cancel_build,
             is_building,
@@ -123,7 +129,9 @@ pub fn run() {
             duplicate_configuration,
             export_configuration,
             import_configuration,
-            deactivate_configuration
+            deactivate_configuration,
+            get_app_settings,
+            update_app_settings
         ])
         .setup(|app| {
             // 初始化应用模式

@@ -24,6 +24,7 @@ pub struct BuildConfig {
     pub env_vars: Vec<EnvVar>,
     pub global_env_vars: String,  // 全局环境变量字符串
     pub advanced_options: Option<AdvancedOptions>,  // 高级选项
+    pub user_modules_path: Option<String>,  // 用户模块路径
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -176,6 +177,13 @@ pub async fn start_build(
             for arg in custom_args {
                 cmd.arg(arg);
             }
+        }
+    }
+    
+    // 从配置中获取用户模块路径
+    if let Some(user_modules_path) = &config.user_modules_path {
+        if !user_modules_path.is_empty() {
+            cmd.arg(format!("--user-modules={}", user_modules_path));
         }
     }
     

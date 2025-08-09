@@ -16,6 +16,7 @@ export const useAppStore = defineStore('app', () => {
   const selectedProfile = ref('')  // 添加 profile 字段
   const outputDirectory = ref('')
   const globalEnvVars = ref('')  // 全局环境变量
+  const userModulesPath = ref<string | null>(null)  // 用户模块路径
   
   // 高级构建选项
   const advancedOptions = ref({
@@ -32,6 +33,7 @@ export const useAppStore = defineStore('app', () => {
     envVars: Record<string, string>
     description: string
     hasReadme: boolean
+    source: 'built' | 'user'
   }>>([])
 
   // 构建状态
@@ -90,6 +92,7 @@ export const useAppStore = defineStore('app', () => {
   const loadModules = async () => {
     try {
       const { invoke } = await import('@tauri-apps/api/core')
+      
       const moduleList = await invoke<Array<{
         name: string
         path: string
@@ -104,7 +107,8 @@ export const useAppStore = defineStore('app', () => {
           description: string
         }>
         description: string
-      }>>('get_modules')
+        source: string
+      }>>('get_modules', { userModulesPath: userModulesPath.value })
       
       // DEFAULT_MODULE_SET from build.sh
       const defaultModuleSet = new Set([
@@ -121,14 +125,15 @@ export const useAppStore = defineStore('app', () => {
           return acc
         }, {} as Record<string, string>),
         description: m.description,
-        hasReadme: m.has_readme
+        hasReadme: m.has_readme,
+        source: m.source as 'built' | 'user'
       }))
       
-      console.log('Modules loaded:', modules.value)
     } catch (error) {
       console.error('Failed to load modules:', error)
     }
   }
+
 
   const loadActiveConfiguration = async () => {
     try {
@@ -271,6 +276,7 @@ export const useAppStore = defineStore('app', () => {
     selectedProfile,
     outputDirectory,
     globalEnvVars,
+    userModulesPath,
     advancedOptions,
     modules,
     isBuilding,

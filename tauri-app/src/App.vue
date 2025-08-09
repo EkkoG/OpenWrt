@@ -76,13 +76,13 @@ onMounted(async () => {
   
   // 启动时检查 Docker 环境
   await appStore.checkDockerEnvironment()
-  // 加载模块信息
-  await appStore.loadModules()
   // 加载保存的配置
   await configStore.loadConfigurations()
   if (configStore.activeConfig) {
     configStore.applyConfigToStore(configStore.activeConfig.config, appStore)
   }
+  // 加载模块信息（需要在配置恢复后进行，因为需要用户模块路径）
+  await appStore.loadModules()
   
   // 在调试模式下获取应用模式信息
   if (isDebugMode.value) {
