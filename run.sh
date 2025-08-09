@@ -116,6 +116,7 @@ services:
       - USE_MIRROR=$USE_MIRROR
       - MIRROR=$MIRROR
       - IMAGEBUILDER_IMAGE=$IMAGEBUILDER_IMAGE
+      - ENABLE_MODULES=$ENABLE_MODULES
     env_file:
       - ./.env
     volumes:
