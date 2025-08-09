@@ -216,6 +216,15 @@ const cancelBuild = async () => {
   }
 }
 
+// 统一的构建按钮处理函数
+const handleBuildAction = async () => {
+  if (appStore.isBuilding) {
+    await cancelBuild()
+  } else {
+    await startBuild()
+  }
+}
+
 // 清除日志
 const clearLogs = () => {
   appStore.clearBuildLogs()
@@ -417,15 +426,14 @@ const copyLogs = async () => {
         <v-card class="mt-4">
           <v-card-text>
             <v-btn
-              color="primary"
+              :color="appStore.isBuilding ? 'error' : 'primary'"
               size="large"
               block
-              @click="startBuild"
-              :disabled="!canStartBuild"
-              :loading="appStore.isBuilding"
+              @click="handleBuildAction"
+              :disabled="!appStore.isBuilding && !canStartBuild"
             >
-              <v-icon start>mdi-hammer</v-icon>
-              开始构建
+              <v-icon start>{{ appStore.isBuilding ? 'mdi-stop' : 'mdi-hammer' }}</v-icon>
+              {{ appStore.isBuilding ? '取消构建' : '开始构建' }}
             </v-btn>
             
             <v-alert
@@ -523,17 +531,6 @@ const copyLogs = async () => {
               </div>
             </div>
             
-            <!-- 构建控制 -->
-            <div v-if="appStore.isBuilding" class="mt-4">
-              <v-btn
-                color="error"
-                block
-                @click="cancelBuild"
-              >
-                <v-icon start>mdi-stop</v-icon>
-                取消构建
-              </v-btn>
-            </div>
             
             <!-- 上次构建状态 -->
             <v-alert
