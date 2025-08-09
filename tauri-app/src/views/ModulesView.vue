@@ -198,7 +198,7 @@ onMounted(() => {
                       <div class="font-weight-medium d-flex align-center">
                         {{ module.name }}
                         <v-chip
-                          v-if="module.source === 'user'"
+                          v-if="appStore.userModulesPath && module.source === 'user'"
                           size="x-small"
                           color="success"
                           variant="tonal"
@@ -207,7 +207,7 @@ onMounted(() => {
                           用户
                         </v-chip>
                         <v-chip
-                          v-if="module.source === 'built'"
+                          v-if="appStore.userModulesPath && module.source === 'built'"
                           size="x-small"
                           color="info"
                           variant="tonal"
