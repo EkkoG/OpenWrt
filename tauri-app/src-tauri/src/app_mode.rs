@@ -26,6 +26,8 @@ impl AppMode {
     pub fn detect_mode() -> Self {
         // 检测是否在开发环境 - 需要同时检查modules和setup目录
         // tauri-app 在项目子目录中，需要向上两层到达项目根目录
+        println!("当前目录: {:?}", std::env::current_dir().unwrap());
+        // 当前目录: "/xx/openwrt/tauri-app/src-tauri"
         if Path::new("../../modules").exists() && Path::new("../../setup").exists() {
             AppMode::Development
         } else {
