@@ -1,6 +1,6 @@
-# OpenWrt
+# OpenWrt Builder
 
-一个可以简单自定义 OpenWrt 固件的工具
+一个可以简单自定义 OpenWrt 固件的工具，支持命令行和图形界面两种使用方式
 
 ## 关于此项目
 
@@ -10,12 +10,15 @@
 
 - 基于 [ImageBuilder](https://openwrt.org/docs/guide-user/additional-software/imagebuilder) 构建，几分钟即可构建完成
 - 使用 [Docker](https://www.docker.com/) 运行 ImageBuilder，无需安装额外的软件和依赖
+- 提供友好的图形界面（GUI），支持可视化配置和构建
 
 ## 特性
 
 - 集成常用代理软件及其最佳实践配置，如 OpenClash, daed, passwall
 - 可配置默认 LAN 口 IP，PPPoE 账号密码，推荐的 IPv6 配置，刷机完成后，无需配置网络
-- 模块化，更易维护
+- 模块化设计，更易维护和扩展
+- 支持自定义模块，可以添加自己的模块目录
+- 配置持久化，支持多套配置方案管理
 
 <!-- Prerequisites -->
 ## 准备
@@ -39,25 +42,75 @@ cd OpenWrt
 
 ## 使用
 
+本项目支持两种使用方式：
+
+### 方式一：图形界面（推荐）
+
+我们提供了友好的图形界面程序，支持可视化配置和构建，适合大多数用户使用。
+
+#### 下载和安装
+
+从 [Releases](https://github.com/EkkoG/OpenWrt/releases) 页面下载适合您系统的安装包：
+
+- **macOS**: 下载 `.dmg` 文件
+  - Apple Silicon (M1/M2): 选择 `aarch64` 版本
+  - Intel: 选择 `x86_64` 版本
+- **Windows**: 下载 `.msi` 文件 (即将支持)
+- **Linux**: 下载 `.AppImage` 文件 (即将支持)
+
+#### 主要功能
+
+- **可视化模块选择**: 通过界面直接选择需要的模块，支持搜索和筛选
+- **镜像配置**: 选择 OpenWrt 或 ImmortalWrt 的不同版本镜像
+- **构建配置**: 设置输出目录、Profile、环境变量等
+- **自定义模块**: 支持添加自定义模块目录
+- **实时构建日志**: 查看构建过程的详细日志
+- **配置管理**: 保存和管理多套构建配置
+
+#### 界面预览
+
+GUI 界面集成了所有构建功能，提供直观的可视化操作体验：
+
+- **欢迎界面**: 简洁的项目介绍和快速开始
+- **镜像选择**: 支持多种 ImageBuilder 镜像和版本
+- **模块配置**: 内置模块和自定义模块的统一管理
+- **构建管理**: 一键开始/取消构建，实时日志显示
+- **配置管理**: 多套配置的保存和切换
+
+### 方式二：命令行
+
 ```bash
 ❯ ./run.sh --help                                                                           
 --image: specify imagebuilder docker image, find it in https://hub.docker.com/r/openwrt/imagebuilder/tags or https://hub.docker.com/r/immortalwrt/imagebuilder/tags
 --profile: specify profile
+--output: specify output directory for build results (default: ./bin)
+--user-modules: specify custom modules directory path
 --with-pull: pull image before build
 --rm-first: remove container before build
 --use-mirror: use mirror
+--mirror: specify mirror url, like mirrors.jlu.edu.cn, do not add http:// or https://
 -h|--help: print this help
 ```
 
 示例
 
+基础构建：
 ```bash
-./run.sh --image=immortalwrt/imagebuilder:rockchip-armv8-openwrt-23.05.1 --profile=friendlyarm_nanopi-r2s --rm-first --with-pull --use-mirror=1                                  
+./run.sh --image=immortalwrt/imagebuilder:rockchip-armv8-openwrt-23.05.1 --profile=friendlyarm_nanopi-r2s --rm-first --with-pull --use-mirror=1
+```
+
+使用自定义模块目录：
+```bash
+./run.sh --image=immortalwrt/imagebuilder:rockchip-armv8-openwrt-23.05.1 --profile=friendlyarm_nanopi-r2s --user-modules=/path/to/your/custom/modules --output=./custom_output
 ```
 
 ## modules
 
-本项目所有的特性均通过 modules 进行配置，您可以根据自己的需求，自由选择需要的模块，或者自行添加新的模块
+本项目所有的特性均通过 modules 进行配置，您可以根据自己的需求，自由选择需要的模块，或者自行添加新的模块。
+
+项目支持两种模块类型：
+- **内置模块**: 项目自带的模块，包含常用的功能和配置
+- **自定义模块**: 用户自定义的模块，可以通过 GUI 界面或命令行参数指定模块目录
 
 每个 module 都是一个目录，目录名即为 module 名，目录下包含以下文件
 
@@ -81,6 +134,33 @@ MODULES="python -tools"
 内置 modules https://github.com/EkkoG/OpenWrt/tree/master/modules
 
 默认使用的 modules 参见 https://github.com/EkkoG/OpenWrt/blob/master/build.sh
+
+## 开发
+
+### GUI 开发
+
+GUI 程序基于 [Tauri](https://tauri.app/) 框架开发，使用 Vue 3 + Vuetify 构建用户界面。
+
+#### 开发环境要求
+
+- Node.js 18+ 和 pnpm
+- Rust 工具链
+- 系统相关的开发工具
+
+#### 本地开发
+
+```bash
+cd tauri-app
+pnpm install
+pnpm run tauri dev
+```
+
+#### 构建发布版本
+
+```bash
+cd tauri-app
+pnpm run tauri build
+```
 
 ## 更多
 
