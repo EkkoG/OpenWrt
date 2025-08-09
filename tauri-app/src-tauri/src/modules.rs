@@ -21,8 +21,8 @@ pub struct ModuleInfo {
 pub enum ModuleSource {
     #[serde(rename = "built")]
     Built,      // 内置模块
-    #[serde(rename = "user")]
-    User,       // 用户模块
+    #[serde(rename = "custom")]
+    Custom,     // 自定义模块
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -50,7 +50,7 @@ pub async fn get_modules(app: AppHandle, user_modules_path: Option<String>) -> R
     if let Some(custom_path) = user_modules_path {
         let user_path = std::path::PathBuf::from(custom_path);
         if user_path.exists() {
-            let user_modules = scan_modules_in_directory(&user_path, ModuleSource::User)?;
+            let user_modules = scan_modules_in_directory(&user_path, ModuleSource::Custom)?;
             all_modules.extend(user_modules);
         }
     }
@@ -185,7 +185,7 @@ fn resolve_duplicate_modules(modules: Vec<ModuleInfo>) -> Result<Vec<ModuleInfo>
         let key = &module.name;
         if let Some(_existing) = module_map.get(key) {
             // 如果已存在，比较优先级（用户模块 > 内置模块）
-            if matches!(module.source, ModuleSource::User) {
+            if matches!(module.source, ModuleSource::Custom) {
                 module_map.insert(key.clone(), module);
             }
         } else {
@@ -198,8 +198,8 @@ fn resolve_duplicate_modules(modules: Vec<ModuleInfo>) -> Result<Vec<ModuleInfo>
     // 排序：用户模块在前，然后按名称排序
     final_modules.sort_by(|a, b| {
         match (&a.source, &b.source) {
-            (ModuleSource::User, ModuleSource::Built) => std::cmp::Ordering::Less,
-            (ModuleSource::Built, ModuleSource::User) => std::cmp::Ordering::Greater,
+            (ModuleSource::Custom, ModuleSource::Built) => std::cmp::Ordering::Less,
+            (ModuleSource::Built, ModuleSource::Custom) => std::cmp::Ordering::Greater,
             _ => a.name.cmp(&b.name),
         }
     });
@@ -341,11 +341,11 @@ pub async fn update_user_modules_path(app: AppHandle, path: Option<String>) -> R
     // 找到当前活跃配置并更新
     if let Some(active_config) = configurations.iter().find(|c| c.is_active) {
         println!("Found active config: {}", active_config.name);
-        println!("Updating user_modules_path to: {:?}", path);
+        println!("Updating custom_modules_path to: {:?}", path);
         
         // 创建更新的配置
         let mut updated_config = active_config.config.clone();
-        updated_config.user_modules_path = path.clone();
+        updated_config.custom_modules_path = path.clone();
         
         // 保存配置
         let updates = serde_json::json!({
@@ -358,7 +358,7 @@ pub async fn update_user_modules_path(app: AppHandle, path: Option<String>) -> R
         println!("Configuration updated successfully");
     } else {
         // 没有活跃配置时，只是记录一下，不报错
-        println!("No active configuration found, user_modules_path update skipped");
+        println!("No active configuration found, custom_modules_path update skipped");
     }
     
     Ok(())
@@ -373,7 +373,7 @@ pub async fn get_current_user_modules_path(app: AppHandle) -> Result<Option<Stri
         .map_err(|e| e.to_string())?;
     
     if let Some(active_config) = configurations.iter().find(|c| c.is_active) {
-        Ok(active_config.config.user_modules_path.clone())
+        Ok(active_config.config.custom_modules_path.clone())
     } else {
         Ok(None)
     }

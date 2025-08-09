@@ -80,7 +80,7 @@ else
 fi
 
 cp -r modules_in_container modules
-cp -r user_modules_in_container user_modules
+cp -r custom_modules_in_container custom_modules
 
 PACKAGE_COLLECTION=
 # Load system environment variables
@@ -155,7 +155,7 @@ process_module_directory() {
 
 log_info "Validating module availability"
 for module_name in $ACTIVE_MODULE_LIST; do
-    if [ ! -d "modules/$module_name" ] && [ ! -d "user_modules/$module_name" ]; then
+    if [ ! -d "modules/$module_name" ] && [ ! -d "custom_modules/$module_name" ]; then
         log_error "Module not found: $module_name"
         exit 1
     fi
@@ -166,7 +166,7 @@ done
 setup_build_environment
 
 process_module_directory modules
-process_module_directory user_modules
+process_module_directory custom_modules
 
 log_info "Package collection complete: $PACKAGE_COLLECTION"
 

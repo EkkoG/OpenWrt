@@ -61,7 +61,7 @@ while [ "$1" != "" ]; do
             OUTPUT_DIR=$VALUE
             ;;
         --user-modules)
-            USER_MODULES_PATH=$VALUE
+            CUSTOM_MODULES_PATH=$VALUE
             ;;
         -h | --help)
             usage
@@ -93,12 +93,12 @@ if [ -z "$OUTPUT_DIR" ]; then
     OUTPUT_DIR="./bin"
 fi
 
-if [ -z "$USER_MODULES_PATH" ]; then
-    USER_MODULES_PATH="./user_modules"
+if [ -z "$CUSTOM_MODULES_PATH" ]; then
+    CUSTOM_MODULES_PATH="./user_modules"
 fi
 
 echo "IMAGEBUILDER_IMAGE: $IMAGEBUILDER_IMAGE PROFILE: $PROFILE"
-echo "USER_MODULES_PATH: $USER_MODULES_PATH"
+echo "CUSTOM_MODULES_PATH: $CUSTOM_MODULES_PATH"
 
 if [[ $IMAGEBUILDER_IMAGE =~ "immortalwrt" ]]; then
     BUILD_DIR=/home/build/immortalwrt
@@ -124,7 +124,7 @@ services:
       - ./build.sh:$BUILD_DIR/build.sh
       - ./setup:$BUILD_DIR/setup
       - ./modules:$BUILD_DIR/modules_in_container
-      - $USER_MODULES_PATH:$BUILD_DIR/user_modules_in_container
+      - $CUSTOM_MODULES_PATH:$BUILD_DIR/custom_modules_in_container
       - ./.env:$BUILD_DIR/.env
     command: "./build.sh"
 END

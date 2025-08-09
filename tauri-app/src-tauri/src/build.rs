@@ -24,7 +24,7 @@ pub struct BuildConfig {
     pub env_vars: Vec<EnvVar>,
     pub global_env_vars: String,  // 全局环境变量字符串
     pub advanced_options: Option<AdvancedOptions>,  // 高级选项
-    pub user_modules_path: Option<String>,  // 用户模块路径
+    pub user_modules_path: Option<String>,  // 自定义模块路径
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]

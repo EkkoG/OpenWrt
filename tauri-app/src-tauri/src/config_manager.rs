@@ -34,7 +34,7 @@ pub struct BuildConfig {
     pub global_env_vars: String,
     pub modules: Vec<ModuleConfig>,
     pub advanced_options: Option<AdvancedBuildOptions>,
-    pub user_modules_path: Option<String>,
+    pub custom_modules_path: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]

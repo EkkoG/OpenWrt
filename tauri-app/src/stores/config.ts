@@ -24,7 +24,7 @@ export interface BuildConfig {
   globalEnvVars: string
   modules: ModuleConfig[]
   advancedOptions?: AdvancedBuildOptions
-  userModulesPath?: string
+  customModulesPath?: string
 }
 
 export interface Configuration {
@@ -255,8 +255,8 @@ export const useConfigStore = defineStore('config', () => {
       }
     })
     
-    // 恢复用户模块路径（现在是配置级别的设置）
-    appStore.userModulesPath = config.userModulesPath || null
+    // 恢复自定义模块路径（现在是配置级别的设置）
+    appStore.customModulesPath = config.customModulesPath || null
     
     // 恢复高级选项
     if (config.advancedOptions) {
@@ -272,7 +272,7 @@ export const useConfigStore = defineStore('config', () => {
       selectedProfile: appStore.selectedProfile,
       outputDirectory: appStore.outputDirectory,
       globalEnvVars: appStore.globalEnvVars,
-      userModulesPath: appStore.userModulesPath || undefined,
+      customModulesPath: appStore.customModulesPath || undefined,
       modules: appStore.modules.map((module: any) => ({
         name: module.name,
         enabled: module.enabled,
@@ -320,7 +320,7 @@ export const useConfigStore = defineStore('config', () => {
     appStore.selectedProfile = ''
     appStore.outputDirectory = ''
     appStore.globalEnvVars = ''
-    appStore.userModulesPath = null
+    appStore.customModulesPath = null
     
     // 重置高级选项
     appStore.advancedOptions = {

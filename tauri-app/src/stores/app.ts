@@ -16,7 +16,7 @@ export const useAppStore = defineStore('app', () => {
   const selectedProfile = ref('')  // 添加 profile 字段
   const outputDirectory = ref('')
   const globalEnvVars = ref('')  // 全局环境变量
-  const userModulesPath = ref<string | null>(null)  // 用户模块路径
+  const customModulesPath = ref<string | null>(null)  // 自定义模块路径
   
   // 高级构建选项
   const advancedOptions = ref({
@@ -33,7 +33,7 @@ export const useAppStore = defineStore('app', () => {
     envVars: Record<string, string>
     description: string
     hasReadme: boolean
-    source: 'built' | 'user'
+    source: 'built' | 'custom'
   }>>([])
 
   // 构建状态
@@ -107,7 +107,7 @@ export const useAppStore = defineStore('app', () => {
         }>
         description: string
         source: string
-      }>>('get_modules', { userModulesPath: userModulesPath.value })
+      }>>('get_modules', { userModulesPath: customModulesPath.value })
       
       // DEFAULT_MODULE_SET from build.sh
       const defaultModuleSet = new Set([
@@ -125,7 +125,7 @@ export const useAppStore = defineStore('app', () => {
         }, {} as Record<string, string>),
         description: m.description,
         hasReadme: m.has_readme,
-        source: m.source as 'built' | 'user'
+        source: m.source as 'built' | 'custom'
       }))
       
     } catch (error) {
@@ -273,7 +273,7 @@ export const useAppStore = defineStore('app', () => {
     selectedProfile,
     outputDirectory,
     globalEnvVars,
-    userModulesPath,
+    customModulesPath,
     advancedOptions,
     modules,
     isBuilding,

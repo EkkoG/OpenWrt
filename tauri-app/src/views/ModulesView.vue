@@ -75,17 +75,17 @@ const selectUserModulesDirectory = async () => {
       
       if (isValid) {
         // 直接更新 appStore 中的值
-        appStore.userModulesPath = selectedPath
+        appStore.customModulesPath = selectedPath
         
         // 重新加载模块
         await refreshModules()
-        console.log('用户模块目录已更新:', selectedPath)
+        console.log('自定义模块目录已更新:', selectedPath)
       } else {
         console.error('选择的路径无效')
       }
     }
   } catch (error) {
-    console.error('选择用户模块目录失败:', error)
+    console.error('选择自定义模块目录失败:', error)
   }
 }
 
@@ -129,7 +129,7 @@ onMounted(() => {
         prepend-icon="mdi-folder-open"
         class="ml-4"
       >
-        选择用户模块目录
+        选择自定义模块目录
       </v-btn>
       <v-btn
         color="primary"
@@ -198,16 +198,16 @@ onMounted(() => {
                       <div class="font-weight-medium d-flex align-center">
                         {{ module.name }}
                         <v-chip
-                          v-if="appStore.userModulesPath && module.source === 'user'"
+                          v-if="appStore.customModulesPath && module.source === 'custom'"
                           size="x-small"
                           color="success"
                           variant="tonal"
                           class="ml-2"
                         >
-                          用户
+                          自定义
                         </v-chip>
                         <v-chip
-                          v-if="appStore.userModulesPath && module.source === 'built'"
+                          v-if="appStore.customModulesPath && module.source === 'built'"
                           size="x-small"
                           color="info"
                           variant="tonal"
