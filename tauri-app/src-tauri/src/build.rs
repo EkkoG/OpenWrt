@@ -35,9 +35,8 @@ pub struct EnvVar {
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct BuildEvent {
-    pub event_type: String, // "log", "progress", "complete", "error"
+    pub event_type: String, // "log", "complete", "error"
     pub data: String,
-    pub progress: Option<u32>,
 }
 
 static BUILD_PROCESS: Mutex<Option<u32>> = Mutex::new(None);
@@ -214,7 +213,6 @@ pub async fn start_build(
         let _ = app_clone.emit("build-event", BuildEvent {
             event_type: "log".to_string(),
             data: "[构建开始]".to_string(),
-            progress: Some(0),
         });
 
         // 读取标准输出
@@ -226,19 +224,8 @@ pub async fn start_build(
                     let _ = app_clone.emit("build-event", BuildEvent {
                         event_type: "log".to_string(),
                         data: line.clone(),
-                        progress: None,
                     });
 
-                    // 尝试解析进度
-                    if line.contains("Progress:") || line.contains("进度:") {
-                        if let Some(progress) = parse_progress(&line) {
-                            let _ = app_clone.emit("build-event", BuildEvent {
-                                event_type: "progress".to_string(),
-                                data: line,
-                                progress: Some(progress),
-                            });
-                        }
-                    }
                 }
             }
         }
@@ -251,7 +238,6 @@ pub async fn start_build(
                     let _ = app_clone.emit("build-event", BuildEvent {
                         event_type: "log".to_string(),
                         data: format!("[ERROR] {}", line),
-                        progress: None,
                     });
                 }
             }
@@ -267,13 +253,11 @@ pub async fn start_build(
                     let _ = app_clone.emit("build-event", BuildEvent {
                         event_type: "complete".to_string(),
                         data: "[构建成功完成]".to_string(),
-                        progress: Some(100),
                     });
                 } else {
                     let _ = app_clone.emit("build-event", BuildEvent {
                         event_type: "error".to_string(),
                         data: format!("[构建失败] 退出码: {:?}", status.code()),
-                        progress: None,
                     });
                 }
             }
@@ -284,7 +268,6 @@ pub async fn start_build(
                 let _ = app_clone.emit("build-event", BuildEvent {
                     event_type: "error".to_string(),
                     data: format!("[构建失败] {}", e),
-                    progress: None,
                 });
             }
         }
@@ -328,14 +311,3 @@ pub async fn is_building() -> Result<bool, String> {
     Ok(process_lock.is_some())
 }
 
-fn parse_progress(line: &str) -> Option<u32> {
-    // 尝试从日志行中提取进度百分比
-    // 例如: "Progress: 50%" 或 "进度: 50%"
-    if let Some(pos) = line.find('%') {
-        let start = line[..pos].rfind(char::is_numeric)?;
-        let num_str = &line[start..pos];
-        num_str.parse::<u32>().ok()
-    } else {
-        None
-    }
-}

@@ -38,7 +38,6 @@ export const useAppStore = defineStore('app', () => {
 
   // 构建状态
   const isBuilding = ref(false)
-  const buildProgress = ref(0)
   const buildLogs = ref<string[]>([])
   const lastBuildTime = ref<Date | null>(null)
   const lastBuildStatus = ref<'success' | 'failed' | 'cancelled' | null>(null)
@@ -204,7 +203,6 @@ export const useAppStore = defineStore('app', () => {
     if (!canStartBuild.value) return
     
     isBuilding.value = true
-    buildProgress.value = 0
     buildLogs.value = []
     
     // 将在后续任务中实现具体构建逻辑
@@ -279,7 +277,6 @@ export const useAppStore = defineStore('app', () => {
     advancedOptions,
     modules,
     isBuilding,
-    buildProgress,
     buildLogs,
     lastBuildTime,
     lastBuildStatus,

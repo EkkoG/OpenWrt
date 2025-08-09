@@ -127,7 +127,6 @@ const startBuild = async () => {
   if (!canStartBuild.value) return
   
   appStore.isBuilding = true
-  appStore.buildProgress = 0
   appStore.buildLogs = []
   
   try {
@@ -141,13 +140,6 @@ const startBuild = async () => {
       if (buildEvent.event_type === 'log') {
         appStore.buildLogs.push(buildEvent.data)
         // 自动滚动到底部
-        await nextTick()
-        if (logContainer.value) {
-          logContainer.value.scrollTop = logContainer.value.scrollHeight
-        }
-      } else if (buildEvent.event_type === 'progress') {
-        appStore.buildProgress = buildEvent.progress || 0
-        appStore.buildLogs.push(buildEvent.data)
         await nextTick()
         if (logContainer.value) {
           logContainer.value.scrollTop = logContainer.value.scrollHeight
@@ -492,19 +484,6 @@ const copyLogs = async () => {
             </v-btn>
           </v-card-title>
           <v-card-text>
-            <!-- 构建进度 -->
-            <v-progress-linear
-              v-if="appStore.isBuilding"
-              :model-value="appStore.buildProgress"
-              color="primary"
-              height="20"
-              rounded
-              class="mb-4"
-            >
-              <template v-slot:default="{ value }">
-                <strong>{{ value }}%</strong>
-              </template>
-            </v-progress-linear>
             
             <!-- 构建命令预览 -->
             <v-alert
