@@ -68,8 +68,8 @@ const deselectAll = () => {
 const selectUserModulesDirectory = async () => {
   try {
     const { invoke } = await import('@tauri-apps/api/core')
-    const selectedPath = await invoke('select_user_modules_directory')
-    if (selectedPath) {
+    const selectedPath = await invoke('select_user_modules_directory') as string
+    if (selectedPath && typeof selectedPath === 'string') {
       // 验证路径
       const isValid = await invoke('validate_user_modules_path', { path: selectedPath })
       
