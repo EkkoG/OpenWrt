@@ -1,0 +1,72 @@
+name: Release Alpha
+
+on:
+  push:
+    branches: ["master"]
+    paths:
+      - "**"
+      - "!README*"
+      - "!*.md"
+      - "!changelog.txt"
+      - "!docs/**"
+      - "!.gitignore"
+  workflow_dispatch:
+
+jobs:
+  build-and-release:
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: "macos-latest"
+            args: ""
+
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies (macOS only)
+        if: matrix.platform == 'macos-latest'
+        run: |
+          # Install system dependencies for Tauri
+          # No additional dependencies needed for macOS
+
+      - name: Rust setup
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: './tauri-app/src-tauri -> target'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Sync node version and setup cache
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'pnpm'
+          cache-dependency-path: './tauri-app/pnpm-lock.yaml'
+
+      - name: Install frontend dependencies
+        working-directory: ./tauri-app
+        run: pnpm install
+
+      - name: Build the app
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          projectPath: ./tauri-app
+          tagName: alpha
+          releaseName: "Alpha Release"
+          releaseBody: "Alpha release built from master branch"
+          releaseDraft: false
+          prerelease: true
+          args: ${{ matrix.args }}
