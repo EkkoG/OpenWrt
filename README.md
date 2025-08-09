@@ -126,7 +126,7 @@ post-files.sh #定义本 module 的预处理脚本，会在将当前 module 的 
 .env #定义本 module 的环境变量，会将其中的变量的值替换到 files/uci-defaults/ 目录下的文件中
 ```
 
-如果您想在项目根目录的 .env 中统一定义变量，以便在 module 中使用，可以在根目录的 .env 中设置 `USE_SYTEM_ENV=1`，这样在 module 中就可以使用系统环境变量了
+如果您想在项目根目录的 .env 中统一定义变量，以便在 module 中使用，可以在根目录的 .env 中设置 `USE_SYSTEM_ENV=1`，这样在 module 中就可以使用系统环境变量了
 
 您可以通过在项目根目录下的 .env 中定义 MODULES 变量，来选择需要的 module，例如
 

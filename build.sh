@@ -85,7 +85,7 @@ cp -r custom_modules_in_container custom_modules
 PACKAGE_COLLECTION=
 # Load system environment variables
 SYSTEM_ENVIRONMENT=""
-if [ $USE_SYTEM_ENV ]; then
+if [ $USE_SYSTEM_ENV ]; then
     SYSTEM_ENVIRONMENT="$(cat .env)"
 fi
 
