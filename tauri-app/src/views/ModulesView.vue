@@ -172,11 +172,14 @@ onMounted(() => {
       </v-alert>
             
             <!-- 模块列表 -->
-            <v-expansion-panels
+            <div 
               v-if="filteredModules.length > 0"
-              variant="accordion"
+              style="max-height: 600px; overflow-y: auto; border-radius: 4px;"
               class="mb-4"
             >
+              <v-expansion-panels
+                variant="accordion"
+              >
               <v-expansion-panel
                 v-for="module in filteredModules"
                 :key="module.name"
@@ -258,7 +261,8 @@ onMounted(() => {
                   </div>
                 </v-expansion-panel-text>
               </v-expansion-panel>
-            </v-expansion-panels>
+              </v-expansion-panels>
+            </div>
             
             <!-- 空状态 -->
             <v-alert
