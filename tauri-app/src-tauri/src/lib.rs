@@ -131,7 +131,7 @@ pub fn run() {
             import_configuration,
             deactivate_configuration,
             get_app_settings,
-            update_app_settings
+            update_app_settings,
         ])
         .setup(|app| {
             // 初始化应用模式

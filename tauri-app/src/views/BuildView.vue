@@ -1,12 +1,10 @@
 <script setup lang="ts">
 import { useAppStore } from '@/stores/app'
-import { ref, computed, onMounted, nextTick, watch } from 'vue'
+import { ref, computed, nextTick, watch } from 'vue'
 import ConfigQuickSelector from '@/components/ConfigQuickSelector.vue'
 import AdvancedBuildOptions from '@/components/AdvancedBuildOptions.vue'
 
 const appStore = useAppStore()
-const isLoadingTags = ref(false)
-const dockerTags = ref<string[]>([])
 const logContainer = ref<HTMLElement | null>(null)
 const copyNotification = ref({ show: false, message: '', color: 'success' })
 
@@ -87,37 +85,16 @@ watch(() => appStore.buildLogs.length, async () => {
   }
 })
 
-// 获取 Docker Hub 镜像标签
-const fetchDockerTags = async () => {
-  isLoadingTags.value = true
-  dockerTags.value = []
-  
-  try {
-    // 调用 Docker Hub API 获取标签
-    const response = await fetch(`https://hub.docker.com/v2/repositories/${appStore.selectedRepository}/tags?page_size=50&ordering=-last_updated`)
-    const data = await response.json()
-    
-    if (data.results) {
-      dockerTags.value = data.results
-        .filter((tag: any) => tag.name !== 'latest')
-        .map((tag: any) => tag.name)
-        .slice(0, 30) // 限制显示前30个
-    }
-  } catch (error) {
-    console.error('Failed to fetch Docker tags:', error)
-    // 失败时使用预设标签
-    dockerTags.value = popularTags.value
-  } finally {
-    isLoadingTags.value = false
-  }
-}
+
+
+
 
 // 切换仓库
 const onRepositoryChange = () => {
   appStore.selectedImage = ''
   appStore.customImageTag = ''
-  fetchDockerTags()
 }
+
 
 // 选择输出目录
 const selectOutputDirectory = async () => {
@@ -317,9 +294,6 @@ const copyLogs = async () => {
 }
 
 
-onMounted(() => {
-  fetchDockerTags()
-})
 </script>
 
 <template>
@@ -376,44 +350,6 @@ onMounted(() => {
               @update:model-value="appStore.selectedImage = ''"
             />
             
-            <!-- Docker Hub 标签列表 -->
-            <v-expansion-panels variant="accordion">
-              <v-expansion-panel>
-                <v-expansion-panel-title>
-                  <div class="d-flex align-center">
-                    <v-icon class="mr-2">mdi-tag-multiple</v-icon>
-                    更多可用标签
-                    <v-spacer />
-                    <v-btn
-                      icon="mdi-refresh"
-                      size="x-small"
-                      variant="text"
-                      @click.stop="fetchDockerTags"
-                      :loading="isLoadingTags"
-                    />
-                  </div>
-                </v-expansion-panel-title>
-                <v-expansion-panel-text>
-                  <v-progress-circular
-                    v-if="isLoadingTags"
-                    indeterminate
-                    size="24"
-                    width="2"
-                    class="ma-4"
-                  />
-                  <v-list v-else density="compact" max-height="300">
-                    <v-list-item
-                      v-for="tag in dockerTags"
-                      :key="tag"
-                      @click="appStore.selectedImage = tag; appStore.customImageTag = ''"
-                      :active="appStore.selectedImage === tag"
-                    >
-                      <v-list-item-title>{{ tag }}</v-list-item-title>
-                    </v-list-item>
-                  </v-list>
-                </v-expansion-panel-text>
-              </v-expansion-panel>
-            </v-expansion-panels>
           </v-card-text>
         </v-card>
         
