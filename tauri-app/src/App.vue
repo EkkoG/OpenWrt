@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { onMounted, ref, watch, computed } from 'vue'
 import { useTheme } from 'vuetify'
+import { useRouter } from 'vue-router'
 import { useAppStore } from '@/stores/app'
 import { useConfigStore } from '@/stores/config'
 
 const theme = useTheme()
+const router = useRouter()
 const appStore = useAppStore()
 const configStore = useConfigStore()
 const appModeInfo = ref<any>(null)
@@ -69,6 +71,11 @@ const getThemeTooltip = computed(() => {
       return '主题切换'
   }
 })
+
+// 跳转到构建页面
+const goToBuildPage = () => {
+  router.push('/build')
+}
 
 onMounted(async () => {
   // 加载保存的设置（包括主题）
@@ -176,6 +183,27 @@ onMounted(async () => {
         </v-tooltip>
       </v-chip>
 
+      <!-- 构建状态指示器 -->
+      <v-chip
+        v-if="appStore.isBuilding"
+        color="warning"
+        variant="tonal"
+        class="mr-2"
+        @click="goToBuildPage"
+        style="cursor: pointer"
+      >
+        <v-progress-circular
+          size="16"
+          width="2"
+          indeterminate
+          class="mr-2"
+        />
+        构建中
+        <v-tooltip activator="parent" location="bottom">
+          正在构建固件，点击查看详情
+        </v-tooltip>
+      </v-chip>
+
       <v-chip
         :color="appStore.dockerReady ? 'success' : 'error'"
         variant="tonal"
@@ -224,32 +252,6 @@ onMounted(async () => {
       </v-container>
     </v-main>
 
-    <v-snackbar
-      v-if="appStore.isBuilding"
-      :model-value="true"
-      :timeout="-1"
-      location="bottom"
-      multi-line
-    >
-      <div class="d-flex align-center">
-        <v-progress-circular
-          indeterminate
-          size="20"
-          width="2"
-          class="mr-3"
-        />
-        <span>正在构建固件...</span>
-      </div>
-      <template v-slot:actions>
-        <v-btn
-          color="error"
-          variant="text"
-          @click="appStore.cancelBuild()"
-        >
-          取消
-        </v-btn>
-      </template>
-    </v-snackbar>
   </v-app>
 </template>
 
