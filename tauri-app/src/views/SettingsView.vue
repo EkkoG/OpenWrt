@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useAppStore } from '@/stores/app'
 import { ref } from 'vue'
+import { openUrl as tauriOpenUrl } from '@tauri-apps/plugin-opener'
 
 const appStore = useAppStore()
 const showSaveSuccess = ref(false)
@@ -36,6 +37,8 @@ const checkForUpdates = async () => {
   // TODO: 实现检查更新功能
   console.log('Checking for updates...')
 }
+
+const openUrl = (url: string) => tauriOpenUrl(url).catch(console.error)
 </script>
 
 <template>
@@ -102,9 +105,17 @@ const checkForUpdates = async () => {
                 <v-list-item-title>版本</v-list-item-title>
                 <v-list-item-subtitle>0.1.0</v-list-item-subtitle>
               </v-list-item>
-              <v-list-item>
+              <v-list-item @click="openUrl('https://github.com/EkkoG/OpenWrt')">
+                <v-list-item-title>项目主页</v-list-item-title>
+                <v-list-item-subtitle class="text-primary cursor-pointer">
+                  https://github.com/EkkoG/OpenWrt
+                </v-list-item-subtitle>
+              </v-list-item>
+              <v-list-item @click="openUrl('https://github.com/EkkoG')">
                 <v-list-item-title>开发者</v-list-item-title>
-                <v-list-item-subtitle>OpenWrt Builder Team</v-list-item-subtitle>
+                <v-list-item-subtitle class="text-primary cursor-pointer">
+                  https://github.com/EkkoG
+                </v-list-item-subtitle>
               </v-list-item>
               <v-list-item>
                 <v-list-item-title>技术栈</v-list-item-title>
