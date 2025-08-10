@@ -42,8 +42,8 @@
 | 平台 | 安装包格式 | 说明 |
 |------|-----------|------|
 | macOS | `.dmg` | Apple Silicon 选 `aarch64`，Intel 选 `x86_64` |
-| Windows | `.msi` / `.exe` | 支持 Windows 10/11，需要 Docker Desktop |
-| Linux | `.deb` / `.AppImage` | 支持 Ubuntu 18.04+ 及其他主流发行版 |
+| Windows | `.msi` / `.exe` | 支持 Windows 10/11 |
+| Linux | `.deb` / `.AppImage` | 支持 Ubuntu 20.04+ 及其他主流发行版 |
 
 也可从源码构建：见文档后半部分“开发与构建”。
 
