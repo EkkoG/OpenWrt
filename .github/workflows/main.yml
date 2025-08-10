@@ -9,7 +9,7 @@ on:
     branches: ["master"]
     paths:
       - "**"
-      - "!README*"
+      - "!*.md"
       - "!changelog.txt"
 
   pull_request:
