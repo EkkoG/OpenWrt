@@ -83,11 +83,8 @@ cp -r modules_in_container modules
 cp -r custom_modules_in_container custom_modules
 
 PACKAGE_COLLECTION=
-# Load system environment variables
-SYSTEM_ENVIRONMENT=""
-if [ $USE_SYSTEM_ENV ]; then
-    SYSTEM_ENVIRONMENT="$(cat .env)"
-fi
+# Load system environment variables (default enabled)
+SYSTEM_ENVIRONMENT="$(cat .env)"
 
 
 process_module_directory() {

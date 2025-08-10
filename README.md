@@ -139,8 +139,7 @@ MODULES="openclash lan pppoe -tools"
 # 或完全覆盖默认模块集（更高优先级）
 ENABLE_MODULES="argon base lan"
 
-# 与模块共享环境变量
-USE_SYSTEM_ENV=1
+# 系统环境变量默认启用，模块可直接引用根 .env 中的变量
 
 # 传递给 ImageBuilder 的常见参数
 CONFIG_TARGET_KERNEL_PARTSIZE=32
@@ -170,7 +169,7 @@ my-module/
 ```
 
 高级特性：
-- 环境变量共享：设置 `USE_SYSTEM_ENV=1` 后，模块可引用根 `.env` 中的变量
+- 环境变量共享：模块可直接引用根 `.env` 中的变量（默认启用）
 - 变量替换：`files/etc/uci-defaults` 下的文件支持 `$VARNAME` 替换
 - 冲突保护：若不同模块生成同名目标文件，构建会失败以避免覆盖
 
