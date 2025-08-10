@@ -146,7 +146,7 @@ onMounted(async () => {
       density="comfortable"
     >
       <v-app-bar-title>
-        <span class="text-h6 font-weight-bold">OpenWrt Builder GUI</span>
+        <span class="text-h6 font-weight-bold">OpenWrt Builder</span>
       </v-app-bar-title>
 
       <v-spacer />

@@ -2,5 +2,5 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 fn main() {
-    openwrt_builder_gui_lib::run()
+    openwrt_builder_lib::run()
 }

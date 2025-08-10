@@ -96,7 +96,7 @@ const checkForUpdates = async () => {
             <v-list density="compact">
               <v-list-item>
                 <v-list-item-title>应用名称</v-list-item-title>
-                <v-list-item-subtitle>OpenWrt Builder GUI</v-list-item-subtitle>
+                <v-list-item-subtitle>OpenWrt Builder</v-list-item-subtitle>
               </v-list-item>
               <v-list-item>
                 <v-list-item-title>版本</v-list-item-title>

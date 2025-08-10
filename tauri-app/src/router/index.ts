@@ -38,7 +38,7 @@ const router = createRouter({
 })
 
 router.beforeEach((to, _from, next) => {
-  document.title = `${to.meta.title || 'OpenWrt Builder'} - OpenWrt Builder GUI`
+  document.title = `${to.meta.title || 'OpenWrt Builder'} - OpenWrt Builder`
   next()
 })
 

@@ -1,4 +1,4 @@
-# OpenWrt Builder GUI
+# OpenWrt Builder
 
 一个用于便捷构建定制化 OpenWrt 固件的跨平台桌面应用。技术栈：Tauri 2 · Vue 3 · TypeScript · Vuetify · Vite。
 

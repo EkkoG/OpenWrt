@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "OpenWrt Builder GUI",
+  "productName": "OpenWrt Builder",
   "version": "0.1.0",
-  "identifier": "com.openwrt.builder",
+  "identifier": "com.imciel.openwrt.builder",
   "build": {
     "beforeDevCommand": "pnpm dev",
     "devUrl": "http://localhost:1420",
@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "OpenWrt Builder GUI",
+        "title": "OpenWrt Builder",
         "width": 1200,
         "height": 1200,
         "minWidth": 1000,

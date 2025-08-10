@@ -1,7 +1,7 @@
 [package]
-name = "openwrt-builder-gui"
+name = "openwrt-builder"
 version = "0.1.0"
-description = "OpenWrt Firmware Builder GUI"
+description = "OpenWrt Firmware Builder"
 authors = ["OpenWrt Builder Team"]
 edition = "2021"
 
@@ -11,7 +11,7 @@ edition = "2021"
 # The `_lib` suffix may seem redundant but it is necessary
 # to make the lib name unique and wouldn't conflict with the bin name.
 # This seems to be only an issue on Windows, see https://github.com/rust-lang/cargo/issues/8519
-name = "openwrt_builder_gui_lib"
+name = "openwrt_builder_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]

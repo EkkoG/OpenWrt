@@ -2766,7 +2766,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "openwrt-builder-gui"
+name = "openwrt-builder"
 version = "0.1.0"
 dependencies = [
  "anyhow",
