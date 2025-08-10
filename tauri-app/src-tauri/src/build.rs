@@ -119,20 +119,44 @@ pub async fn start_build(
         }
     }
     
-    // 写入全局环境变量到根目录的 .env 文件
+    // 写入全局环境变量和自定义环境变量到根目录的 .env 文件
+    let mut env_content = String::new();
+    
+    // 添加全局环境变量
     if !config.global_env_vars.trim().is_empty() {
+        env_content.push_str(&config.global_env_vars);
+        if !config.global_env_vars.ends_with('\n') {
+            env_content.push('\n');
+        }
+    }
+    
+    // 添加模块配置
+    let modules_str = config.modules.join(" ");
+    if !modules_str.is_empty() {
+        env_content.push_str(&format!("ENABLE_MODULES={}\n", modules_str));
+    }
+    
+    // 添加自定义环境变量
+    for env_var in &config.env_vars {
+        env_content.push_str(&format!("{}={}\n", env_var.key, env_var.value));
+    }
+    
+    // 添加 RootFS 分区大小配置
+    if let Some(rootfs_size) = config.rootfs_part_size {
+        env_content.push_str(&format!("CONFIG_TARGET_ROOTFS_PARTSIZE={}\n", rootfs_size));
+    }
+    
+    // 如果有环境变量内容才写入文件
+    if !env_content.trim().is_empty() {
         let root_env_path = working_dir.join(".env");
         
-        if let Err(e) = std::fs::write(&root_env_path, &config.global_env_vars) {
+        if let Err(e) = std::fs::write(&root_env_path, &env_content) {
             eprintln!("Failed to write global .env file: {}", e);
         } else {
             println!("Written global .env file to: {}", root_env_path.display());
         }
     }
 
-    // 准备环境变量
-    let modules_str = config.modules.join(" ");
-    
     // 构建命令 - 根据平台选择脚本
     let mut cmd = if cfg!(target_os = "windows") {
         // Windows: 使用PowerShell执行run.ps1
@@ -237,20 +261,9 @@ pub async fn start_build(
         }
     }
     
-    cmd.env("ENABLE_MODULES", modules_str)
-       .env("OUTPUT_DIR", &config.output_dir)
+    cmd.env("OUTPUT_DIR", &config.output_dir)
        .stdout(Stdio::piped())
        .stderr(Stdio::piped());
-    
-    // 添加 RootFS 分区大小配置
-    if let Some(rootfs_size) = config.rootfs_part_size {
-        cmd.env("CONFIG_TARGET_ROOTFS_PARTSIZE", rootfs_size.to_string());
-    }
-
-    // 添加自定义环境变量
-    for env_var in config.env_vars {
-        cmd.env(env_var.key, env_var.value);
-    }
 
     // 启动进程
     let mut child = cmd.spawn().map_err(|e| format!("Failed to start build: {}", e))?;
