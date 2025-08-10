@@ -13,7 +13,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  update-alpha-tag:
+  update-alpha-release:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -23,24 +23,17 @@ jobs:
         with:
           fetch-depth: 0  # 获取完整历史以便操作标签
 
-      - name: Update alpha tag
+      - name: Delete existing alpha release
         run: |
-          # 配置Git用户信息
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          
-          # 删除现有的alpha标签（本地和远程）
-          git tag -d alpha || true
-          git push origin --delete alpha || true
-          
-          # 在当前commit上创建新的alpha标签
-          git tag -a alpha -m "Alpha release - $(date '+%Y-%m-%d %H:%M:%S')"
-          git push origin alpha
+          # 删除现有的alpha release和关联的tag
+          echo "Deleting existing alpha release and tag..."
+          gh release delete alpha --yes --delete-tags || echo "No existing alpha release found"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build-and-release:
-    needs: update-alpha-tag
+    needs: update-alpha-release
     permissions:
       contents: write
     strategy:
@@ -64,9 +57,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          ref: alpha  # 检出更新后的alpha标签
-          fetch-depth: 0
 
       - name: Install dependencies (macOS only)
         if: matrix.platform == 'macos-latest'
