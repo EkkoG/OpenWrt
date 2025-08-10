@@ -42,6 +42,7 @@ jobs:
           echo "CONFIG_TARGET_KERNEL_PARTSIZE=16" > .env
           echo "CONFIG_TARGET_ROOTFS_PARTSIZE=256" >> .env
           echo "MODULES=openclash openclash-as-default" >> .env
+          echo "LOG_ENABLE=1" >> .env
 
       - name: Build image ${{ matrix.image }}
         run: |
