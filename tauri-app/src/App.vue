@@ -88,7 +88,7 @@ onMounted(async () => {
   if (configStore.activeConfig) {
     configStore.applyConfigToStore(configStore.activeConfig.config, appStore)
   }
-  // 加载模块信息（需要在配置恢复后进行，因为需要用户模块路径）
+  // 加载模块信息（需要在配置恢复后进行，因为需要自定义模块路径）
   await appStore.loadModules()
   
   // 在调试模式下获取应用模式信息

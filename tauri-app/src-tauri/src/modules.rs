@@ -46,7 +46,7 @@ pub async fn get_modules(app: AppHandle, custom_modules_path: Option<String>) ->
         all_modules.extend(builtin_modules);
     }
     
-    // 2. 扫描用户模块
+    // 2. 扫描自定义模块
     if let Some(custom_path) = custom_modules_path {
         let user_path = std::path::PathBuf::from(custom_path);
         if user_path.exists() {
@@ -55,7 +55,7 @@ pub async fn get_modules(app: AppHandle, custom_modules_path: Option<String>) ->
         }
     }
     
-    // 3. 处理同名模块（用户模块覆盖内置模块）
+    // 3. 处理同名模块（自定义模块覆盖内置模块）
     let final_modules = resolve_duplicate_modules(all_modules)?;
     
     Ok(final_modules)
@@ -184,7 +184,7 @@ fn resolve_duplicate_modules(modules: Vec<ModuleInfo>) -> Result<Vec<ModuleInfo>
     for module in modules {
         let key = &module.name;
         if let Some(_existing) = module_map.get(key) {
-            // 如果已存在，比较优先级（用户模块 > 内置模块）
+            // 如果已存在，比较优先级（自定义模块 > 内置模块）
             if matches!(module.source, ModuleSource::Custom) {
                 module_map.insert(key.clone(), module);
             }
@@ -195,7 +195,7 @@ fn resolve_duplicate_modules(modules: Vec<ModuleInfo>) -> Result<Vec<ModuleInfo>
     
     let mut final_modules: Vec<ModuleInfo> = module_map.into_values().collect();
     
-    // 排序：用户模块在前，然后按名称排序
+    // 排序：自定义模块在前，然后按名称排序
     final_modules.sort_by(|a, b| {
         match (&a.source, &b.source) {
             (ModuleSource::Custom, ModuleSource::Built) => std::cmp::Ordering::Less,

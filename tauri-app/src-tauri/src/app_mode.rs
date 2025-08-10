@@ -94,7 +94,7 @@ impl AppMode {
     }
 
     fn extract_resources_if_needed(&self, app_handle: &AppHandle) -> Result<(), String> {
-        // 获取用户数据目录作为提取目标
+        // 获取应用数据目录作为提取目标
         let app_data_dir = app_handle
             .path()
             .app_data_dir()

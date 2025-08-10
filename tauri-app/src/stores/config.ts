@@ -307,7 +307,7 @@ export const useConfigStore = defineStore('config', () => {
       })
       activeConfigId.value = null
       
-      // 重置应用状态到默认值（包括用户模块路径）
+      // 重置应用状态到默认值（包括自定义模块路径）
       resetToDefaultState(appStore)
       
       // 重新加载模块（使用默认状态）
