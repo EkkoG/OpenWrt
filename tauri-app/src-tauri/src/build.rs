@@ -133,45 +133,91 @@ pub async fn start_build(
     // 准备环境变量
     let modules_str = config.modules.join(" ");
     
-    // 构建命令
-    let mut cmd = Command::new("bash");
-    let run_script_path = working_dir.join("run.sh");  // 使用工作目录中的 run.sh
-    
-    println!("Working directory: {}", working_dir.display());
-    println!("Run script path: {}", run_script_path.display());
-    println!("Run script exists: {}", run_script_path.exists());
-    
-    cmd.current_dir(&working_dir)  // 切换到工作目录
-       .arg(&run_script_path)
-       .arg(format!("--image={}", &config.image));
+    // 构建命令 - 根据平台选择脚本
+    let mut cmd = if cfg!(target_os = "windows") {
+        // Windows: 使用PowerShell执行run.ps1
+        let mut cmd = Command::new("powershell");
+        let run_script_path = working_dir.join("run.ps1");
+        
+        println!("Windows platform detected");
+        println!("Working directory: {}", working_dir.display());
+        println!("Run script path: {}", run_script_path.display());
+        println!("Run script exists: {}", run_script_path.exists());
+        
+        cmd.current_dir(&working_dir)
+           .arg("-ExecutionPolicy").arg("Bypass")
+           .arg("-File").arg(&run_script_path)
+           .arg("-Image").arg(&config.image);
+        
+        cmd
+    } else {
+        // Unix/Linux/macOS: 使用bash执行run.sh
+        let mut cmd = Command::new("bash");
+        let run_script_path = working_dir.join("run.sh");
+        
+        println!("Unix-like platform detected");
+        println!("Working directory: {}", working_dir.display());
+        println!("Run script path: {}", run_script_path.display());
+        println!("Run script exists: {}", run_script_path.exists());
+        
+        cmd.current_dir(&working_dir)
+           .arg(&run_script_path)
+           .arg(format!("--image={}", &config.image));
+        
+        cmd
+    };
     
     // 如果指定了 profile，添加 profile 参数
     if let Some(profile) = &config.profile {
         if !profile.is_empty() {
-            cmd.arg(format!("--profile={}", profile));
+            if cfg!(target_os = "windows") {
+                cmd.arg("-Profile").arg(profile);
+            } else {
+                cmd.arg(format!("--profile={}", profile));
+            }
         }
+    }
+    
+    // 添加输出目录参数
+    if cfg!(target_os = "windows") {
+        cmd.arg("-Output").arg(&config.output_dir);
+    } else {
+        cmd.arg(format!("--output={}", &config.output_dir));
     }
     
     // 添加高级选项参数
     if let Some(advanced) = &config.advanced_options {
         if advanced.with_pull {
-            cmd.arg("--with-pull");
-        }
-        
-        if advanced.rm_first {
-            cmd.arg("--rm-first");
-        }
-        
-        if advanced.use_mirror {
-            if !advanced.mirror_url.is_empty() {
-                cmd.arg(format!("--use-mirror"));
-                cmd.arg(format!("--mirror={}", advanced.mirror_url));
+            if cfg!(target_os = "windows") {
+                cmd.arg("-WithPull");
             } else {
-                cmd.arg("--use-mirror");
+                cmd.arg("--with-pull");
             }
         }
         
-        // 处理自定义参数
+        if advanced.rm_first {
+            if cfg!(target_os = "windows") {
+                cmd.arg("-RmFirst");
+            } else {
+                cmd.arg("--rm-first");
+            }
+        }
+        
+        if advanced.use_mirror {
+            if cfg!(target_os = "windows") {
+                cmd.arg("-UseMirror");
+                if !advanced.mirror_url.is_empty() {
+                    cmd.arg("-Mirror").arg(&advanced.mirror_url);
+                }
+            } else {
+                cmd.arg("--use-mirror");
+                if !advanced.mirror_url.is_empty() {
+                    cmd.arg(format!("--mirror={}", advanced.mirror_url));
+                }
+            }
+        }
+        
+        // 处理自定义参数（Windows下需要特殊处理）
         if !advanced.custom_args.is_empty() {
             let custom_args: Vec<&str> = advanced.custom_args.split_whitespace().collect();
             for arg in custom_args {
@@ -183,7 +229,11 @@ pub async fn start_build(
     // 从配置中获取自定义模块路径
     if let Some(custom_modules_path) = &config.custom_modules_path {
         if !custom_modules_path.is_empty() {
-            cmd.arg(format!("--custom-modules={}", custom_modules_path));
+            if cfg!(target_os = "windows") {
+                cmd.arg("-CustomModules").arg(custom_modules_path);
+            } else {
+                cmd.arg(format!("--custom-modules={}", custom_modules_path));
+            }
         }
     }
     

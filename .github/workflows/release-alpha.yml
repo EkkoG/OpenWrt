@@ -26,6 +26,9 @@ jobs:
           - platform: "macos-latest"
             args: "--target x86_64-apple-darwin"
             target: "x86_64-apple-darwin"
+          - platform: "windows-latest"
+            args: "--target x86_64-pc-windows-msvc"
+            target: "x86_64-pc-windows-msvc"
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -37,6 +40,12 @@ jobs:
         run: |
           # Install system dependencies for Tauri
           # No additional dependencies needed for macOS
+
+      - name: Install dependencies (Windows only)
+        if: matrix.platform == 'windows-latest'
+        run: |
+          # Install WebView2 offline installer for Windows
+          # Chocolatey and other dependencies are pre-installed on windows-latest
 
       - name: Rust setup
         uses: dtolnay/rust-toolchain@stable

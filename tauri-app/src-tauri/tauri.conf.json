@@ -44,13 +44,23 @@
     "resources": [
       "../../build.sh",
       "../../run.sh",
+      "../../run.ps1",
       "../../setup",
       "../../modules"
     ],
     "windows": {
       "certificateThumbprint": null,
       "digestAlgorithm": "sha256",
-      "timestampUrl": ""
+      "timestampUrl": "",
+      "wix": {
+        "dialogImagePath": null,
+        "bannerPath": null
+      },
+      "nsis": {
+        "installerIcon": "icons/icon.ico",
+        "installMode": "perMachine",
+        "languages": ["English", "SimpChinese"]
+      }
     },
     "macOS": {
       "entitlements": null,

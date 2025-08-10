@@ -42,7 +42,7 @@
 | 平台 | 安装包格式 | 说明 |
 |------|-----------|------|
 | macOS | `.dmg` | Apple Silicon 选 `aarch64`，Intel 选 `x86_64` |
-| Windows | （适配中） | 即将提供 `.msi` 安装包 |
+| Windows | `.msi` / `.exe` | 支持 Windows 10/11，需要 Docker Desktop |
 | Linux | （适配中） | 即将提供 `.AppImage` 安装包 |
 
 也可从源码构建：见文档后半部分“开发与构建”。
@@ -66,6 +66,7 @@
 
 ### 方式二：命令行（进阶）
 
+**Linux/macOS:**
 在仓库根目录使用 `run.sh`：
 
 ```bash
@@ -79,9 +80,24 @@
   --with-pull --rm-first --use-mirror
 ```
 
-常用参数：
+**Windows:**
+在仓库根目录使用 PowerShell 执行 `run.ps1`：
 
+```powershell
+# 查看帮助
+.\run.ps1 -Help
+
+# 最小示例（以 ImmortalWrt Rockchip 为例）
+.\run.ps1 `
+  -Image "immortalwrt/imagebuilder:rockchip-armv8-openwrt-23.05.1" `
+  -Profile "friendlyarm_nanopi-r2s" `
+  -WithPull -RmFirst -UseMirror
 ```
+
+**常用参数：**
+
+Linux/macOS (Bash):
+```bash
 --image=...         指定 ImageBuilder 镜像（必需）
 --profile=...       指定设备 Profile（可选）
 --output=...        指定输出目录（默认：./bin）
@@ -90,6 +106,18 @@
 --rm-first          构建前清理容器
 --use-mirror        使用镜像加速（默认启用）
 --mirror=...        指定镜像站域名，例如 mirrors.pku.edu.cn
+```
+
+Windows (PowerShell):
+```powershell
+-Image "..."        指定 ImageBuilder 镜像（必需）
+-Profile "..."      指定设备 Profile（可选）
+-Output "..."       指定输出目录（默认：./bin）
+-CustomModules "..." 指定自定义模块目录（默认：./custom_modules）
+-WithPull           构建前拉取镜像
+-RmFirst            构建前清理容器
+-UseMirror          使用镜像加速（默认启用）
+-Mirror "..."       指定镜像站域名，例如 mirrors.pku.edu.cn
 ```
 
 环境变量（`.env`）示例：
@@ -140,10 +168,17 @@ my-module/
 
 ## 常见问题（FAQ）
 
+**通用问题：**
 - 构建很慢/网速受限？建议启用 `--use-mirror` 或指定 `--mirror=mirrors.pku.edu.cn`
 - 没有安装 Docker？请先安装 Docker Desktop（macOS/Windows）或 Docker Engine（Linux）
 - 构建完成后产物在哪？默认在 `./bin`（可通过 `--output` 修改）
-- GUI 构建失败/无响应？请确认 Docker 已安装并正在运行；从源码运行还需 Node.js 18+ 与 pnpm 8+，详见下文“开发与构建”
+- GUI 构建失败/无响应？请确认 Docker 已安装并正在运行；从源码运行还需 Node.js 18+ 与 pnpm 8+，详见下文"开发与构建"
+
+**Windows 特定问题：**
+- PowerShell 脚本无法执行？运行 `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser` 允许脚本执行
+- 提示找不到 Docker？确保 Docker Desktop 已安装并正在运行，尝试重启终端
+- 构建权限问题？确保以管理员权限运行 PowerShell 或 Docker Desktop
+- 中文路径问题？建议将项目放在英文路径下，避免中文目录名
 
 ---
 
@@ -153,8 +188,9 @@ my-module/
 
 ```
 .
-├─ build.sh                 # 容器内实际构建脚本（由 run.sh 调用）
-├─ run.sh                   # 一键构建（Docker Compose 方式）
+├─ build.sh                 # 容器内实际构建脚本（跨平台通用）
+├─ run.sh                   # Linux/macOS 构建脚本（Docker Compose）
+├─ run.ps1                  # Windows PowerShell 构建脚本
 ├─ modules/                 # 内置模块库
 ├─ custom_modules/          # 建议放置自定义模块
 ├─ setup/                   # 构建前置设置脚本
@@ -162,7 +198,7 @@ my-module/
 └─ LICENSE                  # MIT 许可证
 ```
 
-GUI 从源码运行与打包：
+**GUI 从源码运行与打包：**
 
 ```bash
 cd tauri-app
@@ -175,7 +211,12 @@ pnpm tauri dev
 pnpm tauri build
 ```
 
-说明：打包会将仓库根的 `build.sh`、`run.sh`、`setup/`、`modules/` 作为资源一并包含。
+**Windows 特定构建要求：**
+- 安装 Rust toolchain（包含 MSVC 工具链）
+- 安装 Visual Studio Build Tools 或 Visual Studio
+- 确保 PowerShell 5.1+ 或 PowerShell Core 7+
+
+说明：打包会将仓库根的 `build.sh`、`run.sh`、`run.ps1`、`setup/`、`modules/` 作为资源一并包含。Windows 构建将自动生成 `.msi` 和 `.exe` 安装包。
 
 ---
 
