@@ -1,410 +1,220 @@
 <div align="center">
 
-# 🚀 OpenWrt Builder
+# OpenWrt Builder
 
-**轻松定制您专属的 OpenWrt 固件**
+轻松定制您专属的 OpenWrt 固件
 
-*支持图形界面和命令行，让固件构建变得简单高效*
+图形界面 + 命令行，让固件构建更简单高效
 
 [![Release](https://img.shields.io/github/v/release/EkkoG/OpenWrt?include_prereleases&style=flat-square&label=alpha)](https://github.com/EkkoG/OpenWrt/releases/tag/alpha)
-[![License](https://img.shields.io/github/license/EkkoG/OpenWrt?style=flat-square)](LICENSE)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE)
 [![Stars](https://img.shields.io/github/stars/EkkoG/OpenWrt?style=flat-square)](https://github.com/EkkoG/OpenWrt/stargazers)
 
 </div>
 
 ---
 
-## ✨ 为什么选择 OpenWrt Builder？
+## 特性一览
 
-告别繁琐的固件编译过程！OpenWrt Builder 让您能够：
+- **开箱即用**: 基于官方 ImageBuilder，几分钟生成固件
+- **模块化**: 内置常用模块，支持自定义模块目录
+- **一键构建**: 图形界面或脚本命令，实时日志与进度
+- **容器化**: Docker 隔离构建环境，无需配置编译工具链
+- **配置可复用**: 多套构建方案，环境变量集中管理
 
-🎯 **开箱即用** - 无需复杂配置，刷机后直接使用  
-⚡ **快速构建** - 基于官方 ImageBuilder，数分钟完成构建  
-🛠️ **模块化** - 丰富的内置模块 + 自定义扩展支持  
-💾 **配置持久化** - 保存多套配置方案，告别重复工作  
-🖥️ **双模式** - 图形界面 + 命令行，满足不同用户需求
-
-### 🔥 核心优势
-
-相比官方 Firmware Selector 和传统编译方式：
-- ✅ 支持自定义软件源和模块扩展
-- ✅ 预配置网络参数，刷机后免配置上网
-- ✅ 集成主流代理软件的最佳实践
-- 🐳 **Docker 容器化** - 无需配置复杂的编译环境，安全隔离构建过程
-- ✅ 可视化操作界面，降低使用门槛
-
-## 📱 界面预览
+## 界面预览
 
 <div align="center">
-
-### 🎨 现代化图形界面
-
-*简洁美观的设计，强大易用的功能*
-
-<img src="./assets/screentshot1.png" width="400" alt="主界面" />
-<img src="./assets/screentshot2.png" width="400" alt="构建页面" />
-
+<img src="./assets/screentshot1.png" width="420" alt="主界面" />
+<img src="./assets/screentshot2.png" width="420" alt="构建页面" />
 </div>
-
-**✨ 主要功能模块：**
-
-| 功能模块 | 描述 | 亮点 |
-|---------|------|------|
-| 🏠 **欢迎界面** | 项目介绍与快速上手 | 新手友好的引导体验 |
-| 📦 **镜像管理** | 支持 OpenWrt/ImmortalWrt 多版本 | 一键切换，自动适配 |
-| 🧩 **模块配置** | 可视化模块选择和配置 | 内置+自定义双重支持 |
-| ⚡ **构建中心** | 一键构建，实时日志监控 | 支持取消，进度可视化 |
-| 💾 **配置管理** | 多方案保存与快速切换 | 团队协作，经验复用 |
-
-## 🛠️ 核心特性
-
-<table>
-<tr>
-<td width="50%">
-
-### 🔧 **智能模块系统**
-- 🧩 丰富的内置模块库
-- 🎛️ 一键启用/禁用模块
-- 📁 支持自定义模块目录
-- 🔍 智能搜索和分类
-
-### 🌐 **网络配置优化**
-- 🌍 预配置代理软件 (OpenClash, daed, etc.)
-- 🔌 自动配置 LAN/PPPoE 参数
-- 📡 优化 IPv6 设置
-- 🚀 开机即用，无需手动配置
-
-</td>
-<td width="50%">
-
-### ⚡ **高效构建流程**
-- 🐳 **Docker 容器化构建** - 免配置编译环境，一键启动
-- 🛡️ **安全隔离** - 构建过程与主机系统完全隔离
-- ⏱️ 数分钟完成固件生成
-- 📊 实时构建进度和日志
-- 🔄 支持构建过程中断和恢复
-
-### 💾 **配置管理**
-- 📋 多套配置方案保存
-- 🔄 一键切换构建目标
-- 👥 团队配置共享
-- 💫 配置导入导出功能
-
-</td>
-</tr>
-</table>
 
 ---
 
-## 🚀 快速开始
+## 下载与安装（GUI）
 
-### 📥 方式一：图形界面 (推荐新手)
+- 从发布页下载预编译安装包: [Releases](https://github.com/EkkoG/OpenWrt/releases)
 
-<div align="center">
+| 平台 | 安装包格式 | 说明 |
+|------|-----------|------|
+| macOS | `.dmg` | Apple Silicon 选 `aarch64`，Intel 选 `x86_64` |
+| Windows | （适配中） | 即将提供 `.msi` 安装包 |
+| Linux | （适配中） | 即将提供 `.AppImage` 安装包 |
 
-#### 📦 下载安装包
+也可从源码构建：见文档后半部分“开发与构建”。
 
-从 [**Alpha 版本**](https://github.com/EkkoG/OpenWrt/releases/tag/alpha) 获取最新测试版本  
-*注意：这是预发布版本，可能包含未知问题*
+注意：使用 GUI 构建固件前，请先安装并启动 Docker。
 
-| 平台 | 下载链接 | 说明 |
-|------|---------|------|
-| 🍎 **macOS** | `.dmg` | M1/M2 选择 `aarch64`，Intel 选择 `x86_64` |
-| 🪟 **Windows** | `.msi` | *即将发布* |
-| 🐧 **Linux** | `.AppImage` | *即将发布* |
+---
 
-</div>
+## 快速使用指南
 
-**✨ 使用步骤：**
+### 方式一：图形界面（推荐）
 
-1. 📥 下载并安装对应平台的应用
-2. 🚀 启动应用，查看欢迎界面
-3. 🎯 选择 OpenWrt/ImmortalWrt 镜像版本
-4. 🧩 配置所需模块和参数
-5. ⚡ 点击构建，等待完成
+0) 安装并启动 Docker（必需）
+1) 安装并打开应用（或从源码运行 GUI）
+2) 选择镜像（OpenWrt/ImmortalWrt）与目标平台/版本
+3) 在“模块”页面勾选需要的功能模块
+4) 可选：设置输出目录、镜像加速等
+5) 在“构建中心”一键构建，等待完成
 
-### ⌨️ 方式二：命令行 (推荐进阶用户)
+提示：首次构建会下载较多资源，后续会显著加快。
 
-**📋 环境准备：**
+### 方式二：命令行（进阶）
 
-> 💡 **为什么使用 Docker？**  
-> Docker 容器化不仅提供安全隔离，更重要的是**完全免去配置编译环境的烦恼**！  
-> 无需安装 GCC、交叉编译工具链等复杂依赖，一个 Docker 命令搞定一切。
+在仓库根目录使用 `run.sh`：
 
 ```bash
-# 安装 Docker（一次性配置）
-curl -fsSL https://get.docker.com | bash
-
-# 克隆项目
-git clone https://github.com/EkkoG/OpenWrt.git
-cd OpenWrt
-```
-
-**🔧 命令行参数：**
-```bash
+# 查看帮助
 ./run.sh --help
 
-# 核心参数
---image          指定 ImageBuilder 镜像 (必需)
---profile        指定设备 Profile
---output         指定输出目录 (默认: ./bin)
---user-modules   指定自定义模块目录
-
-# 构建选项
---with-pull      构建前拉取最新镜像
---rm-first       构建前清理容器
---use-mirror     使用镜像加速
---mirror         指定镜像地址 (如: mirrors.jlu.edu.cn)
-```
-
-**💡 使用示例：**
-
-<details>
-<summary>📱 基础构建示例</summary>
-
-```bash
-# NanoPi R2S 基础固件
+# 最小示例（以 ImmortalWrt Rockchip 为例）
 ./run.sh \
   --image=immortalwrt/imagebuilder:rockchip-armv8-openwrt-23.05.1 \
   --profile=friendlyarm_nanopi-r2s \
-  --rm-first --with-pull --use-mirror
+  --with-pull --rm-first --use-mirror
 ```
-</details>
 
-<details>
-<summary>🔧 进阶自定义构建</summary>
+常用参数：
+
+```
+--image=...         指定 ImageBuilder 镜像（必需）
+--profile=...       指定设备 Profile（可选）
+--output=...        指定输出目录（默认：./bin）
+--user-modules=...  指定自定义模块目录（默认：./user_modules）
+--with-pull         构建前拉取镜像
+--rm-first          构建前清理容器
+--use-mirror        使用镜像加速（默认启用）
+--mirror=...        指定镜像站域名，例如 mirrors.pku.edu.cn
+```
+
+环境变量（`.env`）示例：
 
 ```bash
-# 使用自定义模块 + 指定输出目录
-./run.sh \
-  --image=immortalwrt/imagebuilder:rockchip-armv8-openwrt-23.05.1 \
-  --profile=friendlyarm_nanopi-r2s \
-  --user-modules=/path/to/custom/modules \
-  --output=./my_firmware \
-  --mirror=mirrors.pku.edu.cn
-```
-</details>
-
-**⚙️ 环境配置：**
-```bash
-# 创建配置文件
-cat > .env << EOF
-# 模块配置
+# 在默认模块集基础上增减
 MODULES="openclash lan pppoe -tools"
 
-# ImageBuilder 参数
+# 或完全覆盖默认模块集（更高优先级）
+ENABLE_MODULES="argon base lan"
+
+# 与模块共享环境变量
+USE_SYSTEM_ENV=1
+
+# 传递给 ImageBuilder 的常见参数
 CONFIG_TARGET_KERNEL_PARTSIZE=32
 CONFIG_TARGET_ROOTFS_PARTSIZE=256
-
-# 环境变量共享 (可选)
-USE_SYSTEM_ENV=1
-EOF
 ```
+
+输出目录默认为 `./bin`，可通过 `--output` 修改。
 
 ---
 
-## 🧩 模块系统详解
+## 模块系统（简述）
 
-> **模块化设计** - 所有功能通过模块实现，灵活组合，按需定制
-
-### 📦 模块类型
-
-<div align="center">
-<table>
-<tr>
-<td align="center" width="50%">
-
-### 🏠 **内置模块**
-预配置的常用功能模块  
-*开箱即用，最佳实践*
-
-🌐 **网络类**: `lan`, `pppoe`, `ipv6`  
-🛡️ **代理类**: `openclash`, `daed`, `passwall`  
-🔧 **系统类**: `base`, `tools`, `statistics`  
-📱 **主题类**: `argon`, `material`  
-
-[📋 查看所有内置模块](https://github.com/EkkoG/OpenWrt/tree/master/modules)
-
-</td>
-<td align="center" width="50%">
-
-### 🎨 **自定义模块**
-用户自建的个性化模块  
-*满足特殊需求，无限扩展*
-
-📁 通过 GUI 选择模块目录  
-⌨️ 通过 `--user-modules` 参数指定  
-🔄 支持与内置模块混合使用  
-👥 支持团队共享和版本管理  
-
-[📖 模块开发指南](#模块开发)
-
-</td>
-</tr>
-</table>
-</div>
-
-### 🔧 模块结构
-
-每个模块都是一个标准化的目录，包含以下文件：
+- **默认模块集**: `add-all-device-to-lan argon base opkg-mirror prefer-ipv6-settings statistics system tools`
+- 两种选择方式：
+  - **ENABLE_MODULES**: 完全覆盖启用模块列表
+  - **MODULES**: 在默认模块集基础上增减（前缀 `-` 表示排除）
+- 模块目录：同时支持 `modules/`（内置）与 `user_modules/`（自定义）
+- 目录结构：
 
 ```
 my-module/
-├── 📄 packages        # 依赖的软件包列表 (空格分隔)
-├── 📁 files/           # 系统文件 (遵循 OpenWrt files 规范)
-├── 🔧 post-files.sh   # 后处理脚本 (可选)
-├── ⚙️ .env             # 模块环境变量 (可选)
-└── 📖 README.md        # 模块说明文档 (可选)
+├─ packages           # 依赖包（空格分隔或可执行脚本）
+├─ files/             # 随固件打包进系统的文件
+├─ post-files.sh      # 可选：files 拷贝后处理
+├─ .env               # 可选：模块级变量
+└─ README.md          # 可选：模块说明
 ```
 
-### 💡 模块使用
-
-<details>
-<summary>🎯 <strong>通过环境变量选择模块</strong></summary>
-
-```bash
-# .env 文件配置
-MODULES="openclash lan pppoe argon -tools"
-
-# 解释:
-# ✅ 启用: openclash, lan, pppoe, argon
-# ❌ 禁用: tools (减号前缀表示排除)
-```
-</details>
-
-<details>
-<summary>🔧 <strong>环境变量共享机制</strong></summary>
-
-```bash
-# 根目录 .env
-USE_SYSTEM_ENV=1
-CLASH_CONFIG_URL="https://example.com/config.yaml"
-LAN_IP="192.168.50.1"
-
-# 模块中可以使用这些变量
-# files/etc/config/network 中: ${LAN_IP}
-```
-</details>
-
-<details>
-<summary>📚 <strong>模块开发示例</strong></summary>
-
-```bash
-# 创建自定义模块
-mkdir -p my-modules/my-vpn
-
-# 添加软件包依赖
-echo "openvpn-openssl luci-app-openvpn" > my-modules/my-vpn/packages
-
-# 添加配置文件
-mkdir -p my-modules/my-vpn/files/etc/openvpn
-cp my-config.ovpn my-modules/my-vpn/files/etc/openvpn/
-
-# 使用模块
-./run.sh --user-modules=./my-modules --image=...
-```
-</details>
+高级特性：
+- 环境变量共享：设置 `USE_SYSTEM_ENV=1` 后，模块可引用根 `.env` 中的变量
+- 变量替换：`files/etc/uci-defaults` 下的文件支持 `$VARNAME` 替换
+- 冲突保护：若不同模块生成同名目标文件，构建会失败以避免覆盖
 
 ---
 
-## 👨‍💻 开发贡献
+## 常见问题（FAQ）
+
+- 构建很慢/网速受限？建议启用 `--use-mirror` 或指定 `--mirror=mirrors.pku.edu.cn`
+- 没有安装 Docker？请先安装 Docker Desktop（macOS/Windows）或 Docker Engine（Linux）
+- 构建完成后产物在哪？默认在 `./bin`（可通过 `--output` 修改）
+- GUI 构建失败/无响应？请确认 Docker 已安装并正在运行；从源码运行还需 Node.js 18+ 与 pnpm 8+，详见下文“开发与构建”
+
+---
+
+## 界面预览
 
 <div align="center">
-
-### 🚀 **技术栈**
-
-| 组件 | 技术 | 描述 |
-|------|------|------|
-| 🖥️ **GUI 前端** | Vue 3 + Vuetify | 现代化响应式界面 |
-| ⚡ **GUI 后端** | Tauri + Rust | 轻量级跨平台框架 |
-| 🐳 **构建引擎** | Docker + Bash | 容器化构建环境 |
-| 📦 **模块系统** | Shell Scripts | 模块化配置管理 |
-
+<img src="./assets/screentshot1.png" width="420" alt="主界面" />
+<img src="./assets/screentshot2.png" width="420" alt="构建页面" />
 </div>
 
-### 🛠️ 本地开发
+---
 
-<details>
-<summary>🖥️ <strong>GUI 开发环境搭建</strong></summary>
+## 开发与构建
+
+目录结构：
+
+```
+.
+├─ build.sh                 # 容器内实际构建脚本（由 run.sh 调用）
+├─ run.sh                   # 一键构建（Docker Compose 方式）
+├─ modules/                 # 内置模块库
+├─ user_modules/            # 建议放置自定义模块
+├─ setup/                   # 构建前置设置脚本
+├─ tauri-app/               # GUI 应用（Tauri 2 + Vue 3）
+└─ LICENSE                  # MIT 许可证
+```
+
+GUI 从源码运行与打包：
 
 ```bash
-# 1. 安装依赖
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh  # Rust
-corepack enable && corepack prepare pnpm@latest --activate        # pnpm
-
-# 2. 启动开发服务器
 cd tauri-app
 pnpm install
-pnpm run tauri dev
 
-# 3. 构建生产版本
-pnpm run tauri build
+# 开发（Tauri 调试，固定端口 1420）
+pnpm tauri dev
+
+# 生产打包（生成桌面安装包）
+pnpm tauri build
 ```
-</details>
 
-<details>
-<summary>🧩 <strong>模块开发规范</strong></summary>
-
-```bash
-# 模块目录结构标准
-your-module/
-├── packages           # 必需: 软件包依赖
-├── files/             # 必需: 配置文件目录
-├── post-files.sh      # 可选: 后处理脚本
-├── .env              # 可选: 环境变量
-├── README.md         # 推荐: 模块说明
-└── .env.example      # 推荐: 环境变量示例
-```
-</details>
-
-### 🤝 贡献指南
-
-我们欢迎任何形式的贡献！
-
-- 🐛 **Bug 报告**: [提交 Issue](https://github.com/EkkoG/OpenWrt/issues)
-- 💡 **功能建议**: [功能请求](https://github.com/EkkoG/OpenWrt/issues/new)
-- 🔧 **代码贡献**: [提交 Pull Request](https://github.com/EkkoG/OpenWrt/pulls)
-- 📖 **文档完善**: 完善 README 和 Wiki
-- 🧩 **模块分享**: 分享你的自定义模块
+说明：打包会将仓库根的 `build.sh`、`run.sh`、`setup/`、`modules/` 作为资源一并包含。
 
 ---
 
-## 📚 更多资源
+## 贡献指南
 
-- 📖 [**详细文档**](https://github.com/EkkoG/OpenWrt/wiki) - 完整使用指南
-- 🎯 [**默认模块列表**](https://github.com/EkkoG/OpenWrt/blob/master/build.sh) - 查看默认启用的模块
-- 🧩 [**内置模块库**](https://github.com/EkkoG/OpenWrt/tree/master/modules) - 浏览所有可用模块
-- 🐛 [**问题反馈**](https://github.com/EkkoG/OpenWrt/issues) - 报告 Bug 或提出建议
-- 💬 [**讨论区**](https://github.com/EkkoG/OpenWrt/discussions) - 社区交流
+- **Bug 报告**: [提交 Issue](https://github.com/EkkoG/OpenWrt/issues)
+- **功能建议**: [功能请求](https://github.com/EkkoG/OpenWrt/issues/new)
+- **代码贡献**: [提交 Pull Request](https://github.com/EkkoG/OpenWrt/pulls)
+- **文档完善**: 完善 README 和 Wiki
+- **模块分享**: 分享你的自定义模块
 
----
-
-## 🙏 致谢
-
-感谢以下开源项目为本项目提供支持：
+## 致谢
 
 <div align="center">
 
-### 🌟 **核心依赖**
+### 核心依赖
 [**OpenWrt**](https://openwrt.org/) • [**ImmortalWrt**](http://immortalwrt.org/) • [**Docker**](https://www.docker.com/)
 
-### 🛡️ **网络工具**
+### 网络工具
 [**OpenClash**](https://github.com/vernesong/OpenClash) • [**dae**](https://github.com/daeuniverse/dae) • [**Passwall**](https://github.com/xiaorouji/openwrt-passwall)
 
-### ⚡ **技术框架**
+### 技术框架
 [**Tauri**](https://tauri.app/) • [**Vue.js**](https://vuejs.org/) • [**Vuetify**](https://vuetifyjs.com/)
 
 </div>
 
+## 许可证
+
+本项目基于 MIT 协议发布，详见 `LICENSE`。
+
 ---
 
 <div align="center">
 
-### ⭐ 如果这个项目对你有帮助，请给个 Star！
-
 [![Star History Chart](https://api.star-history.com/svg?repos=EkkoG/OpenWrt&type=Date)](https://star-history.com/#EkkoG/OpenWrt&Date)
-
-**OpenWrt Builder** - 让固件定制变得简单  
-*Built with ❤️ by the community*
 
 </div>
