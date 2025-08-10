@@ -13,27 +13,23 @@ on:
   workflow_dispatch:
 
 jobs:
-  update-alpha-release:
+  update-alpha-tag:
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # 获取完整历史以便操作标签
 
-      - name: Delete existing alpha release
-        run: |
-          # 删除现有的alpha release和关联的tag
-          echo "Deleting existing alpha release and tag..."
-          gh release delete alpha --yes --cleanup-tag || echo "No existing alpha release found"
+      - name: Update alpha tag
+        uses: richardsimko/update-tag@v1
+        with:
+          tag_name: alpha
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build-and-release:
-    needs: update-alpha-release
+    needs: update-alpha-tag
     permissions:
       contents: write
     strategy:
