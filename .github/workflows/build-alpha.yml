@@ -27,7 +27,7 @@ jobs:
         run: |
           # 删除现有的alpha release和关联的tag
           echo "Deleting existing alpha release and tag..."
-          gh release delete alpha --yes --delete-tags || echo "No existing alpha release found"
+          gh release delete alpha --yes --cleanup-tag || echo "No existing alpha release found"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
