@@ -139,7 +139,8 @@ if [ ! -z $WITH_PULL ]; then
 fi
 
 if [ ! -z $RM_FIRST ]; then
-    compose rm -f
+    # compose rm -f
+    docker stop imagebuilder && docker rm imagebuilder
 fi
 
 mkdir -p "$OUTPUT_DIR"
