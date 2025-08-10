@@ -43,7 +43,7 @@
 |------|-----------|------|
 | macOS | `.dmg` | Apple Silicon 选 `aarch64`，Intel 选 `x86_64` |
 | Windows | `.msi` / `.exe` | 支持 Windows 10/11，需要 Docker Desktop |
-| Linux | （适配中） | 即将提供 `.AppImage` 安装包 |
+| Linux | `.deb` / `.AppImage` | 支持 Ubuntu 18.04+ 及其他主流发行版 |
 
 也可从源码构建：见文档后半部分“开发与构建”。
 
@@ -55,12 +55,22 @@
 
 ### 方式一：图形界面（推荐）
 
+**安装步骤：**
+
 0) 安装并启动 Docker（必需）
-1) 安装并打开应用（或从源码运行 GUI）
+   - **Linux**: `sudo apt install docker.io` 或 `sudo pacman -S docker`
+   - **macOS/Windows**: 下载 Docker Desktop
+
+1) 下载并安装 OpenWrt Builder
+   - **Linux (.deb)**: `sudo dpkg -i openwrt-builder_*.deb`
+   - **Linux (.AppImage)**: `chmod +x OpenWrt-Builder-*.AppImage`
+   - **macOS**: 打开 .dmg 文件并拖拽到应用程序
+   - **Windows**: 运行 .msi 安装包
+
 2) 选择镜像（OpenWrt/ImmortalWrt）与目标平台/版本
-3) 在“模块”页面勾选需要的功能模块
+3) 在"模块"页面勾选需要的功能模块
 4) 可选：设置输出目录、镜像加速等
-5) 在“构建中心”一键构建，等待完成
+5) 在"构建中心"一键构建，等待完成
 
 提示：首次构建会下载较多资源，后续会显著加快。
 
@@ -180,6 +190,12 @@ my-module/
 - 构建权限问题？确保以管理员权限运行 PowerShell 或 Docker Desktop
 - 中文路径问题？建议将项目放在英文路径下，避免中文目录名
 
+**Linux 特定问题：**
+- AppImage 无法运行？运行 `sudo apt install fuse` 安装 FUSE 支持
+- 没有 Docker 权限？将用户加入 docker 组：`sudo usermod -aG docker $USER`，然后重新登录
+- .deb 安装失败？运行 `sudo apt-get install -f` 修复依赖关系
+- GUI 应用无法启动？确保已安装桌面环境和必要的系统库
+
 ---
 
 ## 开发与构建
@@ -211,12 +227,22 @@ pnpm tauri dev
 pnpm tauri build
 ```
 
-**Windows 特定构建要求：**
+**平台特定构建要求：**
+
+*Windows:*
 - 安装 Rust toolchain（包含 MSVC 工具链）
 - 安装 Visual Studio Build Tools 或 Visual Studio
 - 确保 PowerShell 5.1+ 或 PowerShell Core 7+
 
-说明：打包会将仓库根的 `build.sh`、`run.sh`、`run.ps1`、`setup/`、`modules/` 作为资源一并包含。Windows 构建将自动生成 `.msi` 和 `.exe` 安装包。
+*Linux:*
+- 安装系统开发工具：`sudo apt install build-essential`
+- 安装 GTK 开发库：`sudo apt install libgtk-3-dev libwebkit2gtk-4.0-dev`
+- 安装其他依赖：`sudo apt install libappindicator3-dev librsvg2-dev patchelf`
+
+*macOS:*
+- 安装 Xcode Command Line Tools：`xcode-select --install`
+
+说明：打包会将仓库根的 `build.sh`、`run.sh`、`run.ps1`、`setup/`、`modules/` 作为资源一并包含。各平台将自动生成对应的安装包格式(.dmg/.msi/.deb/.AppImage)。
 
 ---
 

@@ -33,12 +33,12 @@ jobs:
             arch: "x64"
             os: "windows"
           
-          # Linux 构建 (未来扩展)
-          # - platform: "ubuntu-20.04"
-          #   args: "--target x86_64-unknown-linux-gnu"
-          #   target: "x86_64-unknown-linux-gnu"
-          #   arch: "x64"
-          #   os: "linux"
+          # Linux 构建
+          - platform: "ubuntu-20.04"
+            args: "--target x86_64-unknown-linux-gnu"
+            target: "x86_64-unknown-linux-gnu"
+            arch: "x64"
+            os: "linux"
 
     runs-on: ${{ matrix.platform }}
     
@@ -67,6 +67,8 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf
+          # 安装额外的系统工具
+          sudo apt-get install -y build-essential curl wget file
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
@@ -122,15 +124,18 @@ jobs:
             | macOS | Apple Silicon (M1/M2) | [.dmg](下载链接将自动生成) |
             | macOS | Intel | [.dmg](下载链接将自动生成) |
             | Windows | x64 | [.msi](下载链接将自动生成) |
+            | Linux | x64 | [.deb / .AppImage](下载链接将自动生成) |
             
             ### 🚀 新特性
             - ✅ 完整的 Windows 支持
+            - ✅ Linux 桌面应用支持 (.deb/.AppImage)
             - ✅ PowerShell 脚本构建支持
             - ✅ 跨平台统一体验
             
             ### 📋 系统要求
             - **macOS**: macOS 10.15+ (Catalina)
             - **Windows**: Windows 10/11 + Docker Desktop
+            - **Linux**: Ubuntu 18.04+ / 其他主流发行版 + Docker
             - **所有平台**: 需要安装并运行 Docker
             
             ### 🔧 使用方法
@@ -147,6 +152,10 @@ jobs:
             # Windows PowerShell  
             .\run.ps1 -Image "immortalwrt/imagebuilder:x86-64-openwrt-23.05.1" -WithPull
             ```
+            
+            ### 📦 Linux 安装说明
+            - **.deb 包**: `sudo dpkg -i openwrt-builder_*.deb && sudo apt-get install -f`
+            - **.AppImage**: `chmod +x OpenWrt-Builder-*.AppImage && ./OpenWrt-Builder-*.AppImage`
           releaseDraft: false  # 自动发布
           prerelease: false    # 正式发布
           includeUpdaterJson: true  # 包含自动更新信息

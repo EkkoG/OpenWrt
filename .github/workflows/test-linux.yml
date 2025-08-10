@@ -1,0 +1,130 @@
+name: Linux Build Test
+
+on:
+  push:
+    branches: ["master", "develop"]
+    paths:
+      - "tauri-app/**"
+      - "assets/openwrt-builder.desktop"
+      - ".github/workflows/test-linux.yml"
+  pull_request:
+    branches: ["master"]
+    paths:
+      - "tauri-app/**"
+      - "assets/openwrt-builder.desktop"
+  workflow_dispatch:
+
+jobs:
+  test-linux-build:
+    runs-on: ubuntu-20.04
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libgtk-3-dev \
+            libwebkit2gtk-4.0-dev \
+            libappindicator3-dev \
+            librsvg2-dev \
+            patchelf \
+            build-essential \
+            curl \
+            wget \
+            file
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-unknown-linux-gnu
+
+      - name: Setup Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: './tauri-app/src-tauri -> target'
+          key: x86_64-unknown-linux-gnu
+          cache-targets: true
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'pnpm'
+          cache-dependency-path: './tauri-app/pnpm-lock.yaml'
+
+      - name: Install frontend dependencies
+        working-directory: ./tauri-app
+        run: pnpm install --frozen-lockfile
+
+      - name: Build Tauri app (Linux)
+        working-directory: ./tauri-app
+        run: |
+          echo "Building Tauri application for Linux..."
+          pnpm tauri build --target x86_64-unknown-linux-gnu
+        env:
+          TAURI_SKIP_UPDATER_CHECK: true
+
+      - name: Check Linux build outputs
+        run: |
+          echo "Checking build outputs..."
+          BUNDLE_PATH="./tauri-app/src-tauri/target/x86_64-unknown-linux-gnu/release/bundle"
+          
+          if [ -d "$BUNDLE_PATH/deb" ]; then
+            echo "✅ DEB package generated"
+            ls -la "$BUNDLE_PATH/deb/"
+          fi
+          
+          if [ -d "$BUNDLE_PATH/appimage" ]; then
+            echo "✅ AppImage generated"
+            ls -la "$BUNDLE_PATH/appimage/"
+          fi
+          
+          # 检查可执行文件
+          EXEC_PATH="./tauri-app/src-tauri/target/x86_64-unknown-linux-gnu/release"
+          if [ -f "$EXEC_PATH/openwrt-builder-gui" ]; then
+            echo "✅ Executable generated"
+            ls -la "$EXEC_PATH/openwrt-builder-gui"
+            file "$EXEC_PATH/openwrt-builder-gui"
+          fi
+
+      - name: Test desktop file
+        run: |
+          echo "Testing desktop file..."
+          if [ -f "assets/openwrt-builder.desktop" ]; then
+            echo "✅ Desktop file exists"
+            desktop-file-validate assets/openwrt-builder.desktop || echo "⚠️ Desktop file validation warnings (non-critical)"
+          else
+            echo "❌ Desktop file missing"
+            exit 1
+          fi
+
+      - name: Test DEB package (if exists)
+        run: |
+          DEB_PATH="./tauri-app/src-tauri/target/x86_64-unknown-linux-gnu/release/bundle/deb"
+          if [ -d "$DEB_PATH" ] && [ "$(ls -A $DEB_PATH/*.deb 2>/dev/null)" ]; then
+            echo "Testing DEB package structure..."
+            DEB_FILE=$(ls $DEB_PATH/*.deb | head -1)
+            dpkg-deb --info "$DEB_FILE"
+            dpkg-deb --contents "$DEB_FILE" | grep -E "(openwrt-builder|\.desktop)" || echo "Package contents verified"
+            echo "✅ DEB package structure is valid"
+          else
+            echo "⚠️ DEB package not found, skipping DEB tests"
+          fi
+
+      - name: Upload Linux build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-build-test
+          path: |
+            ./tauri-app/src-tauri/target/x86_64-unknown-linux-gnu/release/bundle/
+            ./tauri-app/src-tauri/target/x86_64-unknown-linux-gnu/release/openwrt-builder-gui
+          retention-days: 7

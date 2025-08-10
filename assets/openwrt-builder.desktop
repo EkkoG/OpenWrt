@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=OpenWrt Builder
+Name[zh_CN]=OpenWrt 固件构建器
+Comment=Build custom OpenWrt firmware with ease
+Comment[zh_CN]=轻松构建自定义 OpenWrt 固件
+Exec=openwrt-builder-gui
+Icon=openwrt-builder
+StartupNotify=true
+Categories=Development;System;Utility;
+Keywords=openwrt;firmware;builder;router;embedded;
+MimeType=application/x-openwrt-config;

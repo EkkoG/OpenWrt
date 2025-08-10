@@ -71,7 +71,18 @@
     },
     "linux": {
       "deb": {
-        "depends": []
+        "depends": [
+          "docker.io"
+        ],
+        "section": "utils",
+        "priority": "optional",
+        "files": {
+          "/usr/share/applications/openwrt-builder.desktop": "../../assets/openwrt-builder.desktop",
+          "/usr/share/pixmaps/openwrt-builder.png": "icons/128x128.png"
+        }
+      },
+      "appimage": {
+        "bundleMediaFramework": false
       }
     }
   },
