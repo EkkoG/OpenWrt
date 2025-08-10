@@ -25,8 +25,12 @@
 ## 界面预览
 
 <div align="center">
-<img src="./assets/screentshot1.png" width="420" alt="主界面" />
-<img src="./assets/screentshot2.png" width="420" alt="构建页面" />
+<table>
+<tr>
+<td><img src="./assets/screentshot1.png" width="420" alt="主界面" /></td>
+<td><img src="./assets/screentshot2.png" width="420" alt="构建页面" /></td>
+</tr>
+</table>
 </div>
 
 ---
@@ -140,15 +144,6 @@ my-module/
 - 没有安装 Docker？请先安装 Docker Desktop（macOS/Windows）或 Docker Engine（Linux）
 - 构建完成后产物在哪？默认在 `./bin`（可通过 `--output` 修改）
 - GUI 构建失败/无响应？请确认 Docker 已安装并正在运行；从源码运行还需 Node.js 18+ 与 pnpm 8+，详见下文“开发与构建”
-
----
-
-## 界面预览
-
-<div align="center">
-<img src="./assets/screentshot1.png" width="420" alt="主界面" />
-<img src="./assets/screentshot2.png" width="420" alt="构建页面" />
-</div>
 
 ---
 
