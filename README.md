@@ -85,7 +85,7 @@
 --image=...         指定 ImageBuilder 镜像（必需）
 --profile=...       指定设备 Profile（可选）
 --output=...        指定输出目录（默认：./bin）
---user-modules=...  指定自定义模块目录（默认：./user_modules）
+--custom-modules=... 指定自定义模块目录（默认：./custom_modules）
 --with-pull         构建前拉取镜像
 --rm-first          构建前清理容器
 --use-mirror        使用镜像加速（默认启用）
@@ -119,7 +119,7 @@ CONFIG_TARGET_ROOTFS_PARTSIZE=256
 - 两种选择方式：
   - **ENABLE_MODULES**: 完全覆盖启用模块列表
   - **MODULES**: 在默认模块集基础上增减（前缀 `-` 表示排除）
-- 模块目录：同时支持 `modules/`（内置）与 `user_modules/`（自定义）
+- 模块目录：同时支持 `modules/`（内置）与 `custom_modules/`（自定义）
 - 目录结构：
 
 ```
@@ -156,7 +156,7 @@ my-module/
 ├─ build.sh                 # 容器内实际构建脚本（由 run.sh 调用）
 ├─ run.sh                   # 一键构建（Docker Compose 方式）
 ├─ modules/                 # 内置模块库
-├─ user_modules/            # 建议放置自定义模块
+├─ custom_modules/          # 建议放置自定义模块
 ├─ setup/                   # 构建前置设置脚本
 ├─ tauri-app/               # GUI 应用（Tauri 2 + Vue 3）
 └─ LICENSE                  # MIT 许可证

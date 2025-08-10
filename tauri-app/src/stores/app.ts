@@ -110,7 +110,7 @@ export const useAppStore = defineStore('app', () => {
         }>
         description: string
         source: string
-      }>>('get_modules', { userModulesPath: customModulesPath.value })
+      }>>('get_modules', { customModulesPath: customModulesPath.value })
       
       // DEFAULT_MODULE_SET from build.sh
       const defaultModuleSet = new Set([

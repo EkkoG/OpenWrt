@@ -33,7 +33,7 @@ pub struct EnvVariable {
 }
 
 #[command]
-pub async fn get_modules(app: AppHandle, user_modules_path: Option<String>) -> Result<Vec<ModuleInfo>, String> {
+pub async fn get_modules(app: AppHandle, custom_modules_path: Option<String>) -> Result<Vec<ModuleInfo>, String> {
     let mode = get_current_mode();
     let base_path = mode.get_resource_base_path(&app)?;
     
@@ -47,11 +47,11 @@ pub async fn get_modules(app: AppHandle, user_modules_path: Option<String>) -> R
     }
     
     // 2. 扫描用户模块
-    if let Some(custom_path) = user_modules_path {
+    if let Some(custom_path) = custom_modules_path {
         let user_path = std::path::PathBuf::from(custom_path);
         if user_path.exists() {
-            let user_modules = scan_modules_in_directory(&user_path, ModuleSource::Custom)?;
-            all_modules.extend(user_modules);
+            let custom_modules = scan_modules_in_directory(&user_path, ModuleSource::Custom)?;
+            all_modules.extend(custom_modules);
         }
     }
     
@@ -291,7 +291,7 @@ pub async fn save_module_env(app: AppHandle, module_name: String, env_vars: Vec<
 }
 
 #[command]
-pub async fn select_user_modules_directory(app: AppHandle) -> Result<Option<String>, String> {
+pub async fn select_custom_modules_directory(app: AppHandle) -> Result<Option<String>, String> {
     use tauri_plugin_dialog::DialogExt;
     use std::sync::{Arc, Mutex};
     use tokio::sync::oneshot;
@@ -301,7 +301,7 @@ pub async fn select_user_modules_directory(app: AppHandle) -> Result<Option<Stri
     
     app.dialog()
         .file()
-        .set_title("选择用户模块目录")
+        .set_title("选择自定义模块目录")
         .pick_folder(move |folder_path| {
             if let Ok(mut sender) = tx.lock() {
                 if let Some(tx) = sender.take() {
@@ -318,7 +318,7 @@ pub async fn select_user_modules_directory(app: AppHandle) -> Result<Option<Stri
 }
 
 #[command]
-pub async fn validate_user_modules_path(path: String) -> Result<bool, String> {
+pub async fn validate_custom_modules_path(path: String) -> Result<bool, String> {
     let path = std::path::Path::new(&path);
     
     // 检查路径是否存在且是目录
@@ -331,7 +331,7 @@ pub async fn validate_user_modules_path(path: String) -> Result<bool, String> {
 }
 
 #[command]
-pub async fn update_user_modules_path(app: AppHandle, path: Option<String>) -> Result<(), String> {
+pub async fn update_custom_modules_path(app: AppHandle, path: Option<String>) -> Result<(), String> {
     let config_manager = crate::config_manager::ConfigManager::new(&app)
         .map_err(|e| e.to_string())?;
     
@@ -365,7 +365,7 @@ pub async fn update_user_modules_path(app: AppHandle, path: Option<String>) -> R
 }
 
 #[command]
-pub async fn get_current_user_modules_path(app: AppHandle) -> Result<Option<String>, String> {
+pub async fn get_current_custom_modules_path(app: AppHandle) -> Result<Option<String>, String> {
     let config_manager = crate::config_manager::ConfigManager::new(&app)
         .map_err(|e| e.to_string())?;
     

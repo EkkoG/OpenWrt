@@ -51,7 +51,7 @@ const buildCommand = computed(() => {
   
   // 添加自定义模块路径
   if (appStore.customModulesPath) {
-    command += ` --user-modules=${appStore.customModulesPath}`
+    command += ` --custom-modules=${appStore.customModulesPath}`
   }
   
   // 添加高级选项到显示命令
@@ -188,7 +188,7 @@ const startBuild = async () => {
         output_dir: appStore.outputDirectory,
         env_vars: envVars,
         global_env_vars: appStore.globalEnvVars,
-        user_modules_path: appStore.customModulesPath,
+        custom_modules_path: appStore.customModulesPath,
         rootfs_part_size: appStore.rootfsPartSize,
         advanced_options: {
           with_pull: appStore.advancedOptions.withPull,

@@ -3,7 +3,7 @@ bin/
 .DS_Store
 transfer.sh
 
-user_modules
+custom_modules
 docker-compose.yml
 _run.sh
 .claude/

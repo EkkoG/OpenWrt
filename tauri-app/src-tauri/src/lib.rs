@@ -6,7 +6,7 @@ mod config_manager;
 mod settings;
 
 use docker::{check_docker_environment, check_docker_running};
-use modules::{get_modules, read_module_packages, get_module_readme, save_module_env, select_user_modules_directory, validate_user_modules_path, update_user_modules_path, get_current_user_modules_path};
+use modules::{get_modules, read_module_packages, get_module_readme, save_module_env, select_custom_modules_directory, validate_custom_modules_path, update_custom_modules_path, get_current_custom_modules_path};
 use build::{start_build, cancel_build, is_building};
 use app_mode::{get_app_mode_info, reinitialize_app_mode, initialize_app_mode, verify_setup_directory};
 use config_manager::{ConfigManager, Configuration, BuildConfig};
@@ -111,10 +111,10 @@ pub fn run() {
             read_module_packages,
             get_module_readme,
             save_module_env,
-            select_user_modules_directory,
-            validate_user_modules_path,
-            update_user_modules_path,
-            get_current_user_modules_path,
+            select_custom_modules_directory,
+            validate_custom_modules_path,
+            update_custom_modules_path,
+            get_current_custom_modules_path,
             start_build,
             cancel_build,
             is_building,

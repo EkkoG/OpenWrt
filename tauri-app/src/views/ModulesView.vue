@@ -65,13 +65,13 @@ const deselectAll = () => {
   })
 }
 
-const selectUserModulesDirectory = async () => {
+const selectCustomModulesDirectory = async () => {
   try {
     const { invoke } = await import('@tauri-apps/api/core')
-    const selectedPath = await invoke('select_user_modules_directory') as string
+    const selectedPath = await invoke('select_custom_modules_directory') as string
     if (selectedPath && typeof selectedPath === 'string') {
       // 验证路径
-      const isValid = await invoke('validate_user_modules_path', { path: selectedPath })
+      const isValid = await invoke('validate_custom_modules_path', { path: selectedPath })
       
       if (isValid) {
         // 直接更新 appStore 中的值
@@ -124,7 +124,7 @@ onMounted(() => {
         color="info"
         variant="outlined"
         size="small"
-        @click="selectUserModulesDirectory"
+        @click="selectCustomModulesDirectory"
         :disabled="isLoading"
         prepend-icon="mdi-folder-open"
         class="ml-4"

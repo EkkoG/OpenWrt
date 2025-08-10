@@ -145,10 +145,10 @@ impl AppMode {
             self.copy_dir_recursive(&modules_src, &modules_dst)?;
         }
 
-        // 创建user_modules目录
-        let user_modules_dir = extract_dir.join("user_modules");
-        fs::create_dir_all(&user_modules_dir)
-            .map_err(|e| format!("Failed to create user_modules directory: {}", e))?;
+        // 创建custom_modules目录
+        let custom_modules_dir = extract_dir.join("custom_modules");
+        fs::create_dir_all(&custom_modules_dir)
+            .map_err(|e| format!("Failed to create custom_modules directory: {}", e))?;
 
         // 更新状态
         let mut resource_lock = RESOURCE_PATH.lock().unwrap();

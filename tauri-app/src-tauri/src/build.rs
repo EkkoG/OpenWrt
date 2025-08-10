@@ -24,7 +24,7 @@ pub struct BuildConfig {
     pub env_vars: Vec<EnvVar>,
     pub global_env_vars: String,  // 全局环境变量字符串
     pub advanced_options: Option<AdvancedOptions>,  // 高级选项
-    pub user_modules_path: Option<String>,  // 自定义模块路径
+    pub custom_modules_path: Option<String>,  // 自定义模块路径
     pub rootfs_part_size: Option<u32>,  // RootFS 分区大小 (MB)，None 表示由 ImageBuilder 决定
 }
 
@@ -180,10 +180,10 @@ pub async fn start_build(
         }
     }
     
-    // 从配置中获取用户模块路径
-    if let Some(user_modules_path) = &config.user_modules_path {
-        if !user_modules_path.is_empty() {
-            cmd.arg(format!("--user-modules={}", user_modules_path));
+    // 从配置中获取自定义模块路径
+    if let Some(custom_modules_path) = &config.custom_modules_path {
+        if !custom_modules_path.is_empty() {
+            cmd.arg(format!("--custom-modules={}", custom_modules_path));
         }
     }
     

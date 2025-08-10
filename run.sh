@@ -60,7 +60,7 @@ while [ "$1" != "" ]; do
         --output)
             OUTPUT_DIR=$VALUE
             ;;
-        --user-modules)
+        --custom-modules)
             CUSTOM_MODULES_PATH=$VALUE
             ;;
         -h | --help)
@@ -94,7 +94,7 @@ if [ -z "$OUTPUT_DIR" ]; then
 fi
 
 if [ -z "$CUSTOM_MODULES_PATH" ]; then
-    CUSTOM_MODULES_PATH="./user_modules"
+    CUSTOM_MODULES_PATH="./custom_modules"
 fi
 
 echo "IMAGEBUILDER_IMAGE: $IMAGEBUILDER_IMAGE PROFILE: $PROFILE"
