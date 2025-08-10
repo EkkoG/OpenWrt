@@ -236,7 +236,7 @@ pnpm tauri build
 
 *Linux:*
 - 安装系统开发工具：`sudo apt install build-essential`
-- 安装 GTK 开发库：`sudo apt install libgtk-3-dev libwebkit2gtk-4.0-dev`
+- 安装 GTK 开发库：`sudo apt install libgtk-3-dev libwebkit2gtk-4.1-dev`
 - 安装其他依赖：`sudo apt install libappindicator3-dev librsvg2-dev patchelf`
 
 *macOS:*
