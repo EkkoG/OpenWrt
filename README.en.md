@@ -2,6 +2,8 @@
 
 # OpenWrt Builder
 
+English | [简体中文](README.md)
+
 Build your customized OpenWrt firmware with ease
 
 GUI + CLI for a simpler, faster firmware build experience

@@ -2,6 +2,8 @@
 
 # OpenWrt Builder
 
+[English](README.en.md) | 简体中文
+
 轻松定制您专属的 OpenWrt 固件
 
 图形界面 + 命令行，让固件构建更简单高效
