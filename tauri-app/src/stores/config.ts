@@ -70,7 +70,7 @@ export const useConfigStore = defineStore('config', () => {
         activeConfigId.value = active.id
       }
     } catch (e) {
-      error.value = `加载配置失败: ${e}`
+      error.value = `Failed to load configurations: ${e}`
       console.error('Failed to load configurations:', e)
     } finally {
       isLoading.value = false
@@ -95,7 +95,7 @@ export const useConfigStore = defineStore('config', () => {
       
       return newConfig
     } catch (e) {
-      error.value = `保存配置失败: ${e}`
+      error.value = `Failed to save configuration: ${e}`
       console.error('Failed to save configuration:', e)
       throw e
     } finally {
@@ -123,7 +123,7 @@ export const useConfigStore = defineStore('config', () => {
       
       return updated
     } catch (e) {
-      error.value = `更新配置失败: ${e}`
+      error.value = `Failed to update configuration: ${e}`
       console.error('Failed to update configuration:', e)
       throw e
     } finally {
@@ -143,7 +143,7 @@ export const useConfigStore = defineStore('config', () => {
         activeConfigId.value = null
       }
     } catch (e) {
-      error.value = `删除配置失败: ${e}`
+      error.value = `Failed to delete configuration: ${e}`
       console.error('Failed to delete configuration:', e)
       throw e
     } finally {
@@ -163,7 +163,7 @@ export const useConfigStore = defineStore('config', () => {
       
       activeConfigId.value = id
     } catch (e) {
-      error.value = `切换配置失败: ${e}`
+      error.value = `Failed to switch configuration: ${e}`
       console.error('Failed to switch configuration:', e)
       throw e
     } finally {
@@ -176,7 +176,7 @@ export const useConfigStore = defineStore('config', () => {
     error.value = null
     try {
       const original = configurations.value.find(c => c.id === id)
-      if (!original) throw new Error('配置不存在')
+      if (!original) throw new Error('Configuration does not exist')
       
       const duplicated = await invoke<Configuration>('duplicate_configuration', {
         id,

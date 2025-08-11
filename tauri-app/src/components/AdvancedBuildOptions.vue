@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 interface AdvancedOptions {
   withPull: boolean
@@ -18,6 +19,7 @@ interface Emits {
 
 const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
+const { t } = useI18n()
 
 // 为每个属性创建独立的计算属性
 const withPull = computed({
@@ -41,12 +43,12 @@ const mirrorUrl = computed({
 })
 
 
-const mirrorPresets = [
-  { title: '清华大学镜像源', value: 'mirrors.tuna.tsinghua.edu.cn' },
-  { title: '吉林大学镜像源', value: 'mirrors.jlu.edu.cn' },
-  { title: '中科大镜像源', value: 'mirrors.ustc.edu.cn' },
-  { title: '华南理工镜像源', value: 'mirrors.scut.edu.cn' }
-]
+const mirrorPresets = computed(() => [
+  { title: t('build.mirrors.tuna'), value: 'mirrors.tuna.tsinghua.edu.cn' },
+  { title: t('build.mirrors.jlu'), value: 'mirrors.jlu.edu.cn' },
+  { title: t('build.mirrors.ustc'), value: 'mirrors.ustc.edu.cn' },
+  { title: t('build.mirrors.scut'), value: 'mirrors.scut.edu.cn' }
+])
 
 const selectMirrorPreset = (preset: string) => {
   mirrorUrl.value = preset
@@ -66,7 +68,7 @@ const resetOptions = () => {
   <div>
     <div class="d-flex align-center mb-4">
       <v-icon class="mr-2">mdi-tune</v-icon>
-      <span class="text-subtitle-1 font-weight-medium">高级构建选项</span>
+      <span class="text-subtitle-1 font-weight-medium">{{ t('build.advancedOptions') }}</span>
       <v-spacer />
       <v-btn
         variant="text"
@@ -74,7 +76,7 @@ const resetOptions = () => {
         @click="resetOptions"
       >
         <v-icon>mdi-restore</v-icon>
-        重置
+        {{ t('common.reset') }}
       </v-btn>
     </div>
 
@@ -82,11 +84,11 @@ const resetOptions = () => {
       <v-row>
         <!-- Docker 选项 -->
         <v-col cols="12">
-          <div class="text-subtitle-2 mb-3">Docker 选项</div>
+          <div class="text-subtitle-2 mb-3">{{ t('build.dockerOptions') }}</div>
           
           <v-switch
             v-model="withPull"
-            label="构建前拉取最新镜像"
+            :label="t('build.pullImage')"
             color="primary"
             hide-details
             class="mb-2"
@@ -96,14 +98,14 @@ const resetOptions = () => {
                 <template v-slot:activator="{ props }">
                   <v-icon v-bind="props" size="small" color="info">mdi-help-circle-outline</v-icon>
                 </template>
-                <span>--with-pull: 确保使用最新的 ImageBuilder 镜像</span>
+                <span>{{ t('build.pullImageTooltip') }}</span>
               </v-tooltip>
             </template>
           </v-switch>
 
           <v-switch
             v-model="rmFirst"
-            label="构建前删除现有容器"
+            :label="t('build.removeFirst')"
             color="primary"
             hide-details
             class="mb-3"
@@ -113,7 +115,7 @@ const resetOptions = () => {
                 <template v-slot:activator="{ props }">
                   <v-icon v-bind="props" size="small" color="info">mdi-help-circle-outline</v-icon>
                 </template>
-                <span>--rm-first: 清理可能冲突的容器</span>
+                <span>{{ t('build.removeFirstTooltip') }}</span>
               </v-tooltip>
             </template>
           </v-switch>
@@ -121,11 +123,11 @@ const resetOptions = () => {
 
         <!-- 镜像源选项 -->
         <v-col cols="12">
-          <div class="text-subtitle-2 mb-3">镜像源设置</div>
+          <div class="text-subtitle-2 mb-3">{{ t('build.mirrorSettings') }}</div>
           
           <v-switch
             v-model="useMirror"
-            label="使用镜像源加速下载"
+            :label="t('build.useMirror')"
             color="primary"
             hide-details
             class="mb-3"
@@ -135,7 +137,7 @@ const resetOptions = () => {
                 <template v-slot:activator="{ props }">
                   <v-icon v-bind="props" size="small" color="info">mdi-help-circle-outline</v-icon>
                 </template>
-                <span>--use-mirror: 使用国内镜像源加速软件包下载</span>
+                <span>{{ t('build.useMirrorTooltip') }}</span>
               </v-tooltip>
             </template>
           </v-switch>
@@ -144,7 +146,7 @@ const resetOptions = () => {
             <div v-if="useMirror">
               <v-text-field
                 v-model="mirrorUrl"
-                label="镜像源地址"
+                :label="t('build.mirrorUrl')"
                 placeholder="mirrors.tuna.tsinghua.edu.cn"
                 variant="outlined"
                 density="compact"
@@ -176,7 +178,7 @@ const resetOptions = () => {
               </v-text-field>
 
               <div class="text-caption text-medium-emphasis mb-3">
-                提示：不要包含 http:// 或 https:// 前缀
+                {{ t('build.mirrorUrlHint') }}
               </div>
             </div>
           </v-expand-transition>

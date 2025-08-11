@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
+import i18n from '@/i18n'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -11,7 +12,7 @@ const routes: RouteRecordRaw[] = [
     name: 'Build',
     component: () => import('@/views/BuildView.vue'),
     meta: {
-      title: '构建管理'
+      titleKey: 'build.pageTitle'
     }
   },
   {
@@ -19,7 +20,7 @@ const routes: RouteRecordRaw[] = [
     name: 'Config',
     component: () => import('@/views/ConfigView.vue'),
     meta: {
-      title: '配置管理'
+      titleKey: 'config.title'
     }
   },
   {
@@ -27,7 +28,7 @@ const routes: RouteRecordRaw[] = [
     name: 'Settings',
     component: () => import('@/views/SettingsView.vue'),
     meta: {
-      title: '设置'
+      titleKey: 'settings.title'
     }
   }
 ]
@@ -38,7 +39,9 @@ const router = createRouter({
 })
 
 router.beforeEach((to, _from, next) => {
-  document.title = `${to.meta.title || 'OpenWrt Builder'} - OpenWrt Builder`
+  const titleKey = to.meta.titleKey as string
+  const title = titleKey ? i18n.global.t(titleKey) : 'OpenWrt Builder'
+  document.title = `${title} - OpenWrt Builder`
   next()
 })
 

@@ -3,9 +3,11 @@ import { ref, computed, onMounted } from 'vue'
 import { useConfigStore } from '@/stores/config'
 import { useAppStore } from '@/stores/app'
 import { open, save } from '@tauri-apps/plugin-dialog'
+import { useI18n } from 'vue-i18n'
 
 const configStore = useConfigStore()
 const appStore = useAppStore()
+const { t } = useI18n()
 
 const showDeleteDialog = ref(false)
 const showDuplicateDialog = ref(false)
@@ -130,7 +132,7 @@ const openDeleteDialog = (config: any) => {
 
 const openDuplicateDialog = (config: any) => {
   selectedConfig.value = config
-  duplicateName.value = `${config.name} (副本)`
+  duplicateName.value = `${config.name} (${t('config.copy')})`
   showDuplicateDialog.value = true
 }
 
@@ -171,7 +173,7 @@ const copyPreviewText = async () => {
     <v-card>
       <v-card-title class="d-flex align-center">
         <v-icon class="mr-2">mdi-folder-cog</v-icon>
-        配置管理
+        {{ t('config.title') }}
         
         <v-spacer />
         
@@ -179,7 +181,7 @@ const copyPreviewText = async () => {
           v-model="searchQuery"
           density="compact"
           variant="solo"
-          placeholder="搜索配置..."
+          :placeholder="t('config.searchPlaceholder')"
           prepend-inner-icon="mdi-magnify"
           single-line
           hide-details
@@ -192,7 +194,7 @@ const copyPreviewText = async () => {
           @click="importConfiguration"
           prepend-icon="mdi-import"
         >
-          导入配置
+          {{ t('config.importConfig') }}
         </v-btn>
       </v-card-title>
       
@@ -216,8 +218,8 @@ const copyPreviewText = async () => {
         <v-row v-if="filteredConfigurations.length === 0">
           <v-col cols="12" class="text-center py-8">
             <v-icon size="64" color="grey">mdi-folder-open-outline</v-icon>
-            <p class="text-h6 mt-4 text-grey">暂无配置</p>
-            <p class="text-body-2 text-grey">在构建页面保存配置或导入已有配置</p>
+            <p class="text-h6 mt-4 text-grey">{{ t('config.noConfigs') }}</p>
+            <p class="text-body-2 text-grey">{{ t('config.noConfigsHint') }}</p>
           </v-col>
         </v-row>
         
@@ -240,7 +242,7 @@ const copyPreviewText = async () => {
               </v-card-title>
               
               <v-card-subtitle>
-                {{ config.description || '无描述' }}
+                {{ config.description || t('config.noDescription') }}
               </v-card-subtitle>
               
               <v-card-text>
@@ -259,7 +261,7 @@ const copyPreviewText = async () => {
                       <v-icon size="small">mdi-docker</v-icon>
                     </template>
                     <v-list-item-title>
-                      {{ config.config.selectedImage || config.config.customImageTag || '未选择镜像' }}
+                      {{ config.config.selectedImage || config.config.customImageTag || t('config.noImageSelected') }}
                     </v-list-item-title>
                   </v-list-item>
                   
@@ -268,7 +270,7 @@ const copyPreviewText = async () => {
                       <v-icon size="small">mdi-cube</v-icon>
                     </template>
                     <v-list-item-title>
-                      {{ config.config.modules.filter(m => m.enabled).length }} 个模块已启用
+                      {{ t('config.modulesEnabled', { count: config.config.modules.filter(m => m.enabled).length }) }}
                     </v-list-item-title>
                   </v-list-item>
                   
@@ -277,7 +279,7 @@ const copyPreviewText = async () => {
                       <v-icon size="small">mdi-clock-outline</v-icon>
                     </template>
                     <v-list-item-title>
-                      更新于 {{ formatDate(config.updatedAt) }}
+                      {{ t('config.updatedAt') }} {{ formatDate(config.updatedAt) }}
                     </v-list-item-title>
                   </v-list-item>
                 </v-list>
@@ -290,14 +292,14 @@ const copyPreviewText = async () => {
                   variant="text"
                   @click="loadConfiguration(config)"
                 >
-                  加载
+                  {{ t('config.loadConfig') }}
                 </v-btn>
                 
                 <v-btn
                   variant="text"
                   @click="openPreviewDialog(config)"
                 >
-                  预览
+                  {{ t('config.preview') }}
                 </v-btn>
                 
                 <v-btn
@@ -305,14 +307,14 @@ const copyPreviewText = async () => {
                   variant="text"
                   @click="exportConfiguration(config)"
                 >
-                  导出
+                  {{ t('config.exportConfig') }}
                 </v-btn>
                 
                 <v-btn
                   variant="text"
                   @click="openDuplicateDialog(config)"
-                >
-                  复制
+>
+                  {{ t('config.duplicate') }}
                 </v-btn>
                 
                 <v-spacer />
@@ -333,16 +335,16 @@ const copyPreviewText = async () => {
     <!-- 删除确认对话框 -->
     <v-dialog v-model="showDeleteDialog" max-width="400">
       <v-card>
-        <v-card-title>确认删除</v-card-title>
+        <v-card-title>{{ t('config.confirmDelete') }}</v-card-title>
         
         <v-card-text>
-          确定要删除配置 "{{ selectedConfig?.name }}" 吗？此操作不可恢复。
+          {{ t('config.deleteConfirmMessage', { name: selectedConfig?.name }) }}
         </v-card-text>
         
         <v-card-actions>
           <v-spacer />
-          <v-btn @click="showDeleteDialog = false">取消</v-btn>
-          <v-btn color="error" @click="deleteConfiguration">删除</v-btn>
+          <v-btn @click="showDeleteDialog = false">{{ t('common.cancel') }}</v-btn>
+          <v-btn color="error" @click="deleteConfiguration">{{ t('common.delete') }}</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -350,12 +352,12 @@ const copyPreviewText = async () => {
     <!-- 复制配置对话框 -->
     <v-dialog v-model="showDuplicateDialog" max-width="500">
       <v-card>
-        <v-card-title>复制配置</v-card-title>
+        <v-card-title>{{ t('config.duplicateConfig') }}</v-card-title>
         
         <v-card-text>
           <v-text-field
             v-model="duplicateName"
-            label="新配置名称"
+            :label="t('config.newConfigName')"
             variant="outlined"
             density="compact"
           />
@@ -363,7 +365,7 @@ const copyPreviewText = async () => {
         
         <v-card-actions>
           <v-spacer />
-          <v-btn @click="showDuplicateDialog = false">取消</v-btn>
+          <v-btn @click="showDuplicateDialog = false">{{ t('common.cancel') }}</v-btn>
           <v-btn
             color="primary"
             @click="duplicateConfiguration"

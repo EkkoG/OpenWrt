@@ -4,6 +4,7 @@ import { useTheme } from 'vuetify'
 import { useRouter } from 'vue-router'
 import { useAppStore } from '@/stores/app'
 import { useConfigStore } from '@/stores/config'
+import { useI18n } from 'vue-i18n'
 
 const theme = useTheme()
 const router = useRouter()
@@ -11,6 +12,7 @@ const appStore = useAppStore()
 const configStore = useConfigStore()
 const appModeInfo = ref<any>(null)
 const isDebugMode = ref(false)
+const { t } = useI18n()
 
 // 检测是否是调试模式（开发环境）
 if (import.meta.env.DEV) {
@@ -62,13 +64,13 @@ const getThemeIcon = computed(() => {
 const getThemeTooltip = computed(() => {
   switch (appStore.theme) {
     case 'light':
-      return '浅色模式'
+      return t('common.light')
     case 'dark':
-      return '深色模式'
+      return t('common.dark')
     case 'auto':
-      return '跟随系统'
+      return t('common.systemTheme')
     default:
-      return '主题切换'
+      return t('tooltips.switchTheme')
   }
 })
 
@@ -114,14 +116,14 @@ onMounted(async () => {
       <v-list nav>
         <v-list-item
           prepend-icon="mdi-home"
-          title="构建"
+          :title="t('nav.build')"
           value="build"
           to="/build"
           rounded="xl"
         />
         <v-list-item
           prepend-icon="mdi-folder-cog"
-          title="配置"
+          :title="t('nav.config')"
           value="config"
           to="/config"
           rounded="xl"
@@ -132,7 +134,7 @@ onMounted(async () => {
         <v-list nav>
           <v-list-item
             prepend-icon="mdi-cog"
-            title="设置"
+            :title="t('nav.settings')"
             value="settings"
             to="/settings"
             rounded="xl"
@@ -163,8 +165,8 @@ onMounted(async () => {
         <v-tooltip activator="parent" location="bottom" max-width="400">
           <div class="text-caption">
             <strong>{{ appModeInfo.description }}</strong><br>
-            资源路径: {{ appModeInfo.resource_path }}<br>
-            工作目录: {{ appModeInfo.working_directory }}
+            {{ t('tooltips.resourcePath') }}: {{ appModeInfo.resource_path }}<br>
+            {{ t('tooltips.workingDir') }}: {{ appModeInfo.working_directory }}
           </div>
         </v-tooltip>
       </v-chip>
@@ -184,9 +186,9 @@ onMounted(async () => {
           indeterminate
           class="mr-2"
         />
-        构建中
+        {{ t('build.building') }}
         <v-tooltip activator="parent" location="bottom">
-          正在构建固件，点击查看详情
+          {{ t('messages.buildInProgress') }}
         </v-tooltip>
       </v-chip>
 
@@ -199,18 +201,18 @@ onMounted(async () => {
         Docker
         <v-tooltip activator="parent" location="bottom" max-width="350">
           <div class="text-caption">
-            <div><strong>状态:</strong> {{ appStore.dockerReady ? '就绪' : '未就绪' }}</div>
-            <div><strong>安装状态:</strong> {{ appStore.dockerInstalled ? '已安装' : '未安装' }}</div>
-            <div><strong>运行状态:</strong> {{ appStore.dockerRunning ? '运行中' : '未运行' }}</div>
-            <div v-if="appStore.dockerInstalled"><strong>版本:</strong> {{ appStore.dockerVersion }}</div>
+            <div><strong>{{ t('common.status') }}:</strong> {{ appStore.dockerReady ? t('docker.statusReady') : t('docker.statusNotReady') }}</div>
+            <div><strong>{{ t('docker.installStatus') }}:</strong> {{ appStore.dockerInstalled ? t('docker.statusInstalled') : t('docker.statusNotInstalled') }}</div>
+            <div><strong>{{ t('docker.runningStatus') }}:</strong> {{ appStore.dockerRunning ? t('docker.statusRunning') : t('docker.statusNotRunning') }}</div>
+            <div v-if="appStore.dockerInstalled"><strong>{{ t('common.version') }}:</strong> {{ appStore.dockerVersion }}</div>
             <div v-if="appStore.dockerComposeInstalled"><strong>Compose:</strong> {{ appStore.dockerComposeVersion }}</div>
             <div v-if="!appStore.dockerInstalled" class="text-error">
-              <strong>问题:</strong> Docker 未安装<br>
-              <small>请访问 https://docker.com 下载安装 Docker Desktop</small>
+              <strong>{{ t('common.error') }}:</strong> {{ t('docker.notInstalled') }}<br>
+              <small>{{ t('messages.dockerNotInstalledHint') }}</small>
             </div>
             <div v-if="appStore.dockerInstalled && !appStore.dockerRunning" class="text-error">
-              <strong>问题:</strong> Docker 未运行<br>
-              <small>请启动 Docker Desktop 应用程序</small>
+              <strong>{{ t('common.error') }}:</strong> {{ t('docker.notRunning') }}<br>
+              <small>{{ t('messages.dockerNotRunningHint') }}</small>
             </div>
           </div>
         </v-tooltip>

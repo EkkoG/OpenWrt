@@ -2,9 +2,11 @@
 import { ref, onMounted } from 'vue'
 import { useConfigStore } from '@/stores/config'
 import { useAppStore } from '@/stores/app'
+import { useI18n } from 'vue-i18n'
 
 const configStore = useConfigStore()
 const appStore = useAppStore()
+const { t } = useI18n()
 
 const selectedConfigId = ref<string | null>(null)
 const showSaveDialog = ref(false)
@@ -52,7 +54,7 @@ const openSaveDialog = () => {
     isUpdatingExisting.value = true
   } else {
     // 否则使用默认的新配置名称
-    configName.value = `配置 - ${new Date().toLocaleString('zh-CN', { 
+    configName.value = `${t('config.configName')} - ${new Date().toLocaleString('zh-CN', { 
       year: 'numeric',
       month: '2-digit', 
       day: '2-digit',
@@ -81,7 +83,7 @@ const saveQuickConfig = async () => {
       console.log('Updating existing configuration:', configStore.activeConfig.id)
       
       savedConfig = await configStore.updateConfiguration(configStore.activeConfig.id, {
-        description: configDescription.value || '从构建页面保存的配置',
+        description: configDescription.value || t('config.defaultDescription'),
         config: config
       })
       
@@ -92,7 +94,7 @@ const saveQuickConfig = async () => {
       
       savedConfig = await configStore.saveConfiguration(
         configName.value.trim(),
-        configDescription.value || '从构建页面保存的配置',
+        configDescription.value || t('config.defaultDescription'),
         config
       )
       
@@ -109,7 +111,7 @@ const saveQuickConfig = async () => {
     saveError.value = null
   } catch (error: any) {
     console.error('Failed to save configuration:', error)
-    saveError.value = error?.message || error?.toString() || '保存配置失败'
+    saveError.value = error?.message || error?.toString() || t('config.saveFailed')
   } finally {
     isSaving.value = false
   }
@@ -130,8 +132,8 @@ const saveQuickConfig = async () => {
             :items="configStore.sortedConfigurations"
             item-title="name"
             item-value="id"
-            label="选择配置"
-            placeholder="选择已保存的配置"
+            :label="t('config.selectConfig')"
+            :placeholder="t('config.selectSavedConfig')"
             variant="outlined"
             density="compact"
             @update:model-value="handleConfigChange"
@@ -146,7 +148,7 @@ const saveQuickConfig = async () => {
                   </v-icon>
                 </template>
                 <template v-slot:subtitle>
-                  {{ item.raw.description || '无描述' }}
+                  {{ item.raw.description || t('config.noDescription') }}
                 </template>
               </v-list-item>
             </template>
@@ -154,7 +156,7 @@ const saveQuickConfig = async () => {
         </v-col>
         
         <v-col cols="auto">
-          <v-tooltip text="保存当前配置">
+          <v-tooltip :text="t('config.saveCurrentConfig')">
             <template v-slot:activator="{ props }">
               <v-btn
                 v-bind="props"
@@ -169,7 +171,7 @@ const saveQuickConfig = async () => {
         </v-col>
         
         <v-col cols="auto">
-          <v-tooltip text="管理配置">
+          <v-tooltip :text="t('config.manageConfig')">
             <template v-slot:activator="{ props }">
               <v-btn
                 v-bind="props"
@@ -190,10 +192,10 @@ const saveQuickConfig = async () => {
         class="mt-3"
       >
         <div class="d-flex align-center">
-          当前配置: {{ configStore.activeConfig.name }}
+          {{ t('config.currentConfig') }}: {{ configStore.activeConfig.name }}
           <v-spacer />
           <small class="text-caption">
-            更新于 {{ new Date(configStore.activeConfig.updatedAt).toLocaleString('zh-CN') }}
+            {{ t('config.updatedAt') }} {{ new Date(configStore.activeConfig.updatedAt).toLocaleString() }}
           </small>
         </div>
       </v-alert>
@@ -205,7 +207,7 @@ const saveQuickConfig = async () => {
     <v-card>
       <v-card-title>
         <v-icon class="mr-2">mdi-content-save</v-icon>
-        {{ isUpdatingExisting ? '更新配置' : '保存新配置' }}
+        {{ isUpdatingExisting ? t('config.updateConfig') : t('config.saveNewConfig') }}
       </v-card-title>
       
       <v-card-text>
@@ -222,21 +224,21 @@ const saveQuickConfig = async () => {
         
         <v-text-field
           v-model="configName"
-          label="配置名称"
-          placeholder="例如：生产环境配置"
+          :label="t('config.configName')"
+          :placeholder="t('config.configNamePlaceholder')"
           variant="outlined"
           density="compact"
           class="mb-4"
-          :rules="[v => !!v.trim() || '请输入配置名称']"
+          :rules="[v => !!v.trim() || t('config.validation.nameRequired')]"
           :disabled="isSaving"
-          :hint="isUpdatingExisting ? (configStore.activeConfig?.name === configName ? '将更新当前配置' : '修改名称将创建新配置') : ''"
+          :hint="isUpdatingExisting ? (configStore.activeConfig?.name === configName ? t('config.willUpdateCurrent') : t('config.changeNameWillCreate')) : ''"
           persistent-hint
         />
         
         <v-textarea
           v-model="configDescription"
-          label="配置描述（可选）"
-          placeholder="描述这个配置的用途..."
+          :label="t('config.configDescriptionOptional')"
+          :placeholder="t('config.descriptionPlaceholder')"
           variant="outlined"
           density="compact"
           rows="3"
@@ -251,7 +253,7 @@ const saveQuickConfig = async () => {
           @click="showSaveDialog = false"
           :disabled="isSaving"
         >
-          取消
+          {{ t('common.cancel') }}
         </v-btn>
         <v-btn
           color="primary"
@@ -260,7 +262,7 @@ const saveQuickConfig = async () => {
           :disabled="!configName.trim() || isSaving"
           :loading="isSaving"
         >
-          {{ isUpdatingExisting && configStore.activeConfig?.name === configName ? '更新' : '保存' }}
+          {{ isUpdatingExisting && configStore.activeConfig?.name === configName ? t('common.update') : t('common.save') }}
         </v-btn>
       </v-card-actions>
     </v-card>

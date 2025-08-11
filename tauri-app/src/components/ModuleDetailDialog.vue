@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { marked } from 'marked'
+import { useI18n } from 'vue-i18n'
 
 interface Props {
   modelValue: boolean
@@ -14,6 +15,7 @@ interface Emits {
 
 const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
+const { t } = useI18n()
 
 const isLoading = ref(false)
 const readmeContent = ref('')
@@ -73,7 +75,7 @@ const closeDialog = () => {
         <v-icon class="mr-3">mdi-package-variant</v-icon>
         <div>
           <div class="text-h6">{{ moduleName }}</div>
-          <div class="text-caption text-medium-emphasis">模块详细介绍</div>
+          <div class="text-caption text-medium-emphasis">{{ t('modules.moduleDetail') }}</div>
         </div>
         <v-spacer />
         <v-btn
@@ -89,7 +91,7 @@ const closeDialog = () => {
         <!-- 加载状态 -->
         <div v-if="isLoading" class="text-center py-8">
           <v-progress-circular indeterminate size="48" />
-          <div class="mt-4 text-body-2">正在加载模块文档...</div>
+          <div class="mt-4 text-body-2">{{ t('modules.loadingModuleDocs') }}</div>
         </div>
 
         <!-- 错误状态 -->
@@ -99,7 +101,7 @@ const closeDialog = () => {
           variant="tonal"
           class="mb-4"
         >
-          <div class="text-subtitle2">无法加载模块文档</div>
+          <div class="text-subtitle2">{{ t('modules.loadModuleDocsFailed') }}</div>
           <div class="text-body-2 mt-2">{{ error }}</div>
         </v-alert>
 
@@ -114,8 +116,8 @@ const closeDialog = () => {
         <v-empty-state
           v-else
           icon="mdi-file-document-outline"
-          title="暂无文档"
-          text="该模块暂时没有详细文档"
+          :title="t('modules.noDocumentTitle')"
+          :text="t('modules.noDocumentText')"
         />
       </v-card-text>
 
@@ -126,7 +128,7 @@ const closeDialog = () => {
           variant="text"
           @click="closeDialog"
         >
-          关闭
+          {{ t('common.close') }}
         </v-btn>
       </v-card-actions>
     </v-card>

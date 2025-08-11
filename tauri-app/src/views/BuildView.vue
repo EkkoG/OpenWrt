@@ -4,10 +4,12 @@ import { ref, computed, nextTick, watch } from 'vue'
 import ConfigQuickSelector from '@/components/ConfigQuickSelector.vue'
 import AdvancedBuildOptions from '@/components/AdvancedBuildOptions.vue'
 import ModulesView from '@/views/ModulesView.vue'
+import { useI18n } from 'vue-i18n'
 
 const appStore = useAppStore()
 const logContainer = ref<HTMLElement | null>(null)
 const copyNotification = ref({ show: false, message: '', color: 'success' })
+const { t } = useI18n()
 
 // 高级选项状态
 const showAdvancedOptions = ref(false)
@@ -107,7 +109,7 @@ const selectOutputDirectory = async () => {
     const selected = await open({
       directory: true,
       multiple: false,
-      title: '选择固件输出目录'
+      title: t('build.selectFirmwareOutputDir')
     })
     
     console.log('Dialog result:', selected)
@@ -133,6 +135,9 @@ const startBuild = async () => {
   try {
     const { invoke } = await import('@tauri-apps/api/core')
     const { listen } = await import('@tauri-apps/api/event')
+    
+    // 添加开始构建日志
+    appStore.buildLogs.push(t('build.logs.starting'))
     
     // 监听构建事件
     const unlisten = await listen('build-event', async (event: any) => {
@@ -201,7 +206,7 @@ const startBuild = async () => {
     })
   } catch (error) {
     appStore.lastBuildStatus = 'failed'
-    appStore.buildLogs.push(`[构建失败: ${error}]`)
+    appStore.buildLogs.push(`[${t('build.logs.failed', { error })}]`)
     appStore.isBuilding = false
   }
 }
@@ -238,13 +243,13 @@ const toggleAdvancedOptions = () => {
 
 // 复制日志
 const copyLogs = async () => {
-  console.log('开始复制日志...')
-  console.log('日志数量:', appStore.buildLogs.length)
+  console.log('Starting to copy logs...')
+  console.log('Log count:', appStore.buildLogs.length)
   
   if (appStore.buildLogs.length === 0) {
     copyNotification.value = {
       show: true,
-      message: '没有可复制的日志',
+      message: t('messages.noLogsAvailable'),
       color: 'warning'
     }
     return
@@ -254,42 +259,42 @@ const copyLogs = async () => {
     // 根据 Tauri v2 文档的正确导入方式
     const { writeText } = await import('@tauri-apps/plugin-clipboard-manager')
     const logText = appStore.buildLogs.join('\n')
-    console.log('准备复制的文本长度:', logText.length)
+    console.log('Text length to copy:', logText.length)
     
     await writeText(logText)
-    console.log('Tauri 剪贴板复制成功')
+    console.log('Tauri clipboard copy successful')
     
     copyNotification.value = {
       show: true,
-      message: `已复制 ${appStore.buildLogs.length} 行日志到剪贴板`,
+      message: t('build.logCopied'),
       color: 'success'
     }
   } catch (error) {
-    console.error('Tauri 剪贴板复制失败:', error)
-    console.log('尝试降级到浏览器剪贴板...')
+    console.error('Tauri clipboard copy failed:', error)
+    console.log('Trying to fallback to browser clipboard...')
     
     // 降级方案：使用浏览器的 navigator.clipboard
     try {
       const logText = appStore.buildLogs.join('\n')
       
       if (!navigator.clipboard) {
-        console.error('浏览器不支持 navigator.clipboard')
-        throw new Error('浏览器不支持剪贴板 API')
+        console.error('Browser does not support navigator.clipboard')
+        throw new Error('Browser does not support clipboard API')
       }
       
       await navigator.clipboard.writeText(logText)
-      console.log('浏览器剪贴板复制成功')
+      console.log('Browser clipboard copy successful')
       
       copyNotification.value = {
         show: true,
-        message: `已复制 ${appStore.buildLogs.length} 行日志到剪贴板`,
+        message: t('build.logCopied'),
         color: 'success'
       }
     } catch (fallbackError) {
-      console.error('浏览器剪贴板复制也失败:', fallbackError)
+      console.error('Browser clipboard copy also failed:', fallbackError)
       copyNotification.value = {
         show: true,
-        message: '复制日志失败，请手动选择复制',
+        message: t('messages.copyLogsFailed'),
         color: 'error'
       }
     }
@@ -304,9 +309,9 @@ const copyLogs = async () => {
     <v-card class="mb-4" variant="tonal" color="primary">
       <v-card-text class="text-center py-6">
         <v-icon size="48" class="mb-3 text-primary">mdi-router-wireless</v-icon>
-        <h2 class="text-h4 font-weight-bold mb-2 text-primary">欢迎使用 OpenWrt Builder</h2>
+        <h2 class="text-h4 font-weight-bold mb-2 text-primary">{{ t('build.welcomeTitle') }}</h2>
         <p class="text-body-1 text-medium-emphasis mb-0">
-          轻松构建定制化的 OpenWrt 固件，选择所需模块，一键开始构建
+          {{ t('build.welcomeSubtitle') }}
         </p>
       </v-card-text>
     </v-card>
@@ -320,14 +325,14 @@ const copyLogs = async () => {
         <v-card>
           <v-card-title>
             <v-icon class="mr-2">mdi-docker</v-icon>
-            镜像选择
+            {{ t('build.imageSelection') }}
           </v-card-title>
           <v-card-text>
             <!-- 仓库选择 -->
             <v-select
               v-model="appStore.selectedRepository"
               :items="repositories"
-              label="选择镜像仓库"
+              :label="t('build.repository')"
               variant="outlined"
               density="compact"
               @update:model-value="onRepositoryChange"
@@ -340,7 +345,7 @@ const copyLogs = async () => {
               @update:model-value="appStore.customImageTag = ''"
             >
               <template v-slot:label>
-                <div class="text-subtitle-2 mb-2">常用镜像标签</div>
+                <div class="text-subtitle-2 mb-2">{{ t('build.popularTags') }}</div>
               </template>
               <v-radio
                 v-for="tag in popularTags"
@@ -356,8 +361,8 @@ const copyLogs = async () => {
             <!-- 自定义镜像输入 -->
             <v-text-field
               v-model="appStore.customImageTag"
-              label="或输入自定义标签"
-              placeholder="例如: x86-64-v23.05.2"
+              :label="t('build.customTag')"
+              :placeholder="t('build.customTagPlaceholder')"
               variant="outlined"
               density="compact"
               @update:model-value="appStore.selectedImage = ''"
@@ -370,7 +375,7 @@ const copyLogs = async () => {
         <v-card class="mt-4">
           <v-card-title class="d-flex align-center">
             <v-icon class="mr-2">mdi-cog</v-icon>
-            构建配置
+            {{ t('common.config') }}
             <v-spacer />
             <v-btn
               variant="text"
@@ -379,15 +384,15 @@ const copyLogs = async () => {
               :color="showAdvancedOptions ? 'primary' : 'default'"
             >
               <v-icon>{{ showAdvancedOptions ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
-              高级选项
+              {{ t('build.advancedOptions') }}
             </v-btn>
           </v-card-title>
           <v-card-text>
             <v-text-field
               v-model="appStore.selectedProfile"
-              label="Profile (可选)"
-              placeholder="例如: x86_64、rockchip_armv8 等"
-              hint="部分镜像需要指定 profile，留空则使用默认配置"
+              :label="t('build.deviceProfile')"
+              :placeholder="t('build.profilePlaceholder')"
+              :hint="t('build.profilePlaceholder')"
               persistent-hint
               variant="outlined"
               density="compact"
@@ -397,7 +402,7 @@ const copyLogs = async () => {
             
             <v-text-field
               v-model="appStore.outputDirectory"
-              label="固件输出目录"
+              :label="t('build.outputDirectory')"
               variant="outlined"
               density="compact"
               readonly
@@ -409,11 +414,11 @@ const copyLogs = async () => {
             <v-text-field
               :model-value="appStore.rootfsPartSize"
               @update:model-value="(val: string) => appStore.rootfsPartSize = val === '' ? null : Number(val)"
-              label="RootFS 分区大小 (MB)"
+              :label="t('build.rootfsSize')"
               type="number"
               :min="64"
               :max="2048"
-              hint="设置根文件系统分区大小，单位：MB，留空由 ImageBuilder 自动决定"
+              :hint="t('build.rootfsSizeHint')"
               persistent-hint
               variant="outlined"
               density="compact"
@@ -423,9 +428,9 @@ const copyLogs = async () => {
             
             <v-textarea
               v-model="appStore.globalEnvVars"
-              label="全局环境变量"
+              :label="t('modules.globalEnvVars')"
               placeholder="KEY1=value1&#10;KEY2=value2&#10;KEY3=value3"
-              hint="每行一个环境变量，格式：KEY=VALUE"
+              :hint="t('modules.globalEnvVarsHint')"
               persistent-hint
               variant="outlined"
               density="compact"
@@ -460,7 +465,7 @@ const copyLogs = async () => {
               :disabled="!appStore.isBuilding && !canStartBuild"
             >
               <v-icon start>{{ appStore.isBuilding ? 'mdi-stop' : 'mdi-hammer' }}</v-icon>
-              {{ appStore.isBuilding ? '取消构建' : '开始构建' }}
+              {{ appStore.isBuilding ? t('build.cancelBuild') : t('build.startBuild') }}
             </v-btn>
             
             <v-alert
@@ -470,7 +475,7 @@ const copyLogs = async () => {
               class="mt-3"
               density="compact"
             >
-              请先确保 Docker 环境就绪
+              {{ t('messages.dockerRequired') }}
             </v-alert>
             
             <v-alert
@@ -480,7 +485,7 @@ const copyLogs = async () => {
               class="mt-3"
               density="compact"
             >
-              请选择或输入镜像标签
+              {{ t('messages.selectImageFirst') }}
             </v-alert>
             
             <v-alert
@@ -490,7 +495,7 @@ const copyLogs = async () => {
               class="mt-3"
               density="compact"
             >
-              请选择固件输出目录
+              {{ t('messages.selectOutputFirst') }}
             </v-alert>
           </v-card-text>
         </v-card>
@@ -499,7 +504,7 @@ const copyLogs = async () => {
         <v-card class="mt-4">
           <v-card-title class="d-flex align-center">
             <v-icon class="mr-2">mdi-console</v-icon>
-            构建日志
+            {{ t('build.buildLog') }}
             <v-spacer />
             <v-btn
               size="small"
@@ -509,7 +514,7 @@ const copyLogs = async () => {
               class="mr-2"
             >
               <v-icon>mdi-content-copy</v-icon>
-              <v-tooltip activator="parent" location="bottom">复制所有日志</v-tooltip>
+              <v-tooltip activator="parent" location="bottom">{{ t('build.copyLog') }}</v-tooltip>
             </v-btn>
             <v-btn
               size="small"
@@ -518,7 +523,7 @@ const copyLogs = async () => {
               :disabled="appStore.isBuilding"
             >
               <v-icon>mdi-delete</v-icon>
-              <v-tooltip activator="parent" location="bottom">清空日志</v-tooltip>
+              <v-tooltip activator="parent" location="bottom">{{ t('build.clearLog') }}</v-tooltip>
             </v-btn>
           </v-card-title>
           <v-card-text>
@@ -531,7 +536,7 @@ const copyLogs = async () => {
               density="compact"
               class="mb-4"
             >
-              <div class="text-caption">构建命令预览:</div>
+              <div class="text-caption">{{ t('build.commandPreview') }}:</div>
               <code class="text-caption">{{ buildCommand }}</code>
             </v-alert>
             
@@ -546,7 +551,7 @@ const copyLogs = async () => {
                 class="text-center text-medium-emphasis"
                 style="color: #999"
               >
-                暂无构建日志
+                {{ t('messages.noLogsAvailable') }}
               </div>
               <div
                 v-for="(log, index) in appStore.buildLogs"
@@ -569,7 +574,7 @@ const copyLogs = async () => {
             >
               <div class="d-flex align-center">
                 <div>
-                  上次构建{{ appStore.lastBuildStatus === 'success' ? '成功' : '失败' }}
+                  {{ appStore.lastBuildStatus === 'success' ? t('build.buildSuccess') : t('build.buildFailed') }}
                   <span v-if="appStore.lastBuildTime" class="text-caption">
                     ({{ new Date(appStore.lastBuildTime).toLocaleString() }})
                   </span>
@@ -594,7 +599,7 @@ const copyLogs = async () => {
           variant="text"
           @click="copyNotification.show = false"
         >
-          关闭
+          {{ t('common.close') }}
         </v-btn>
       </template>
     </v-snackbar>

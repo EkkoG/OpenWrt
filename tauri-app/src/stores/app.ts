@@ -48,6 +48,7 @@ export const useAppStore = defineStore('app', () => {
   // 应用设置
   const checkForUpdates = ref(true)
   const theme = ref<'light' | 'dark' | 'auto'>('light')
+  const language = ref<string>('zh-CN')
 
   // 计算属性
   const dockerReady = computed(() => 
@@ -219,7 +220,7 @@ export const useAppStore = defineStore('app', () => {
     
     isBuilding.value = false
     lastBuildStatus.value = 'cancelled'
-    buildLogs.value.push('[构建已取消]')
+    buildLogs.value.push('[Build cancelled]')
   }
 
   const clearBuildLogs = () => {
@@ -237,6 +238,11 @@ export const useAppStore = defineStore('app', () => {
       if (savedCheckUpdates) {
         checkForUpdates.value = savedCheckUpdates === 'true'
       }
+      
+      const savedLanguage = localStorage.getItem('language')
+      if (savedLanguage) {
+        language.value = savedLanguage
+      }
     } catch (error) {
       console.error('Failed to load settings:', error)
     }
@@ -246,6 +252,7 @@ export const useAppStore = defineStore('app', () => {
     try {
       localStorage.setItem('app-theme', theme.value)
       localStorage.setItem('app-check-updates', checkForUpdates.value.toString())
+      localStorage.setItem('language', language.value)
     } catch (error) {
       console.error('Failed to save settings:', error)
     }
@@ -254,14 +261,16 @@ export const useAppStore = defineStore('app', () => {
   const updateSettings = (settings: Partial<{
     checkForUpdates: boolean
     theme: 'light' | 'dark' | 'auto'
+    language: string
   }>) => {
     if (settings.checkForUpdates !== undefined) checkForUpdates.value = settings.checkForUpdates
     if (settings.theme) theme.value = settings.theme
+    if (settings.language) language.value = settings.language
     saveSettings()
   }
 
   // 自动保存设置变化
-  watch([theme, checkForUpdates], () => {
+  watch([theme, checkForUpdates, language], () => {
     saveSettings()
   })
 
@@ -288,6 +297,7 @@ export const useAppStore = defineStore('app', () => {
     lastBuildStatus,
     checkForUpdates,
     theme,
+    language,
     
     // 计算属性
     dockerReady,

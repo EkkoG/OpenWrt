@@ -2,15 +2,36 @@
 import { useAppStore } from '@/stores/app'
 import { ref } from 'vue'
 import { openUrl as tauriOpenUrl } from '@tauri-apps/plugin-opener'
+import { useI18n } from 'vue-i18n'
+import { saveLanguage } from '@/i18n'
 
 const appStore = useAppStore()
 const showSaveSuccess = ref(false)
+const { t, locale } = useI18n()
 
-const themes = [
-  { title: '浅色主题', value: 'light', icon: 'mdi-white-balance-sunny' },
-  { title: '深色主题', value: 'dark', icon: 'mdi-weather-night' },
-  { title: '跟随系统', value: 'auto', icon: 'mdi-theme-light-dark' }
+const themes = ref([
+  { title: t('settings.lightTheme'), value: 'light', icon: 'mdi-white-balance-sunny' },
+  { title: t('settings.darkTheme'), value: 'dark', icon: 'mdi-weather-night' },
+  { title: t('settings.autoTheme'), value: 'auto', icon: 'mdi-theme-light-dark' }
+])
+
+const languages = [
+  { title: '简体中文', value: 'zh-CN', icon: 'mdi-translate' },
+  { title: 'English', value: 'en-US', icon: 'mdi-translate' }
 ]
+
+const currentLanguage = ref(locale.value)
+
+const onLanguageChange = () => {
+  locale.value = currentLanguage.value
+  saveLanguage(currentLanguage.value)
+  // Update dynamic theme titles
+  themes.value = [
+    { title: t('settings.lightTheme'), value: 'light', icon: 'mdi-white-balance-sunny' },
+    { title: t('settings.darkTheme'), value: 'dark', icon: 'mdi-weather-night' },
+    { title: t('settings.autoTheme'), value: 'auto', icon: 'mdi-theme-light-dark' }
+  ]
+}
 
 const saveSettings = () => {
   // 保存设置到 store
@@ -48,17 +69,17 @@ const openUrl = (url: string) => tauriOpenUrl(url).catch(console.error)
         <v-card>
           <v-card-title>
             <v-icon class="mr-2">mdi-cog</v-icon>
-            应用设置
+            {{ t('settings.title') }}
           </v-card-title>
           
           <v-card-text>
             <!-- 界面设置 -->
-            <div class="text-h6 mb-4">界面设置</div>
+            <div class="text-h6 mb-4">{{ t('settings.appearance') }}</div>
             
             <v-select
               v-model="appStore.theme"
               :items="themes"
-              label="主题"
+              :label="t('settings.themeMode')"
               variant="outlined"
               density="compact"
               class="mb-4"
@@ -72,13 +93,32 @@ const openUrl = (url: string) => tauriOpenUrl(url).catch(console.error)
               </template>
             </v-select>
             
+            <!-- 语言设置 -->
+            <v-select
+              v-model="currentLanguage"
+              :items="languages"
+              :label="t('settings.selectLanguage')"
+              variant="outlined"
+              density="compact"
+              class="mb-4"
+              @update:model-value="onLanguageChange"
+            >
+              <template v-slot:item="{ props, item }">
+                <v-list-item v-bind="props">
+                  <template v-slot:prepend>
+                    <v-icon>{{ item.raw.icon }}</v-icon>
+                  </template>
+                </v-list-item>
+              </template>
+            </v-select>
+            
             <v-divider class="my-6" />
             
             <!-- 更新设置 -->
-            <div class="text-h6 mb-4">更新设置</div>
+            <div class="text-h6 mb-4">{{ t('settings.general') }}</div>
             <v-checkbox
               v-model="appStore.checkForUpdates"
-              label="自动检查更新"
+              :label="t('settings.checkUpdates')"
               density="compact"
               class="mb-4"
             />
@@ -89,36 +129,36 @@ const openUrl = (url: string) => tauriOpenUrl(url).catch(console.error)
               @click="checkForUpdates"
             >
               <v-icon start>mdi-cloud-download</v-icon>
-              立即检查更新
+              {{ t('settings.checkForUpdates') }}
             </v-btn>
             
             <v-divider class="my-6" />
             
             <!-- 关于 -->
-            <div class="text-h6 mb-4">关于</div>
+            <div class="text-h6 mb-4">{{ t('settings.about') }}</div>
             <v-list density="compact">
               <v-list-item>
-                <v-list-item-title>应用名称</v-list-item-title>
+                <v-list-item-title>{{ t('common.build') }}</v-list-item-title>
                 <v-list-item-subtitle>OpenWrt Builder</v-list-item-subtitle>
               </v-list-item>
               <v-list-item>
-                <v-list-item-title>版本</v-list-item-title>
+                <v-list-item-title>{{ t('common.version') }}</v-list-item-title>
                 <v-list-item-subtitle>0.1.0</v-list-item-subtitle>
               </v-list-item>
               <v-list-item @click="openUrl('https://github.com/EkkoG/OpenWrt')">
-                <v-list-item-title>项目主页</v-list-item-title>
+                <v-list-item-title>{{ t('settings.documentation') }}</v-list-item-title>
                 <v-list-item-subtitle class="text-primary cursor-pointer">
                   https://github.com/EkkoG/OpenWrt
                 </v-list-item-subtitle>
               </v-list-item>
               <v-list-item @click="openUrl('https://github.com/EkkoG')">
-                <v-list-item-title>开发者</v-list-item-title>
+                <v-list-item-title>Developer</v-list-item-title>
                 <v-list-item-subtitle class="text-primary cursor-pointer">
                   https://github.com/EkkoG
                 </v-list-item-subtitle>
               </v-list-item>
               <v-list-item>
-                <v-list-item-title>技术栈</v-list-item-title>
+                <v-list-item-title>Tech Stack</v-list-item-title>
                 <v-list-item-subtitle>Tauri + Vue 3 + Vuetify 3</v-list-item-subtitle>
               </v-list-item>
             </v-list>
@@ -133,7 +173,7 @@ const openUrl = (url: string) => tauriOpenUrl(url).catch(console.error)
                 @click="resetSettings"
               >
                 <v-icon start>mdi-restore</v-icon>
-                恢复默认设置
+                {{ t('settings.resetSettings') }}
               </v-btn>
               
               <v-btn
@@ -142,7 +182,7 @@ const openUrl = (url: string) => tauriOpenUrl(url).catch(console.error)
                 @click="saveSettings"
               >
                 <v-icon start>mdi-content-save</v-icon>
-                保存设置
+                {{ t('common.save') }}
               </v-btn>
             </div>
           </v-card-text>
@@ -155,7 +195,7 @@ const openUrl = (url: string) => tauriOpenUrl(url).catch(console.error)
           color="success"
         >
           <v-icon start>mdi-check-circle</v-icon>
-          设置已保存
+          {{ t('settings.resetSuccess') }}
         </v-snackbar>
       </v-col>
     </v-row>

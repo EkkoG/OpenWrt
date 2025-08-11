@@ -2,12 +2,14 @@
 import { useAppStore } from '@/stores/app'
 import { ref, computed, onMounted } from 'vue'
 import ModuleDetailDialog from '@/components/ModuleDetailDialog.vue'
+import { useI18n } from 'vue-i18n'
 // import { invoke } from '@tauri-apps/api/core'  // 使用动态导入
 
 const appStore = useAppStore()
 const searchQuery = ref('')
 // const expandedModules = ref<string[]>([]) // Reserved for future expansion control
 const isLoading = ref(false)
+const { t } = useI18n()
 
 // 详细介绍对话框状态
 const detailDialog = ref(false)
@@ -79,13 +81,13 @@ const selectCustomModulesDirectory = async () => {
         
         // 重新加载模块
         await refreshModules()
-        console.log('自定义模块目录已更新:', selectedPath)
+        console.log('Custom modules directory updated:', selectedPath)
       } else {
-        console.error('选择的路径无效')
+        console.error('Selected path is invalid')
       }
     }
   } catch (error) {
-    console.error('选择自定义模块目录失败:', error)
+    console.error('Failed to select custom modules directory:', error)
   }
 }
 
@@ -100,7 +102,7 @@ onMounted(() => {
   <v-card>
     <v-card-title class="d-flex align-center">
       <v-icon class="mr-2">mdi-package-variant</v-icon>
-      模块配置
+      {{ t('modules.title') }}
       <v-spacer />
       <v-btn
         color="primary"
@@ -109,7 +111,7 @@ onMounted(() => {
         @click="selectAll"
         :disabled="isLoading"
       >
-        全选
+        {{ t('modules.selectAll') }}
       </v-btn>
       <v-btn
         color="secondary"
@@ -118,7 +120,7 @@ onMounted(() => {
         @click="deselectAll"
         :disabled="isLoading"
       >
-        全不选
+        {{ t('modules.deselectAll') }}
       </v-btn>
       <v-btn
         color="info"
@@ -129,7 +131,7 @@ onMounted(() => {
         prepend-icon="mdi-folder-open"
         class="ml-4"
       >
-        选择自定义模块目录
+        {{ t('modules.selectCustomModulesDir') }}
       </v-btn>
       <v-btn
         color="primary"
@@ -140,7 +142,7 @@ onMounted(() => {
         prepend-icon="mdi-refresh"
         class="ml-4"
       >
-        刷新
+        {{ t('common.refresh') }}
       </v-btn>
     </v-card-title>
     
@@ -148,7 +150,7 @@ onMounted(() => {
       <!-- 搜索栏 -->
       <v-text-field
         v-model="searchQuery"
-        label="搜索模块"
+        :label="t('modules.searchModules')"
         prepend-inner-icon="mdi-magnify"
         variant="outlined"
         density="compact"
@@ -165,8 +167,7 @@ onMounted(() => {
       >
         <div class="d-flex align-center">
           <span>
-            共 {{ appStore.modules.length }} 个模块，
-            已启用 {{ appStore.enabledModules.length }} 个
+            {{ t('modules.moduleStats', { total: appStore.modules.length, enabled: appStore.enabledModules.length }) }}
           </span>
         </div>
       </v-alert>
@@ -204,7 +205,7 @@ onMounted(() => {
                           variant="tonal"
                           class="ml-2"
                         >
-                          自定义
+                          {{ t('modules.custom') }}
                         </v-chip>
                         <v-chip
                           v-if="appStore.customModulesPath && module.source === 'built'"
@@ -213,7 +214,7 @@ onMounted(() => {
                           variant="tonal"
                           class="ml-2"
                         >
-                          内置
+                          {{ t('modules.builtin') }}
                         </v-chip>
                       </div>
                       <div class="text-caption text-medium-emphasis">
@@ -227,7 +228,7 @@ onMounted(() => {
                       variant="tonal"
                       class="ml-2"
                     >
-                      需配置
+                      {{ t('modules.needConfig') }}
                     </v-chip>
                     <v-btn
                       v-if="module.hasReadme"
@@ -238,14 +239,14 @@ onMounted(() => {
                       @click.stop="showModuleDetail(module)"
                     >
                       <v-icon>mdi-information-outline</v-icon>
-                      <v-tooltip activator="parent" location="top">查看详细介绍</v-tooltip>
+                      <v-tooltip activator="parent" location="top">{{ t('modules.viewDetails') }}</v-tooltip>
                     </v-btn>
                   </div>
                 </v-expansion-panel-title>
                 
                 <v-expansion-panel-text>
                   <div v-if="hasEnvVars(module)">
-                    <div class="text-subtitle-2 mb-2">环境变量配置</div>
+                    <div class="text-subtitle-2 mb-2">{{ t('modules.envVars') }}</div>
                     <v-text-field
                       v-for="(_, key) in module.envVars"
                       :key="key"
@@ -257,7 +258,7 @@ onMounted(() => {
                     />
                   </div>
                   <div v-else class="text-body-2 text-medium-emphasis">
-                    此模块无需额外配置
+                    {{ t('modules.noExtraConfig') }}
                   </div>
                 </v-expansion-panel-text>
               </v-expansion-panel>
@@ -272,16 +273,16 @@ onMounted(() => {
               class="text-center"
             >
               <v-icon size="48" class="mb-3">mdi-package-variant-closed</v-icon>
-              <div class="text-h6">没有找到模块</div>
+              <div class="text-h6">{{ t('modules.noModulesFound') }}</div>
               <div class="text-caption">
-                {{ searchQuery ? '尝试修改搜索条件' : '点击刷新按钮加载模块' }}
+                {{ searchQuery ? t('modules.tryDifferentSearch') : t('modules.clickRefresh') }}
               </div>
             </v-alert>
             
             <!-- 加载中 -->
             <div v-if="isLoading" class="text-center pa-8">
               <v-progress-circular indeterminate color="primary" />
-              <div class="text-caption mt-3">正在加载模块...</div>
+              <div class="text-caption mt-3">{{ t('modules.loadingModules') }}</div>
             </div>
           </v-card-text>
         </v-card>
