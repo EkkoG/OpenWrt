@@ -1,5 +1,7 @@
 # OpenWrt Builder
 
+[English](README.en.md) | 简体中文
+
 一个用于便捷构建定制化 OpenWrt 固件的跨平台桌面应用。技术栈：Tauri 2 · Vue 3 · TypeScript · Vuetify · Vite。
 
 - **目标**: 以图形界面封装 OpenWrt/ImmortalWrt ImageBuilder 的常见操作，降低固件定制门槛。

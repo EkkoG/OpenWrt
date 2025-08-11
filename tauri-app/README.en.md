@@ -1,5 +1,7 @@
 # OpenWrt Builder
 
+English | [简体中文](README.md)
+
 A cross‑platform desktop app to conveniently build customized OpenWrt firmware. Tech stack: Tauri 2 · Vue 3 · TypeScript · Vuetify · Vite.
 
 - **Goal**: Wrap common OpenWrt/ImmortalWrt ImageBuilder actions with a GUI to lower the barrier for firmware customization.
